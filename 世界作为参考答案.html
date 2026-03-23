@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拆卷 · 世界作为参考答案</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=ZCOOL+XiaoWei&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#f5f0e8;font-family:'Noto Serif SC','PingFang SC',Georgia,serif;color:#2c2418;overflow-x:hidden}
+  html{scroll-behavior:smooth}
+  ::selection{background:rgba(180,120,60,0.2)}
+  ::-webkit-scrollbar{width:5px}
+  ::-webkit-scrollbar-track{background:#ebe5d8}
+  ::-webkit-scrollbar-thumb{background:rgba(140,110,70,0.3);border-radius:3px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes glowPulse{0%,100%{opacity:0.3}50%{opacity:0.7}}
+  @keyframes slideOpen{from{max-height:0;opacity:0}to{max-height:6000px;opacity:1}}
+  @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  @keyframes pageIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+  @keyframes inkDraw{from{stroke-dashoffset:300}to{stroke-dashoffset:0}}
+  .fade-up{animation:fadeUp 0.4s ease both}
+  .page-in{animation:pageIn 0.35s ease both}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState}=React;
+
+const P={
+  paper:"#f5f0e8",paperDeep:"#efe9dd",paperLight:"#faf7f0",
+  pageShadow:"rgba(120,100,70,0.06)",
+  text:"#2c2418",textSoft:"#6a5d4e",textMuted:"#a89a88",textChapter:"#4a3f30",
+  vermillion:"#c85030",
+  colors:[
+    {name:"赭石",hex:"#a87a28",glow:"rgba(168,122,40,0.12)",char:"觉",desc:"感知的觉醒"},
+    {name:"花青",hex:"#3a7090",glow:"rgba(58,112,144,0.12)",char:"养",desc:"精神的滋养"},
+    {name:"石青",hex:"#3a8a6a",glow:"rgba(58,138,106,0.12)",char:"安",desc:"身份的安顿"},
+    {name:"胭脂",hex:"#a84a58",glow:"rgba(168,74,88,0.12)",char:"超",desc:"痛苦的超越"},
+    {name:"藤黄",hex:"#b89a28",glow:"rgba(184,154,40,0.12)",char:"行",desc:"行动的回归"},
+  ],
+};
+
+function PaperBg(){
+  return(
+    <div style={{position:"fixed",inset:0,zIndex:0,pointerEvents:"none"}}>
+      <svg width="100%" height="100%" style={{position:"absolute",inset:0,opacity:0.035}}>
+        <defs><filter id="pf"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="4" seed="8"/><feColorMatrix type="saturate" values="0"/></filter></defs>
+        <rect width="100%" height="100%" fill="#a09070" filter="url(#pf)"/>
+      </svg>
+      <svg width="100%" height="100%" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice" style={{position:"absolute",inset:0,opacity:0.03}}>
+        <defs><filter id="ms"><feGaussianBlur stdDeviation="18"/></filter></defs>
+        <path d="M-50 580 Q200 460 400 510 Q600 420 800 480 Q1000 400 1200 460 Q1400 430 1450 470 L1450 900 L-50 900Z" fill="#a09080" opacity="0.5" filter="url(#ms)"/>
+      </svg>
+    </div>
+  );
+}
+
+function SealIcon({char="拆",color=P.vermillion,size=48,glow=true}){
+  const[h,setH]=useState(false);
+  return(
+    <div onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
+      style={{width:size,height:size,position:"relative",flexShrink:0,cursor:"default"}}>
+      <div style={{position:"absolute",inset:-4,borderRadius:"50%",background:`radial-gradient(circle,${color}${h?"15":"08"} 0%,transparent 70%)`,transition:"all 0.5s",animation:glow?"glowPulse 3s ease infinite":"none",filter:"blur(3px)"}}/>
+      <div style={{position:"absolute",inset:0,border:`1.5px solid ${h?color:color+"60"}`,borderRadius:5,transform:"rotate(-3deg)",transition:"all 0.4s",boxShadow:h?`0 0 14px ${color}20`:"none"}}/>
+      <div style={{position:"absolute",inset:3,border:`1px solid ${h?color+"50":color+"25"}`,borderRadius:3,transform:"rotate(-3deg)",transition:"all 0.4s"}}/>
+      <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",transform:"rotate(-3deg)"}}>
+        <span style={{fontSize:size*0.42,fontWeight:900,color,fontFamily:"'ZCOOL XiaoWei','Noto Serif SC',serif",textShadow:h?`0 0 12px ${color}30`:`0 0 6px ${color}10`,transition:"all 0.4s"}}>{char}</span>
+      </div>
+    </div>
+  );
+}
+
+function MiniLandscape({color=P.colors[0].hex,size=44,variant=0}){
+  const v=variant%4;
+  return(
+    <svg width={size} height={size} viewBox="0 0 52 52" style={{flexShrink:0,opacity:0.85}}>
+      {v===0&&<g><path d="M4 38 Q14 12 26 28 Q34 10 48 34 L48 48 L4 48Z" fill={color+"15"} stroke={color+"40"} strokeWidth="0.8"/><path d="M0 42 Q12 28 24 38 Q36 24 52 36 L52 52 L0 52Z" fill={color+"20"} stroke={color+"50"} strokeWidth="0.8"/></g>}
+      {v===1&&<g><line x1="20" y1="48" x2="18" y2="6" stroke={color+"50"} strokeWidth="1.5" strokeLinecap="round"/><path d="M18 12 Q10 8 6 14" fill="none" stroke={color+"40"} strokeWidth="1" strokeLinecap="round"/><path d="M18 20 Q12 16 8 22" fill="none" stroke={color+"35"} strokeWidth="1" strokeLinecap="round"/><path d="M18 28 Q24 24 28 30" fill="none" stroke={color+"40"} strokeWidth="1" strokeLinecap="round"/></g>}
+      {v===2&&<g><path d="M4 22 Q14 16 26 22 Q38 28 48 22" fill="none" stroke={color+"45"} strokeWidth="1" strokeLinecap="round"/><path d="M8 30 Q18 24 30 30 Q42 36 48 30" fill="none" stroke={color+"35"} strokeWidth="0.8" strokeLinecap="round"/><path d="M4 38 Q14 32 26 38 Q38 44 48 38" fill="none" stroke={color+"25"} strokeWidth="0.6" strokeLinecap="round"/></g>}
+      {v===3&&<g><ellipse cx="26" cy="30" rx="20" ry="8" fill={color+"08"} stroke={color+"20"} strokeWidth="0.5"/><ellipse cx="18" cy="26" rx="10" ry="5" fill={color+"0c"} stroke={color+"28"} strokeWidth="0.5"/><path d="M10 20 Q16 8 26 14 Q36 6 44 16" fill="none" stroke={color+"30"} strokeWidth="0.7" strokeLinecap="round"/></g>}
+    </svg>
+  );
+}
+
+function ReadBar({progress}){
+  return(
+    <div style={{position:"fixed",top:0,left:0,right:0,height:2,zIndex:100,background:"rgba(160,140,110,0.1)"}}>
+      <div style={{height:"100%",width:`${progress}%`,background:`linear-gradient(90deg,${P.vermillion}60,${P.vermillion})`,transition:"width 0.3s ease",borderRadius:"0 1px 1px 0"}}/>
+    </div>
+  );
+}
+
+function ChTab({label,char,color,active,onClick,isOverview}){
+  return(
+    <button onClick={onClick} style={{
+      padding:"10px 14px",border:"none",display:"flex",alignItems:"center",gap:6,
+      background:active?P.paperLight:"transparent",
+      borderBottom:active?`2px solid ${color}`:"2px solid transparent",
+      borderRight:isOverview?"1px solid rgba(160,140,110,0.15)":"none",
+      color:active?P.textChapter:P.textMuted,fontSize:13,fontWeight:active?700:400,
+      letterSpacing:active?1.5:0.5,cursor:"pointer",transition:"all 0.3s",
+      fontFamily:"'Noto Serif SC',serif",whiteSpace:"nowrap",flexShrink:0,
+    }}>
+      {char&&<span style={{fontSize:10,fontWeight:900,fontFamily:"'ZCOOL XiaoWei',serif",border:`1px solid ${active?color+"60":color+"25"}`,color:active?color:color+"60",width:18,height:18,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)",transition:"all 0.3s",background:active?color+"08":"transparent"}}>{char}</span>}
+      {label}
+    </button>
+  );
+}
+
+function Sidebar({chapters,current,onSelect,open,onClose}){
+  return(
+    <div>
+      {open&&<div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(60,50,30,0.2)",zIndex:98}}/>}
+      <div style={{position:"fixed",top:0,left:open?0:-320,width:300,height:"100vh",background:P.paperDeep,borderRight:`1px solid rgba(160,140,110,0.15)`,boxShadow:open?"4px 0 30px rgba(80,60,30,0.1)":"none",zIndex:99,transition:"left 0.35s cubic-bezier(.4,0,.2,1)",padding:"32px 0",overflowY:"auto"}}>
+        <div style={{padding:"0 24px 24px",borderBottom:`1px solid rgba(160,140,110,0.12)`}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <SealIcon char="目" color={P.vermillion} size={28} glow={false}/>
+            <span style={{fontSize:16,fontWeight:700,color:P.textChapter,letterSpacing:3}}>目录</span>
+          </div>
+        </div>
+        {chapters.map((ch,i)=>(
+          <div key={i} onClick={()=>{onSelect(i);onClose();}} style={{padding:"14px 24px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,background:current===i?ch.color+"08":"transparent",borderLeft:current===i?`3px solid ${ch.color}`:"3px solid transparent",transition:"all 0.25s"}}>
+            <span style={{fontSize:11,fontWeight:900,fontFamily:"'ZCOOL XiaoWei',serif",color:current===i?ch.color:P.textMuted,border:`1px solid ${current===i?ch.color+"50":P.textMuted+"30"}`,width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)"}}>{ch.char}</span>
+            <span style={{fontSize:14,color:current===i?P.textChapter:P.textSoft,fontWeight:current===i?600:400}}>{ch.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PageNav({current,total,name,onPrev,onNext}){
+  return(
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 0",borderTop:`1px solid rgba(160,140,110,0.15)`,marginTop:40}}>
+      <button onClick={current>0?onPrev:undefined} style={{padding:"10px 20px",border:current>0?"1px solid rgba(160,140,110,0.25)":"1px solid transparent",borderRadius:6,background:current>0?P.paperLight:"transparent",color:current>0?P.textSoft:"transparent",fontSize:14,cursor:current>0?"pointer":"default",fontFamily:"'Noto Serif SC',serif"}}>{"← 上一章"}</button>
+      <div style={{textAlign:"center"}}>
+        <div style={{fontSize:12,color:P.textMuted,letterSpacing:2}}>{name}</div>
+        <div style={{fontSize:11,color:P.textMuted,marginTop:2}}>{current+1} / {total}</div>
+      </div>
+      <button onClick={current<total-1?onNext:undefined} style={{padding:"10px 20px",border:current<total-1?"1px solid rgba(160,140,110,0.25)":"1px solid transparent",borderRadius:6,background:current<total-1?P.paperLight:"transparent",color:current<total-1?P.textSoft:"transparent",fontSize:14,cursor:current<total-1?"pointer":"default",fontFamily:"'Noto Serif SC',serif"}}>{"下一章 →"}</button>
+    </div>
+  );
+}
+
+function SecTitle({title,sub,color=P.colors[0].hex,char,ls=0}){
+  return(
+    <div style={{marginBottom:32,paddingTop:8}}>
+      <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:10}}>
+        <SealIcon char={char} color={color} size={44} glow={false}/>
+        <div style={{opacity:0.3,marginLeft:-28,marginTop:14}}><MiniLandscape color={color} size={32} variant={ls}/></div>
+        <h2 style={{fontSize:26,fontWeight:900,letterSpacing:4,color:P.textChapter,fontFamily:"'Noto Serif SC',serif",lineHeight:1.4}}>{title}</h2>
+      </div>
+      {sub&&<p style={{fontSize:15,color:P.textSoft,lineHeight:1.9,borderLeft:`2px solid ${color}30`,paddingLeft:16,marginLeft:2}}>{sub}</p>}
+      <div style={{height:1,background:`linear-gradient(90deg,${color}40,transparent 60%)`,marginTop:16}}/>
+    </div>
+  );
+}
+
+function Card({children,color=P.colors[0].hex,style={}}){
+  const[h,setH]=useState(false);
+  return(
+    <div onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{background:P.paperLight,borderRadius:10,padding:28,borderLeft:`3px solid ${h?color:color+"50"}`,boxShadow:h?`0 4px 24px ${P.pageShadow},0 0 20px ${color}08`:`0 1px 8px ${P.pageShadow}`,transition:"all 0.35s ease",transform:h?"translateY(-2px)":"none",position:"relative",overflow:"hidden",...style}}>
+      {children}
+    </div>
+  );
+}
+
+function Para({children}){
+  return <p style={{fontSize:16,color:P.text,lineHeight:2.0,marginBottom:16,textAlign:"justify"}}>{children}</p>;
+}
+
+function Step({n,text,detail,color=P.colors[1].hex}){
+  return(
+    <div style={{display:"flex",gap:16,marginBottom:20,alignItems:"flex-start"}}>
+      <div style={{width:30,height:30,borderRadius:"50%",background:color+"10",border:`1.5px solid ${color}35`,color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:800,flexShrink:0,fontFamily:"'Inter',sans-serif"}}>{n}</div>
+      <div style={{flex:1}}>
+        <div style={{fontSize:16,fontWeight:700,color:P.textChapter,lineHeight:1.7}}>{text}</div>
+        {detail&&<div style={{fontSize:15,color:P.textSoft,lineHeight:2.0,marginTop:6}}>{detail}</div>}
+      </div>
+    </div>
+  );
+}
+
+function Quote({text,color=P.vermillion}){
+  return(
+    <div style={{borderLeft:`3px solid ${color}40`,background:color+"06",borderRadius:"0 8px 8px 0",padding:"16px 22px",margin:"20px 0"}}>
+      <span style={{fontSize:15,color:P.textSoft,lineHeight:2.0,fontStyle:"italic"}}>{text}</span>
+    </div>
+  );
+}
+
+function Formula({text,color=P.vermillion}){
+  return(
+    <div style={{textAlign:"center",padding:28,margin:"24px 0",background:P.paperLight,borderRadius:10,border:`1px solid ${color}15`,position:"relative",overflow:"hidden",boxShadow:`0 1px 6px ${P.pageShadow}`}}>
+      <div style={{position:"absolute",inset:0,background:`linear-gradient(90deg,transparent,${color}04,transparent)`,backgroundSize:"200% 100%",animation:"shimmer 5s ease infinite"}}/>
+      <span style={{fontSize:22,fontWeight:900,letterSpacing:5,color:P.textChapter,fontFamily:"'Noto Serif SC',serif",position:"relative"}}>{text}</span>
+    </div>
+  );
+}
+
+function Expand({title,children,color=P.colors[0].hex,char}){
+  const[open,setOpen]=useState(false);
+  return(
+    <div style={{background:open?P.paperLight:P.paperDeep,borderRadius:8,border:`1px solid ${open?color+"20":"rgba(160,140,110,0.1)"}`,overflow:"hidden",transition:"all 0.3s",marginBottom:10,boxShadow:open?`0 2px 12px ${P.pageShadow}`:"none"}}>
+      <div onClick={()=>setOpen(!open)} style={{padding:"16px 22px",display:"flex",alignItems:"center",justifyContent:"space-between",cursor:"pointer"}}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          {char&&<span style={{fontSize:13,fontWeight:900,color:open?color:color+"60",fontFamily:"'ZCOOL XiaoWei',serif",border:`1px solid ${open?color+"50":color+"25"}`,width:22,height:22,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)",transition:"all 0.3s"}}>{char}</span>}
+          <span style={{fontSize:16,fontWeight:open?700:500,color:open?P.textChapter:P.textSoft,letterSpacing:1,transition:"all 0.3s"}}>{title}</span>
+        </div>
+        <span style={{fontSize:10,color:open?color:P.textMuted,transition:"transform 0.3s",transform:open?"rotate(90deg)":"none",display:"inline-block"}}>{"▶"}</span>
+      </div>
+      {open&&<div style={{padding:"0 22px 20px",animation:"slideOpen 0.3s ease"}} onClick={(e)=>e.stopPropagation()}>{children}</div>}
+    </div>
+  );
+}
+
+function Divider({color=P.textMuted}){
+  return(
+    <div style={{display:"flex",alignItems:"center",gap:8,margin:"32px 0",opacity:0.3}}>
+      <div style={{height:1,flex:1,background:`linear-gradient(90deg,transparent,${color}30)`}}/>
+      <div style={{width:3,height:3,borderRadius:"50%",background:color+"50"}}/>
+      <div style={{width:40,height:1,background:color+"25"}}/>
+      <div style={{width:3,height:3,borderRadius:"50%",background:color+"50"}}/>
+      <div style={{height:1,flex:1,background:`linear-gradient(270deg,transparent,${color}30)`}}/>
+    </div>
+  );
+}
+
+function ActionBox({children,char="行"}){
+  return(
+    <div style={{background:P.vermillion+"05",borderRadius:10,padding:24,border:`1px solid ${P.vermillion}12`,position:"relative"}}>
+      <div style={{position:"absolute",top:10,right:14,opacity:0.1}}><SealIcon char={char} color={P.vermillion} size={32} glow={false}/></div>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
+        <SealIcon char={char} color={P.vermillion} size={28} glow={false}/>
+        <span style={{fontSize:16,fontWeight:800,color:P.vermillion,letterSpacing:2}}>即刻行动</span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function InkFlow({steps,color=P.colors[0].hex,title}){
+  const w=680,h=steps.length>4?140:120,boxW=130,boxH=48,gap=20;
+  const totalW=steps.length*boxW+(steps.length-1)*gap;
+  const startX=(w-totalW)/2;
+  return(
+    <div style={{margin:"24px 0",background:P.paperLight,borderRadius:10,padding:"20px 12px",border:`1px solid ${color}15`,overflow:"hidden"}}>
+      {title&&<div style={{fontSize:15,fontWeight:700,color,letterSpacing:2,textAlign:"center",marginBottom:14}}>{title}</div>}
+      <svg width="100%" viewBox={`0 0 ${w} ${h}`} style={{display:"block",maxWidth:680,margin:"0 auto"}}>
+        <defs>
+          <filter id="inkBlur"><feGaussianBlur stdDeviation="0.5"/></filter>
+          <marker id={`arrow-${color.slice(1)}`} markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d={`M0,0 L8,3 L0,6`} fill={color+"80"}/></marker>
+        </defs>
+        {steps.map((s,i)=>{
+          const x=startX+i*(boxW+gap);
+          const y=(h-boxH)/2;
+          return(
+            <g key={i}>
+              <rect x={x} y={y} width={boxW} height={boxH} rx="8" fill={color+"0a"} stroke={color+"40"} strokeWidth="1.2" filter="url(#inkBlur)"/>
+              <text x={x+boxW/2} y={y+boxH/2+1} textAnchor="middle" dominantBaseline="middle" fill={P.textChapter} fontSize="13" fontFamily="'Noto Serif SC',serif" fontWeight="600">{s}</text>
+              {i<steps.length-1&&<line x1={x+boxW+2} y1={h/2} x2={x+boxW+gap-2} y2={h/2} stroke={color+"60"} strokeWidth="1.5" strokeDasharray="4 3" markerEnd={`url(#arrow-${color.slice(1)})`}/>}
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+function InkCompare({left,right,leftTitle,rightTitle,color=P.colors[0].hex,title}){
+  return(
+    <div style={{margin:"24px 0",background:P.paperLight,borderRadius:10,padding:"20px 20px 16px",border:`1px solid ${color}15`}}>
+      {title&&<div style={{fontSize:15,fontWeight:700,color,letterSpacing:2,textAlign:"center",marginBottom:16}}>{title}</div>}
+      <div style={{display:"flex",gap:16,flexWrap:"wrap"}}>
+        <div style={{flex:"1 1 280px",minWidth:0,background:color+"08",borderRadius:8,padding:16,border:`1px solid ${color}20`}}>
+          <div style={{fontSize:14,fontWeight:800,color,letterSpacing:2,marginBottom:10,textAlign:"center"}}>{leftTitle}</div>
+          {left.map((item,i)=><div key={i} style={{fontSize:14,color:P.textSoft,lineHeight:1.9,padding:"4px 0",borderBottom:i<left.length-1?`1px dashed ${color}15`:"none"}}>{item}</div>)}
+        </div>
+        <div style={{width:1,background:`linear-gradient(to bottom,transparent,${color}30,transparent)`,flexShrink:0,display:window.innerWidth<500?"none":"block"}}/>
+        <div style={{flex:"1 1 280px",minWidth:0,background:P.vermillion+"06",borderRadius:8,padding:16,border:`1px solid ${P.vermillion}15`}}>
+          <div style={{fontSize:14,fontWeight:800,color:P.vermillion,letterSpacing:2,marginBottom:10,textAlign:"center"}}>{rightTitle}</div>
+          {right.map((item,i)=><div key={i} style={{fontSize:14,color:P.textSoft,lineHeight:1.9,padding:"4px 0",borderBottom:i<right.length-1?`1px dashed ${P.vermillion}12`:"none"}}>{item}</div>)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InkStructure({items,color=P.colors[0].hex,title,cols=4}){
+  return(
+    <div style={{margin:"24px 0",background:P.paperLight,borderRadius:10,padding:"20px 16px",border:`1px solid ${color}15`}}>
+      {title&&<div style={{fontSize:15,fontWeight:700,color,letterSpacing:2,textAlign:"center",marginBottom:16}}>{title}</div>}
+      <div style={{display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap:10}}>
+        {items.map((item,i)=>(
+          <div key={i} style={{background:color+"08",borderRadius:8,padding:"14px 10px",textAlign:"center",border:`1px solid ${color}18`,position:"relative"}}>
+            <div style={{fontSize:20,fontWeight:900,color:color+"30",fontFamily:"'Inter',sans-serif",marginBottom:4}}>{i+1}</div>
+            <div style={{fontSize:13,fontWeight:700,color:P.textChapter,marginBottom:4}}>{item.title}</div>
+            <div style={{fontSize:12,color:P.textSoft,lineHeight:1.7}}>{item.desc}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CaseStory({title,children,color=P.colors[0].hex,icon="📖"}){
+  return(
+    <div style={{margin:"20px 0",background:`linear-gradient(135deg,${color}06,${P.paperLight})`,borderRadius:10,padding:"22px 24px",border:`1px solid ${color}18`,position:"relative",overflow:"hidden"}}>
+      <div style={{position:"absolute",top:12,right:16,fontSize:32,opacity:0.08}}>{icon}</div>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+        <div style={{width:4,height:20,borderRadius:2,background:color}}/>
+        <span style={{fontSize:15,fontWeight:800,color:P.textChapter,letterSpacing:1}}>{title}</span>
+      </div>
+      <div style={{fontSize:15,color:P.textSoft,lineHeight:2.0}}>{children}</div>
+    </div>
+  );
+}
+
+function InkTimeline({items,color=P.colors[0].hex,title}){
+  return(
+    <div style={{margin:"24px 0",background:P.paperLight,borderRadius:10,padding:"20px 20px",border:`1px solid ${color}15`}}>
+      {title&&<div style={{fontSize:15,fontWeight:700,color,letterSpacing:2,textAlign:"center",marginBottom:16}}>{title}</div>}
+      <div style={{position:"relative",paddingLeft:28}}>
+        <div style={{position:"absolute",left:8,top:4,bottom:4,width:2,background:`linear-gradient(to bottom,${color}40,${color}15)`}}/>
+        {items.map((item,i)=>(
+          <div key={i} style={{position:"relative",marginBottom:i<items.length-1?20:0,paddingLeft:20}}>
+            <div style={{position:"absolute",left:-24,top:6,width:12,height:12,borderRadius:"50%",background:color+"15",border:`2px solid ${color}60`}}/>
+            <div style={{fontSize:14,fontWeight:700,color,marginBottom:2}}>{item.label}</div>
+            <div style={{fontSize:14,color:P.textSoft,lineHeight:1.8}}>{item.text}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ===== BookMap: 全书导读 ===== */
+function BookMap({onJump}){
+  const chapters=[
+    {char:"觉",title:"感知的觉醒",color:P.colors[0].hex,question:"为什么现代人看不见世界？",core:"把瓦尔登湖当动词，在日常中恢复感知能力",concepts:["瓦尔登湖动词","感知切换","洞穴性","三行日记","旅行vs旅游"]},
+    {char:"养",title:"精神的滋养",color:P.colors[1].hex,question:"人文教育到底在培育什么？",core:"人文精神是刚需，不是奢侈品，精神不偷懒是真正的现实主义",concepts:["现实主义","第二次成长","精神不偷懒","低级安全感","军军与加缪"]},
+    {char:"安",title:"身份的安顿",color:P.colors[2].hex,question:"当时代无法安顿你，如何安顿自己？",core:"nowhere → now here，在所在之处建立真实连接",concepts:["茨威格乡愁","精神家园","第三空间","社会连接","精神自传"]},
+    {char:"超",title:"痛苦的超越",color:P.colors[3].hex,question:"痛苦不可消除，但可以被什么取代？",core:"痛苦的反义词不是快乐，而是意义与超越",concepts:["积极主义暴政","命名痛苦","鸵鸟策略","消费止痛药","直面与记录"]},
+    {char:"行",title:"行动的回归",color:P.colors[4].hex,question:"知道了这些之后，我们该怎么做？",core:"介入的超脱：此身此时此地，从最小的事开始",concepts:["反智主义","介入的超脱","天职召唤","远景句","信息甄别"]},
+  ];
+  return(
+    <div className="page-in">
+      <SecTitle title="全书导读" sub="这不是一本提供答案的书，而是一本教你换一种方式提问的书。两位学者八场对话，一条精神成长的路径。" color={P.vermillion} char="览" ls={0}/>
+
+      <Formula text="当标准答案失效 → 世界就是参考答案 → 发现自己的活法" color={P.vermillion}/>
+
+      {/* 全书逻辑架构 */}
+      <div style={{margin:"28px 0",background:P.paperLight,borderRadius:12,padding:"24px 12px 16px",border:`1px solid ${P.vermillion}12`}}>
+        <div style={{fontSize:16,fontWeight:800,color:P.vermillion,letterSpacing:3,textAlign:"center",marginBottom:4}}>全书逻辑架构</div>
+        <div style={{fontSize:12,color:P.textMuted,textAlign:"center",marginBottom:16}}>五个议题层层递进，构成一条完整的精神成长路径</div>
+        <svg width="100%" viewBox="0 0 680 250" style={{display:"block",maxWidth:680,margin:"0 auto"}}>
+          <defs>
+            <marker id="arrowV" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4" fill={P.vermillion+"80"}/></marker>
+          </defs>
+          <path d="M30,220 Q340,190 650,220" fill="none" stroke={P.vermillion+"12"} strokeWidth="36" strokeLinecap="round"/>
+          <text x="340" y="236" textAnchor="middle" fill={P.vermillion+"35"} fontSize="10" fontFamily="'Noto Serif SC',serif">从感知到行动，从个体到世界 →</text>
+
+          {[
+            {x:30,w:200,label:"内在层面（感知＋精神）",color:P.colors[0].hex},
+            {x:248,w:140,label:"身份安顿",color:P.colors[2].hex},
+            {x:406,w:200,label:"实践层面（痛苦＋行动）",color:P.colors[4].hex},
+          ].map((b,i)=>(
+            <g key={i}>
+              <rect x={b.x} y="170" width={b.w} height="22" rx="11" fill={b.color+"0a"} stroke={b.color+"20"} strokeWidth="0.8"/>
+              <text x={b.x+b.w/2} y="184" textAnchor="middle" fill={b.color} fontSize="10" fontWeight="600" fontFamily="'Noto Serif SC',serif" style={{pointerEvents:"none"}}>{b.label}</text>
+            </g>
+          ))}
+
+          {chapters.map((ch,i)=>{
+            const w=104,h=46,gap=24;
+            const totalW=5*w+4*gap;
+            const startX=(680-totalW)/2;
+            const x=startX+i*(w+gap);
+            const y=20;
+            return(
+              <g key={i} style={{cursor:"pointer"}} onClick={()=>onJump&&onJump(i+1)}>
+                <rect x={x} y={y} width={w} height={h} rx="8" fill={ch.color+"0c"} stroke={ch.color+"40"} strokeWidth="1.5"/>
+                <text x={x+w/2} y={y+18} textAnchor="middle" fill={ch.color} fontSize="13" fontWeight="900" fontFamily="'ZCOOL XiaoWei',serif" style={{pointerEvents:"none"}}>{ch.char}</text>
+                <text x={x+w/2} y={y+36} textAnchor="middle" fill={P.textChapter} fontSize="11" fontWeight="600" fontFamily="'Noto Serif SC',serif" style={{pointerEvents:"none"}}>{ch.title}</text>
+                <line x1={x+w/2} y1={y+h} x2={x+w/2} y2={y+h+12} stroke={ch.color+"30"} strokeWidth="1" strokeDasharray="3 2"/>
+                <rect x={x+2} y={y+h+14} width={w-4} height={86} rx="5" fill={ch.color+"05"} stroke={ch.color+"12"} strokeWidth="0.7"/>
+                {ch.concepts.slice(0,4).map((c,j)=>(
+                  <text key={j} x={x+w/2} y={y+h+28+j*17} textAnchor="middle" fill={P.textSoft} fontSize="10" fontFamily="'Noto Serif SC',serif" style={{pointerEvents:"none"}}>{c}</text>
+                ))}
+                {ch.concepts.length>4&&<text x={x+w/2} y={y+h+28+4*17} textAnchor="middle" fill={P.textMuted} fontSize="9" fontFamily="'Noto Serif SC',serif" style={{pointerEvents:"none"}}>+{ch.concepts.length-4}个</text>}
+                {i<4&&<line x1={x+w+1} y1={y+h/2} x2={x+w+gap-1} y2={y+h/2} stroke={P.vermillion+"45"} strokeWidth="1.5" strokeDasharray="4 3" markerEnd="url(#arrowV)"/>}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* 章节速览 */}
+      <div style={{fontSize:16,fontWeight:800,color:P.textChapter,letterSpacing:2,marginBottom:14,marginTop:28}}>章节速览</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+        {chapters.map((ch,i)=>(
+          <div key={i} onClick={()=>onJump&&onJump(i+1)} style={{background:P.paperLight,borderRadius:10,padding:"14px 16px",border:`1px solid ${ch.color}15`,cursor:"pointer",transition:"all 0.3s",borderLeft:`3px solid ${ch.color}60`}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+              <span style={{fontSize:11,fontWeight:900,fontFamily:"'ZCOOL XiaoWei',serif",color:ch.color,border:`1px solid ${ch.color}40`,width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)",background:ch.color+"08"}}>{ch.char}</span>
+              <span style={{fontSize:14,fontWeight:700,color:P.textChapter}}>{ch.title}</span>
+            </div>
+            <div style={{fontSize:13,color:ch.color,fontWeight:600,marginBottom:4,lineHeight:1.6}}>{ch.question}</div>
+            <div style={{fontSize:12,color:P.textSoft,lineHeight:1.7}}>{ch.core}</div>
+          </div>
+        ))}
+      </div>
+
+      <Divider color={P.vermillion}/>
+
+      {/* 全书结构性弱点·编者评 */}
+      <Card color={P.vermillion} style={{marginBottom:24}}>
+        <div style={{fontSize:17,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>编者按：这本书的结构性弱点</div>
+        <Para>但我必须先说一句不客气的话：这本书有一个结构性弱点。对话体让两位学者可以随意跳跃、互相激发，读起来很舒服，但也让每个话题都停留在「点到为止」的深度——他们像两个优雅的击剑手，比划了几个漂亮的姿势，却从不真正刺下去。每当对话触及最尖锐的问题，话题就滑向了下一个优美的引用。</Para>
+        <Para>所以这份拆解要做的事是：把他们点到为止的地方刺穿，把散落在八章对话里的珍珠串成一条完整的项链，把学者的语言翻译成你今晚就能用的行动。</Para>
+        <Quote text="全书八章，重新提炼为五个核心议题，构成一条递进的精神成长路径：感知的觉醒 → 精神的滋养 → 身份的安顿 → 痛苦的超越 → 行动的回归" color={P.vermillion}/>
+      </Card>
+
+      {/* 阅读建议 */}
+      <Card color={P.vermillion} style={{marginBottom:24}}>
+        <div style={{fontSize:17,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>阅读建议</div>
+        <Step n="🌊" text="感到迷茫或内卷？" detail="先读模块一（感知的觉醒），特别是「把瓦尔登湖作为动词」的段落" color={P.colors[0].hex}/>
+        <Step n="📚" text="纠结读书有没有用？" detail="先读模块二（精神的滋养）" color={P.colors[1].hex}/>
+        <Step n="🏠" text="有漂泊感或身份焦虑？" detail="先读模块三（身份的安顿）" color={P.colors[2].hex}/>
+        <Step n="💧" text="正在经历痛苦？" detail="先读模块四（痛苦的超越）" color={P.colors[3].hex}/>
+        <Step n="⚡" text="想要行动指南？" detail="模块五（行动的回归）适合所有人最后读" color={P.colors[4].hex}/>
+      </Card>
+    </div>
+  );
+}
+
+/* ===== LogicChain ===== */
+function LogicChain({items,color,question}){
+  return(
+    <div style={{margin:"0 0 28px",background:`linear-gradient(135deg,${color}06,${P.paperLight})`,borderRadius:10,padding:"18px 20px",border:`1px solid ${color}18`}}>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+        <div style={{width:22,height:22,borderRadius:"50%",background:color+"15",border:`1.5px solid ${color}40`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color,fontWeight:800}}>?</div>
+        <span style={{fontSize:14,fontWeight:700,color,letterSpacing:1}}>{question}</span>
+      </div>
+      <div style={{display:"flex",alignItems:"center",flexWrap:"wrap",gap:"6px 2px"}}>
+        {items.map((item,i)=>(
+          <span key={i} style={{display:"inline-flex",alignItems:"center",gap:4}}>
+            <span style={{fontSize:13,fontWeight:600,color:P.textChapter,background:color+"0a",border:`1px solid ${color}18`,borderRadius:6,padding:"4px 9px"}}>{item}</span>
+            {i<items.length-1&&<span style={{fontSize:13,color:color+"50",fontWeight:700,flexShrink:0}}>→</span>}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const CHS=[
+  {id:"overview",label:"全书导读",char:"览",color:P.vermillion,ls:0},
+  {id:"juejue",label:"感知的觉醒",char:"觉",color:P.colors[0].hex,ls:0},
+  {id:"yang",label:"精神的滋养",char:"养",color:P.colors[1].hex,ls:1},
+  {id:"an",label:"身份的安顿",char:"安",color:P.colors[2].hex,ls:2},
+  {id:"chao",label:"痛苦的超越",char:"超",color:P.colors[3].hex,ls:3},
+  {id:"xing",label:"行动的回归",char:"行",color:P.colors[4].hex,ls:0},
+];
+
+/* ===== Ch1: 感知的觉醒 ===== */
+function Ch1(){
+  const c=P.colors[0].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="感知的觉醒" sub="现代人被效率裹挟，失去了对生活的感知能力——第一章 瓦尔登湖 + 第五章 旅行" color={c} char="觉" ls={0}/>
+      <LogicChain question="我们为什么看不见世界？如何恢复感知能力？" color={c} items={["被效率裹挟","失去感知能力","只见认知框架投影","打破固有视角","瓦尔登湖当动词","旅行视角重置"]}/>
+      <Formula text="瓦尔登湖 = 动词（不是名词）= 在日常中恢复对生命的完整感知" color={c}/>
+
+      <InkFlow steps={["被裹挟的日常","设置切换触发器","被动接收→主动感知","记录三行字","世界开始变大"]} color={c} title="感知觉醒的路径"/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>不要把瓦尔登湖当名词，要当动词</div>
+        <Para>严飞提出了这本书最精彩的观点之一：不要把瓦尔登湖当名词，要当动词。大多数人把瓦尔登湖理解为一个「状态」——远离喧嚣、隐居山林、世外桃源。但严飞说，梭罗的瓦尔登湖从来不是静止的避世，而是一种持续的行动：在日常生活中发现价值、提升意义、创造合理形态。</Para>
+        <Para>这个洞察改变了整个问题的框架：你不需要逃离北上广去找一片湖，你只需要每天给自己5分钟、10分钟、15分钟，把当下变成寻找瓦尔登湖的行动。打开一本书、认真散一次步、和一个人好好说一次话——这些就是把瓦尔登湖当动词。</Para>
+        <Para>刘擎则从哲学角度补充：梭罗不是避世主义者。他的小木屋离康科德小镇步行可达，他还帮爱默生带娃、积极参与废奴运动。他在瓦尔登湖做的事是空间上拉开距离，让自己有意识地进入反省沉思的状态——不是与世隔绝，而是恢复生命的完整性。</Para>
+
+        <Quote text="但这里有一个两位作者没有正面回答的问题：对于一个996的打工人来说，「把瓦尔登湖当动词」会不会沦为另一碗鸡汤？梭罗能去湖边住两年，是因为他有爱默生免费借的地、有哈佛的教育背景、没有房贷要还。当你每天通勤三小时、回家还要辅导孩子作业的时候，「15分钟的瓦尔登湖」真的够用吗？" color={c}/>
+
+        <Para>我的判断是：够用，但前提是你理解这不是「放松」而是「切换」。瓦尔登湖时刻的本质不是休息，而是从「被动接收模式」切换到「主动感知模式」。通勤路上刷抖音是被动的，但同样的30分钟用来观察地铁里的人、听一段播客、甚至只是闭眼感受车厢的节奏——这就是切换。区别不在于时间长短，在于你是消费者还是感知者。</Para>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>旅游者 vs 旅行者：深度相遇的艺术</div>
+        <Para>关于旅行，两人共同指出：旅游（tourist）和旅行（traveler）完全不同。旅游是「见物不见人」的打卡；旅行是通过与他者的深度相遇来发现自己的「洞穴性」。</Para>
+
+        <InkCompare
+          title="旅游者 vs 旅行者"
+          leftTitle="旅行者（traveler）"
+          rightTitle="旅游者（tourist）"
+          left={["寻找只有你会注意到的东西","和当地人真正交谈","出发前研究历史与人文","回来写一个人的故事","感知，发现，印证"]}
+          right={["寻找别人都在看的东西","走马观花式打卡","查攻略、刷地标","回来发照片到此一游","消费，拍照，离开"]}
+          color={c}
+        />
+
+        <Para>这个区分很漂亮，但有一个盲区：两位学者的旅行经验全部是学术访问——在哈佛听讲座、在欧洲研究中心花园对话、去巴黎拜访学者。这种旅行当然有深度，但它本身是一种特权。更值得讨论的是：一个普通人怎么在有限的预算和假期里，把旅游升级成旅行？答案藏在严飞自己的经历里——他和伊朗裔汽车销售鲍勃的偶遇、和偷渡来的福建小哥在地铁上的长谈——这些最深刻的旅行体验，恰恰发生在最不「学术」的场景里。<strong>关键不是去哪里，而是你是否愿意和遇到的人真正交谈。</strong></Para>
+      </Card>
+
+      <Divider color={c}/>
+
+      <CaseStory title="严飞在纽约地铁上的相遇" color={c} icon="🚇">
+        <p style={{marginBottom:10}}><strong>场景</strong>：博士读不下去，苦闷中买了张「红眼航班」机票飞纽约，凌晨两点一个人在地铁站等车。</p>
+        <p style={{marginBottom:10}}><strong>冲突</strong>：一个福建偷渡来的年轻人向他问路，两人发现搭同一班车。一个在读博士，一个在中餐馆打黑工——身份天差地别。</p>
+        <p style={{marginBottom:10}}><strong>转折</strong>：晃悠悠的车厢里只有两人，福建小哥说他正在努力学英语，想把家人接来美国。「在那一刻，我觉得我和他没有任何区别。我们都只是个谋生人，对于未来是如此地看不清楚。」</p>
+        <p><strong>结果</strong>：这次偶遇改变了严飞看待自己困境的视角——论文还是要写，但它在生命中的位置和重量变了。十年后严飞已是清华副教授，但那个福建小哥在哪里他不知道。这恰恰说明：旅行中最深刻的相遇，往往是和你永远不会再见的人。</p>
+      </CaseStory>
+
+      <CaseStory title="长椅铭文（感知）vs 朋友圈打卡（消费）" color={c} icon="🪑">
+        <p style={{marginBottom:10}}><strong>正面</strong>：严飞在剑桥散步时读公园长椅上的铭文——简和鲍勃，一对在社区生活50多年的普通夫妻，她是护士他是物理老师。通过这些细小的发现，他感到自己「正在与这个地方的真实生活连接起来」。</p>
+        <p style={{marginBottom:10}}><strong>反面</strong>：同一时间，无数游客在哈佛铜像前摸左脚拍照，发朋友圈「到此一游」。同一个地方，两种完全不同的体验——一个是感知，一个是消费。</p>
+        <p><strong>区别在哪？</strong> 时间一样长，花费一样少（都是免费的）。唯一的区别是：你是在寻找「别人都在看的东西」，还是在寻找「只有你会注意到的东西」。</p>
+      </CaseStory>
+
+      <CaseStory title="刘擎的「虚空感」" color={c} icon="🌫️">
+        <p style={{marginBottom:10}}><strong>场景</strong>：刘擎承认自己也有过走马观花式旅游的经历。</p>
+        <p style={{marginBottom:10}}><strong>冲突</strong>：身在美景中却感到虚空——「我和这个所到之地没有任何真正的联系，眼前的一切稍纵即逝，有虚幻的感觉」。</p>
+        <p style={{marginBottom:10}}><strong>转折</strong>：一个哲学教授在世界美景面前也会感到虚空，说明这不是「修养不够」的问题，而是方法不对的问题。</p>
+        <p><strong>结果</strong>：他后来的旅行策略是出发前大量做功课——研究目的地的历史、人文、地理。预习本身就是在和那个地方建立联系，到了之后才有「发现」和「印证」的快感。</p>
+      </CaseStory>
+
+      <Divider color={c}/>
+
+      <Expand title="「感知模式切换」四步法" color={c} char="法">
+        <Step n={1} text="设置触发器" detail="选一个每天必经的场景（通勤、午饭、接孩子），作为「切换信号」。到了这个场景就放下手机，启动主动感知。" color={c}/>
+        <Step n={2} text="问一个问题" detail="给自己一个简单的观察任务——「今天注意三个以前没注意过的东西」「这个路口的行人走路的节奏是什么样的」「咖啡店老板今天心情怎么样」。" color={c}/>
+        <Step n={3} text="记录三行字" detail="不是写日记，就写三行。在手机备忘录里，打下今天你「看见」了什么。三行就够。" color={c}/>
+        <Step n={4} text="一周回顾" detail="周末花5分钟翻看这一周的记录。你会发现，你的世界正在变大。" color={c}/>
+      </Expand>
+
+      <Expand title="旅行升级三步清单" color={c} char="旅">
+        <Step n="前" text="出发前：花1小时查目的地的历史" detail="不是攻略，是Wikipedia级别的了解——这个地方发生过什么、住过什么人、有什么不为人知的故事。" color={c}/>
+        <Step n="中" text="到达后：找一个当地人聊10分钟" detail="出租车司机、餐馆老板、市场摊贩——他们是最好的信息源。问他们：这里最近有什么变化？你在这里住了多久？" color={c}/>
+        <Step n="后" text="回来后：写下一个人的故事" detail="不是风景照的图说，而是你在这次旅行中遇到的一个人的故事。哪怕只有三段话。" color={c}/>
+      </Expand>
+
+      <Divider color={c}/>
+
+      <Quote text="💎 我们以为自己在看世界，其实看的是自己认知框架的投影。感知世界的第一步不是去远方，而是承认自己正活在一个「洞穴」里。但比「走出洞穴」更难的是：你每天回到洞穴时，还能记得外面的光。瓦尔登湖不是一个去了就行的地方，而是一种需要每天练习的能力。" color={c}/>
+
+      <ActionBox char="觉">
+        <Para>今天就做（5分钟版）：打开手机备忘录，建一个笔记叫「三行日记」。从今天开始，每天写三行——你今天注意到的一个以前没注意过的细节。不需要深刻，不需要文艺。「楼下面馆的老板娘换了新围裙」「地铁里有个男生在看纸质书」「今天的云像鱼鳞」——这就够了。坚持一周，你会发现自己的「注意力带宽」明显变宽。</Para>
+      </ActionBox>
+
+      <Card color={P.colors[1].hex} style={{marginTop:32,background:`linear-gradient(135deg,${P.colors[1].hex}04,${P.paperLight})`,borderLeft:`3px solid ${P.colors[1].hex}40`}}>
+        <Para>恢复了感知之后，你会发现一个新问题——<strong>感知到的世界太复杂了，你需要精神工具来理解它。</strong> 这就是下一个模块要解决的：人文教育到底在培育什么？→</Para>
+      </Card>
+    </div>
+  );
+}
+
+/* ===== Ch2: 精神的滋养 ===== */
+function Ch2(){
+  const c=P.colors[1].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="精神的滋养" sub="「无用之用」的人文教育到底在培育什么？现代人的精神饥渴与出路。——第二章 人文教育" color={c} char="养" ls={1}/>
+      <LogicChain question="人文教育到底在培育什么？" color={c} items={["实用主义洪流","忽视精神维度","现实主义的非现实性","人文教育第二次成长","两重夹击","承认精神是刚需"]}/>
+      <Formula text="人文教育 = 不是给你答案，是让你学会在没有标准答案的世界里活下去" color={c}/>
+
+      <InkCompare
+        title="两种「现实主义」"
+        leftTitle="完整的现实主义"
+        rightTitle="狭义现实主义"
+        left={["承认人同时是生物的和精神的存在","精神性是刚需不是奢侈品","活得明白比活得「对」更重要","愿意承受复杂混乱风险与挑战"]}
+        right={["只关注物质和功效","把精神需求视为奢侈品","按最优化策略内卷到极限","最终发现生命失去了意义"]}
+        color={c}
+      />
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>「现实主义的非现实性」</div>
+        <Para>刘擎提出了一个犀利的概念：现实主义的非现实性。我们总觉得只关注赚钱、就业、房价才是「现实的」。但人同时是生物的和精神的存在——精神性是人的基本现实。如果你的「现实主义」完全无视精神维度，那它恰恰误解了现实。这就是为什么那么多「很现实」的人反而活得最迷茫——他们按照最优化策略内卷到极限，却发现生活失去了意义。</Para>
+
+        <Para>这个论点很有力，但有一个两位作者没有触碰的暗角：<strong>人文教育本身也在被体制化吞噬。</strong>严飞自己就描述了——香港的大学一面墙挂人文主义价值观，另一面墙全是西装革履的职业展示；教授们把一个课题炒成好几篇论文；大学最自豪的是排名进步了几位。当人文教育自身已经变成了「论文生产线」，它还能拯救谁的精神？</Para>
+
+        <Para>这不是在否定人文教育，而是在指出：<strong>人文精神和人文教育体制是两码事。</strong> 你可以在大学里读了四年文学却毫无人文精神（只是在背诵和考试），也可以像书中的军军那样——一个工地安装门窗的年轻人，读加缪的《异乡人》读了两遍，虽然不完全理解，但说出「我是灯火琉璃都市里没有人看得到的北极星」这样的话。谁更有人文精神？答案很明显。</Para>
+
+        <Para><strong>所以真正的问题不是「要不要接受人文教育」，而是「你愿不愿意做一个精神上不偷懒的人」。</strong></Para>
+
+        <Quote text="我宁可经历人文主义带给我的复杂、混乱、风险和挑战，也不愿意回避这些困难，获得一个低级的安全感。——刘擎" color={c}/>
+
+        <Para>这句话值得展开——什么是「低级的安全感」？就是那种「别人都这样我也这样」的随大流感。考公、考研、进大厂——这些选择本身没有问题，但如果你选择它们只是因为「大家都在选」而从未问过自己「我到底想要什么」，那就是低级安全感。它很舒适，但你付出的代价是——永远不知道自己是谁。</Para>
+      </Card>
+
+      <Divider color={c}/>
+
+      <CaseStory title="香港大学的两面墙" color={c} icon="🏫">
+        <p style={{marginBottom:10}}><strong>场景</strong>：严飞在香港一所大学教书，每天穿过购物中心去上班。连接学校的人行通道两面墙上贴着截然不同的内容。</p>
+        <p style={{marginBottom:10}}><strong>冲突</strong>：一面墙是学校的人本主义价值观，另一面墙是清一色身穿西装的学生展示职业追求。同一所学校、同一条走廊，两种完全矛盾的信号。</p>
+        <p style={{marginBottom:10}}><strong>转折</strong>：这所学校最自豪的成就是在排名榜中前进了几位。博士教授们都成了论文生产线上的机器——一项课题翻来覆去炒出好几篇论文。</p>
+        <p><strong>结果</strong>：人文教育的危机不是「外部不重视」，而是「内部已异化」。当大学自身都在用KPI衡量人文学科，人文精神就只能在体制外野生生长了。</p>
+      </CaseStory>
+
+      <CaseStory title="军军 vs 论文博士（人文精神的真实分布）" color={c} icon="🔆">
+        <p style={{marginBottom:10}}><strong>正面——军军</strong>：工地安装门窗的00后，高考落榜后跟着父亲打工。读加缪的《异乡人》读了两遍，读龙应台的《孩子你慢慢来》，正在考成人自考（前两门已过）。父母催他回老家相亲，说读书没用。他想学外贸英语把门窗生意做到海外。他说：「我是一颗在灯火琉璃的都市里明明存在，却没有人看得到也没有人需要的北极星。」</p>
+        <p style={{marginBottom:10}}><strong>反面——某类博士</strong>：严飞在大学里见过的某些博士生——论文写了一篇又一篇，但从未真正被学术激动过，选题跟着热点走、方法跟着导师走、结论跟着课题走。毕业后进了体制，再也没打开过一本学术书。</p>
+        <p><strong>区别在哪？</strong> 军军没有学历，但有精神上的饥渴和自主性。有些博士有学历，但精神上早已进入了「自动驾驶」模式。人文精神的敌人不是「没受过教育」，而是「停止了思考」。</p>
+      </CaseStory>
+
+      <CaseStory title="牛津辩论社：看见自己学科的「洞穴性」" color={c} icon="🎓">
+        <p style={{marginBottom:10}}><strong>场景</strong>：刘擎提到牛津大学的传统——让不同学科的学生辩论，比如让神学家和生物学家争论同一个问题。</p>
+        <p style={{marginBottom:10}}><strong>冲突</strong>：这种辩论看起来「低效」——两个完全不同领域的人，连基本术语都不通。</p>
+        <p style={{marginBottom:10}}><strong>转折</strong>：但碰撞的目的不是达成共识，而是让每个人看到自己学科的「洞穴性」——你以为理所当然的前提，在另一个学科里可能完全不成立。</p>
+        <p><strong>结果</strong>：人文教育最核心的能力不是知识，而是「意识到自己的认知有边界」。这种意识只有在和不同的人碰撞时才能产生。</p>
+      </CaseStory>
+
+      <Divider color={c}/>
+
+      <Expand title="「精神不偷懒」周计划" color={c} char="练">
+        <Step n={1} text="周一：读30分钟「没用的书」" detail="不是工具书、不是专业书，是小说/哲学/历史/诗歌。挑一本你「一直想读但觉得没时间读」的。" color={c}/>
+        <Step n={2} text="周三：和一个「不同世界」的人聊15分钟" detail="你的外卖小哥、出租车司机、公司保洁阿姨。不是寒暄，是真的问一个问题：你是哪里人？来这座城市多久了？" color={c}/>
+        <Step n={3} text="周五：写一段「二阶反思」" detail="不是记录发生了什么，而是问自己：这周我做的事情里，有多少是「我真正想做的」，有多少是「别人期待我做的」？比例是多少？" color={c}/>
+        <Step n={4} text="月底：做一次「价值审计」" detail="列出你这个月花时间最多的五件事，问自己：如果生命只剩一年，这五件事我还做吗？如果答案是「不」，那就值得想想为什么你现在在做。" color={c}/>
+      </Expand>
+
+      <Divider color={c}/>
+
+      <Quote text="💎 人文教育不是告诉你什么是对的，而是训练你在「什么都不确定」的时候还能思考、对话、选择。但比这更重要的是：人文精神不需要学历作为入场券。一个在工地读加缪的年轻人，可能比一个在大学里批量生产论文的教授更有人文精神。关键不是你在哪里，而是你是否还在主动思考「我到底想要什么样的生活」。" color={c}/>
+
+      <ActionBox char="养">
+        <Para>今天就做（10分钟版）：拿出纸笔（不是手机），画一个两栏表。左栏写「我现在在做的事」，右栏写「我如果完全自由会做的事」。不需要很多，每栏写3-5条就够。然后看看两栏的重合度有多高。如果重合度低于30%，不需要马上辞职革命——但你需要认真想想，有没有可能每周给「右栏」腾出哪怕2小时。这2小时就是你的人文教育。</Para>
+      </ActionBox>
+
+      <Card color={P.colors[2].hex} style={{marginTop:32,background:`linear-gradient(135deg,${P.colors[2].hex}04,${P.paperLight})`,borderLeft:`3px solid ${P.colors[2].hex}40`}}>
+        <Para>精神不再偷懒之后，你会面对一个更根本的问题——<strong>我是谁？我在哪里？我属于哪里？</strong> 当外部世界无法安顿你的心灵，你如何安顿自己？→</Para>
+      </Card>
+    </div>
+  );
+}
+
+/* ===== Ch3: 身份的安顿 ===== */
+function Ch3(){
+  const c=P.colors[2].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="身份的安顿" sub="当时代无法安顿你的心灵，你如何安顿自己？——第三章 茨威格 + 第四章 乡愁" color={c} char="安" ls={2}/>
+      <LogicChain question="当时代无法安顿你，如何安顿自己？" color={c} items={["茨威格精神世界崩塌","现代人漂泊感","乡愁是精神的非地理","回故乡解决不了问题","在任何地方重建家园","此身此时此地"]}/>
+      <Formula text="精神安顿 = nowhere → now here = 此身、此时、此地，蓬勃生长" color={c}/>
+
+      <InkTimeline
+        title="茨威格的三个「昨日」"
+        color={c}
+        items={[
+          {label:"一战前：维也纳黄金时代",text:"欧洲文化人自由往来，不需要护照，知识分子以整个欧洲为家园，茨威格正是这一文化世界的中心人物。"},
+          {label:"两次大战之间：短暂恢复",text:"以为悲剧不会重演，知识分子重新汇聚，但暗流涌动，旧世界的裂缝已无法弥合。"},
+          {label:"二战爆发：流亡巴西",text:"精神世界彻底崩塌。1942年，已物质安稳的茨威格与妻子双双自杀——他死于意义的枯竭，不是死于迫害。"},
+        ]}
+      />
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>在任何处境下，做那些在所有年代都值得做的事</div>
+        <Para>刘擎重读茨威格《昨日的世界》后，提出了一个核心洞察：在任何处境下，唯一能够拯救我们意义匮乏的方式就是，做那些在所有境遇中、在所有时代都值得做的事情。</Para>
+        <Para>什么意思？当年「50后」的年轻人根本没有指望过好工作、好收入，他们不知道1978年会有改革开放。但其中一些人没有虚度年华——他们读书、写作、交友、思考、磨炼技艺。后来时代变了，这些积累全部兑现了。但<strong>即便时代没有变，这些事情本身也是好的</strong>。</Para>
+        <Para>这个观点对当下年轻人的意义是：你不需要等到「找到方向」才开始行动。锻炼身体、阅读、写作、旅行、认真交友、像匠人一样磨炼技艺——这些事情不依赖于任何外部条件，它们本身就有价值，就能赋予生命意义感。</Para>
+
+        <Para>关于乡愁，刘擎打破了一个迷思：<strong>不存在一个永远对你敞开怀抱的故乡。</strong> 现代人必须面对这个事实——你寻求的那个精神家园不是现成的「在某处」，而是有待自己去造就的。</Para>
+
+        <Quote text="但我要指出这个论述的一个阶层盲区。刘擎和严飞讨论乡愁时，用的例子是茨威格流亡巴西、陈寅恪在广州写诗、他们自己在哈佛访学——这些都是知识分子的精神乡愁。但中国三亿农民工面对的乡愁是实打实的肉体乡愁：春运挤不上的火车、留守的孩子、拆迁后消失的村庄。对他们来说，「且认他乡作故乡」不是一种哲学选择，而是一种被迫的现实。" color={c}/>
+
+        <Para><strong>真正有力的洞察是：不管你是主动选择还是被迫漂泊，安顿的方式是一样的——在你所在的地方建立真实的人际连接。</strong> 这不是鸡汤。社会学有大量研究表明，社会连接（social connection）是人类幸福感最强的预测变量——比收入、学历、婚姻状态都强。一个在异乡有三五个真朋友的人，比一个回了老家但没有深度社交的人，安顿感更强。</Para>
+      </Card>
+
+      <Divider color={c}/>
+
+      <CaseStory title="茨威格：精神家园崩塌后，人可以活在哪里？" color={c} icon="🕊️">
+        <p style={{marginBottom:10}}><strong>场景</strong>：茨威格已经成功逃到巴西，物质生活安逸，但在60岁时与妻子一起自杀。</p>
+        <p style={{marginBottom:10}}><strong>冲突</strong>：他人身安全，为什么还要寻死？因为他的生命主要是精神存在，依托于欧洲文化世界——而那个世界已经毁灭。他不是死于迫害，而是死于意义的枯竭。</p>
+        <p style={{marginBottom:10}}><strong>转折</strong>：他在遗言中写「只是我老了」——他把绝望归因于自身的局限而非普遍的必然，为希望留了余地。</p>
+        <p><strong>结果</strong>：刘擎的追问极其犀利：如果茨威格多活三年，看到盟军胜利和《联合国宪章》，他会重新振作吗？昨日的世界是悲喜交替的——<strong>你以为是「末日」的东西，可能只是「低谷」</strong>。茨威格的悲剧不在于他看到了黑暗，而在于他在黑暗中失去了「这不是永恒」的信念。</p>
+      </CaseStory>
+
+      <CaseStory title="安徽小哥的「两棵槐树」" color={c} icon="🌳">
+        <p style={{marginBottom:10}}><strong>场景</strong>：严飞调研中遇到一位在北京打工十多年的安徽人，对北京道路了如指掌。</p>
+        <p style={{marginBottom:10}}><strong>冲突</strong>：北京不是他的家——他的家在高碑店的城中村。三里屯、博物馆、体育赛事都与他无关。</p>
+        <p style={{marginBottom:10}}><strong>转折</strong>：早年回家坐慢车要一天，虽然远但心理距离近。现在高铁四小时能到，但村口的两棵槐树被砍了，每条路都长得一样，他差点找不到回家的路。</p>
+        <p><strong>结果</strong>：交通便利了，物理距离近了，心理距离却远了。<strong>故乡不是在远方等你的人，而是一种正在消失的记忆。</strong> 你回去找的不是那个地方，而是那个地方曾经给你的感觉——而那个感觉已经不在了。</p>
+      </CaseStory>
+
+      <CaseStory title="社区夜校：40块钱的精神家园" color={c} icon="🎨">
+        <p style={{marginBottom:10}}><strong>场景</strong>：越来越多年轻人沉迷于社区夜校——40块钱上一节乐器、刺绣、书法或绘画课。</p>
+        <p style={{marginBottom:10}}><strong>冲突</strong>：这些活动看起来「没用」——不能升职加薪，不能考证拿学历。</p>
+        <p style={{marginBottom:10}}><strong>转折</strong>：但格子间里的年轻人在这里找到了三样东西：一个学习新技能的过程（心流体验）、一群志同道合的陌生人（社交连接）、一个固定的「第三空间」（归属感）。</p>
+        <p><strong>结果</strong>：这就是刘擎说的「在任何地方扎根」的最朴素实践。不需要辞职、不需要回老家、不需要找到人生意义——<strong>40块钱、一个晚上、一项手艺，就能开始重建你的「附近」。</strong></p>
+      </CaseStory>
+
+      <CaseStory title="nowhere → now here（全书最精彩的文字游戏）" color={c} icon="✨">
+        <p style={{marginBottom:10}}><strong>场景</strong>：刘擎引用一位朋友的说法——当我们面对无根的漂泊感，感觉身处 nowhere 时。</p>
+        <p style={{marginBottom:10}}><strong>冲突</strong>：nowhere 意味着无处可去、无处可归、无所归属。</p>
+        <p style={{marginBottom:10}}><strong>转折</strong>：把 nowhere 拆开，变成 now here——此刻就在这里。</p>
+        <p><strong>结果</strong>：这不是文字游戏，而是一种存在主义的转换。「无处可去」和「此刻就在这里」之间只差一个空格——差的是你是否决定把此地当作起点，而不是继续把它当作「暂时的将就」。</p>
+      </CaseStory>
+
+      <Divider color={c}/>
+
+      <Expand title="「在任何地方扎根」三步法" color={c} char="扎">
+        <Step n={1} text="找到你的「第三空间」" detail="社会学家雷·奥登伯格提出「第三空间」概念——第一空间是家，第二空间是公司，第三空间是你可以放松社交的公共场所：咖啡馆、图书馆、公园、健身房、社区夜校。选择一个你能每周去至少两次的第三空间，开始在那里「露面」。" color={c}/>
+        <Step n={2} text="从「点头之交」升级到「聊天之交」" detail="在第三空间里，你会开始认识一些面孔。主动打招呼、问一个简单的问题。不需要推心置腹，先从「你也经常来？」「这家咖啡你推荐哪款？」开始。" color={c}/>
+        <Step n={3} text="发起一次「低门槛社交」" detail="约一个新认识的人做一件简单的事——散步、吃饭、一起上一门课。不是「交朋友」的压力，只是「一起做件事」。深度关系都是从一起做事开始的，不是从「深聊」开始的。" color={c}/>
+      </Expand>
+
+      <Expand title="「精神自传」写作框架（五个问题）" color={c} char="传">
+        <Para>回答以下五个问题（每个问题写200-500字），完成之后你会更清楚自己是谁、从哪里来、要去哪里：</Para>
+        <Step n={1} text="我从哪里来？" detail="家庭、故乡、童年的关键场景——哪些画面构成了你最早的「我」？" color={c}/>
+        <Step n={2} text="什么塑造了我？" detail="哪些人/事件/选择让我成为现在的我？哪次经历改变了我看世界的方式？" color={c}/>
+        <Step n={3} text="我离开了什么？" detail="我主动放弃或被迫告别了什么？那些失去的东西我还在想念吗？" color={c}/>
+        <Step n={4} text="我现在站在哪里？" detail="我和这座城市/这份工作/这些人的真实关系是什么？我是过客，还是已经在这里生根了？" color={c}/>
+        <Step n={5} text="我想走向哪里？" detail="不是「应该」走向哪里，是「想要」走向哪里。此时此地，我能做的最小一步是什么？" color={c}/>
+      </Expand>
+
+      <Divider color={c}/>
+
+      <Quote text="💎 乡愁最深刻的含义不是想念某个地方，而是一种「无根的漂泊感」——在精神上无处安顿自己。大多数人之所以无法安顿，不是因为找不到好地方，而是因为在任何地方都保持着「过客心态」——这里只是暂时的，等我赚够了钱/等孩子上了学/等我想清楚了，我就走。这种心态才是真正的 nowhere。治愈它的方式不是找到完美的地方，而是在任何地方都决定「我要在这里活一段真实的生活」。" color={c}/>
+
+      <ActionBox char="安">
+        <Para>今天就做（15分钟版）：拿出纸笔，画一张「我的社交地图」。在中间写上你的名字，然后画三个圈：最内圈写你能在凌晨三点打电话的人（通常0-3个）；中间圈写你每月至少见一次的人；最外圈写你认识但超过三个月没联系的人。如果内圈是空的或者只有家人，你需要的不是「找到自己」，而是先「找到别人」——本周就去你附近的一个第三空间（图书馆、咖啡馆、社区活动中心），开始露面。</Para>
+      </ActionBox>
+
+      <Card color={P.colors[3].hex} style={{marginTop:32,background:`linear-gradient(135deg,${P.colors[3].hex}04,${P.paperLight})`,borderLeft:`3px solid ${P.colors[3].hex}40`}}>
+        <Para>找到了安顿之所，并不意味着生活从此一帆风顺——<strong>痛苦是不可消除的，问题是你怎么面对它。</strong> 逃避还是直面？消费麻醉还是从中取义？→</Para>
+      </Card>
+    </div>
+  );
+}
+
+/* ===== Ch4: 痛苦的超越 ===== */
+function Ch4(){
+  const c=P.colors[3].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="痛苦的超越" sub="痛苦不可消除，但可以被什么取代？——第六章 直面痛苦" color={c} char="超" ls={3}/>
+      <LogicChain question="痛苦不可消除，但可以被什么取代？" color={c} items={["痛苦恐惧症","积极主义暴政","消费主义伪止痛","鸵鸟策略","直面痛苦","命名记录","从中取义"]}/>
+      <Formula text="超越痛苦 ≠ 消除痛苦 ≠ 用快乐替代痛苦 = 从痛苦中发展出自我成长的积极力量" color={c}/>
+
+      <InkCompare
+        title="痛苦的三种应对方式"
+        leftTitle="直面与记录（有效）"
+        rightTitle="两种无效策略"
+        left={["命名→记录→寻找共鸣","经由更痛走向解脱","痛苦转化为成长与意义","看清镜中真实的自己"]}
+        right={["鸵鸟策略：痛苦在缝隙里持续发酵","消费止痛：堤坝会决堤","买买买打游戏暴饮暴食","短暂缓解后更深的空洞"]}
+        color={c}
+      />
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>「积极主义的暴政」与消费闭环</div>
+        <Para>严飞提出了一个精准的诊断：现代社会的「痛苦恐惧症」。我们被要求永远积极、正能量、阳光向上。晚上十点准时推送的「心灵鸡汤」告诉你要乐观勤奋；谁表达痛苦谁就是「负能量」「不上进」。严飞称之为<strong>「积极主义的暴政」</strong>——它不是在治愈痛苦，而是在剥夺你表达痛苦的权利。</Para>
+
+        <Para>这个诊断非常准确。但我要把它推进一步：<strong>积极主义暴政之所以能成立，是因为它和消费主义形成了完美的闭环。</strong> 你不开心？买东西。买完还不开心？是你买的不够多/不够好。消费主义需要你永远处于「不满足但保持希望」的状态——如果你真的停下来面对痛苦、想清楚了「我其实不需要这些」，整个消费机器就失去了燃料。所以「不允许你痛苦」不只是一种文化现象，更是一种经济需求。</Para>
+
+        <Para>刘擎从哲学层面指出：痛苦有一个独特的本体论地位——它不能独立于主观感受而存在。痛感和痛本身是共生的，无法分开。这意味着任何「客观的最佳方案」都不存在，痛苦的应对永远与你个人的个殊性有关。</Para>
+
+        <Para><strong>这个哲学洞察翻译成人话就是：没有人能告诉你「正确的」应对痛苦的方式。</strong> 那些「10个技巧帮你摆脱焦虑」的文章之所以无效，不是因为技巧不好，而是因为你的痛苦和别人的痛苦不是同一种东西。刘擎应对失败的方式是极端的自我解剖——把细节反复揉碎直到能从容面对；严飞的方式是写作——把痛苦外化为文字。这两种方式对调过来可能完全不管用。你必须找到自己的方式，而找到它的前提是——你得先允许自己痛苦。</Para>
+
+        <Para>两人共同反对的两种错误策略：</Para>
+        <Para><strong>鸵鸟策略</strong>——把头埋进沙子假装看不见。严飞说：「痛苦隐藏在生活的缝隙里，我们即便像鸵鸟一样埋在沙子里，痛苦还是无法止住。」</Para>
+        <Para><strong>消费止痛药</strong>——买买买、打游戏、暴饮暴食。刘擎的分析极其精到：消费止痛有两个致命反弹。第一，你必须不断消费才能维持效果，一旦停下来「引发痛苦的记忆会像潮水一样涌过来，让堤坝决堤」。第二，消费本身会制造新的痛苦——你的购买力永远追不上攀比的对象，于是从一种痛苦跳进了另一种痛苦。</Para>
+      </Card>
+
+      <Divider color={c}/>
+
+      <CaseStory title="军军：安装门窗的加缪读者" color={c} icon="⭐">
+        <p style={{marginBottom:10}}><strong>场景</strong>：严飞家装修时认识了门窗安装师傅，师傅请他加儿子军军的微信。军军是江西留守儿童，正在读高三。</p>
+        <p style={{marginBottom:10}}><strong>冲突</strong>：高考超过500分，但填志愿时用皮尺量哪所大学离父母的出租房最近——选了中国传媒大学，自然没录上。最终跟着父亲在北京工地安装门窗。</p>
+        <p style={{marginBottom:10}}><strong>转折</strong>：军军喜欢读书。读加缪的《异乡人》读了两遍，读龙应台的《孩子你慢慢来》，正在考成人自考（前两门已过）。他说：「我是一颗在灯火琉璃的都市里明明存在，却没有人看得到也没有人需要的北极星。」</p>
+        <p><strong>结果</strong>：父母催他回老家相亲，觉得读书没用。但军军想学外贸英语把门窗生意做到海外。他的痛苦不是「生活不好」，而是「我想成为的那个人被否定了」——这是最深的痛苦：丧失自由的痛苦。但他没有放弃——成人自考就是他对痛苦的回应。</p>
+      </CaseStory>
+
+      <CaseStory title="刘擎的自我解剖术" color={c} icon="🔬">
+        <p style={{marginBottom:10}}><strong>场景</strong>：刘擎分享了他面对失败感的独特方式——极端的自我解剖。</p>
+        <p style={{marginBottom:10}}><strong>冲突</strong>：「我对痛苦的治愈，几乎总是经由更痛才可以走到解脱。」他把失败的经历一步步拆解，钻到所有细节里，识别哪个环节让自己最紧张、恐慌、羞耻。</p>
+        <p style={{marginBottom:10}}><strong>转折</strong>：他也承认这种方式「很耗能」，而且年轻时他曾经试过另一种方式——「否认」，假装这件事对自己不重要。但他「无法逃过自己」——像鲁迅《伤逝》里的涓生，总觉得背后有另一个声音。</p>
+        <p><strong>结果</strong>：关键不是用哪种方式，而是你是否有勇气承认「我在痛苦」。刘擎的自我解剖适合高反思型的人；严飞的写作适合表达型的人；还有人适合运动、旅行、对话。但所有方式的前提都是同一个：不装没事。</p>
+      </CaseStory>
+
+      <CaseStory title="韩炳哲的「功绩社会」vs 社区夜校（结构性对比）" color={c} icon="⚖️">
+        <p style={{marginBottom:10}}><strong>学术视角</strong>：韩炳哲在《妥协社会》中说「我们生活在一个试图消除一切否定性的肯定社会」——不允许痛苦、不允许失败、不允许消极。</p>
+        <p style={{marginBottom:10}}><strong>生活视角</strong>：那些下班后去社区夜校学刺绣的年轻人，本质上是在做一件「无生产力」的事——不产出KPI、不提升简历、不创造经济价值。但恰恰是这种「无用」的时间，让他们找回了作为一个完整的人的感觉。</p>
+        <p><strong>刘擎的犀利反问</strong>：如果韩炳哲自己去做胃镜，有无痛和有痛两种选择，他会选有痛的吗？——<strong>理论上主张「否定性的力量」是一回事，自己在具体场景中选择承受痛苦是另一回事。</strong> 任何关于痛苦的道理，最终都要落到你自己的具体生活里检验。</p>
+      </CaseStory>
+
+      <Divider color={c}/>
+
+      <Expand title="「面对痛苦」四阶段法" color={c} char="法">
+        <Step n={1} text="命名（不是分析，是命名）" detail="写下一句话：「我现在感到______，因为______。」不需要准确，不需要深刻，只是给痛苦一个名字。没有名字的痛苦最可怕，因为你会把它解读为「我整个人都不行了」。给它命名之后，它就从「我」变成了「我的一个感受」——这一步已经是巨大的解脱。" color={c}/>
+        <Step n={2} text="记录（不是宣泄，是记录）" detail="花15分钟写下来：发生了什么（事实）？我感受到了什么（情绪词）？我最害怕的后果是什么（恐惧的具体形状）？一年后这件事还重要吗（时间尺度校准）？" color={c}/>
+        <Step n={3} text="寻找「同类」（不是建议，是共鸣）" detail="不要去找「能帮你解决问题」的人，去找「经历过类似痛苦」的人。你需要的不是解决方案，而是一句「我懂，我也经历过」。这可以是一个朋友，也可以是一本书——严飞在最痛苦的时候读加缪，不是因为加缪教他怎么做，而是因为加缪让他感到自己不是一个人。" color={c}/>
+        <Step n={4} text="从痛苦中「取」一样东西" detail="齐邦媛说：「回应暴虐和无常的最好方法，就是以文学书写超越政治成败的人与事。」痛苦不是白受的——你能从中取出什么？一个教训？一种对他人痛苦的同理心？一个改变的决心？一段值得写下来的故事？痛苦的反义词不是快乐，而是意义。" color={c}/>
+      </Expand>
+
+      <Divider color={c}/>
+
+      <Quote text="💎 痛苦的反义词不是快乐，而是「解脱」或「超越」——一种从羞耻、仇恨、卑微中解放出来的状态。大多数时候，我们害怕的不是痛苦本身，而是痛苦暴露出来的那个真实的自己。失恋的痛不是「失去了一个人」，而是「原来我这么害怕孤独」；失业的痛不是「没有收入」，而是「原来我的价值感全部绑定在职位上」。痛苦是一面镜子，照出你平时不敢看的东西。超越痛苦的意思不是打碎镜子，而是看清镜中的自己之后，依然决定往前走。" color={c}/>
+
+      <ActionBox char="超">
+        <Para>今天就做（15分钟版）：拿出纸笔，做一次「痛苦命名」练习。写下你最近三个月内让你最不舒服的一件事（不需要是大事，小事也行）。然后回答四个问题：①发生了什么（只写事实，不加评价）？②我当时的感受是什么（用情绪词：愤怒/委屈/恐惧/羞耻/无力）？③我最害怕的后果是什么？④三年后我还会在意这件事吗？写完之后你可能会发现：你害怕的「后果」其实从未发生，而你真正痛苦的原因和你以为的不一样。</Para>
+      </ActionBox>
+
+      <Card color={P.colors[4].hex} style={{marginTop:32,background:`linear-gradient(135deg,${P.colors[4].hex}04,${P.paperLight})`,borderLeft:`3px solid ${P.colors[4].hex}40`}}>
+        <Para>学会了面对痛苦，最后一个问题是——<strong>知道了这一切之后，我该怎么做？</strong> 是退回象牙塔，还是投身流量场？答案在「介入的超脱」。→</Para>
+      </Card>
+    </div>
+  );
+}
+
+/* ===== Ch5: 行动的回归 ===== */
+function Ch5(){
+  const c=P.colors[4].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="行动的回归" sub="知道了这些之后，我们该怎么做？反智主义与「介入的超脱」。——第七章 反智主义 + 第八章 漂流时间" color={c} char="行" ls={0}/>
+      <LogicChain question="知道了这些之后，我们该怎么做？" color={c} items={["反智主义盛行","知识精英失信任","三宗罪：脱离/轻情感/道德可疑","出路是重建信任","介入的超脱","此身此时此地"]}/>
+      <Formula text="行动的回归 = 介入的超脱 = 专业深度 × 公共宽度 × 眺望远景" color={c}/>
+
+      <InkStructure
+        title="「介入的超脱」行动模型"
+        color={c}
+        cols={4}
+        items={[
+          {title:"专业深耕",desc:"在你擅长的事上保持高标准，持续精进"},
+          {title:"公共参与",desc:"每月一次出圈活动，与不同世界对话"},
+          {title:"远景眺望",desc:"写下远景句，每日1分钟回顾进展"},
+          {title:"信息甄别",desc:"三问法过滤噪音，辨别值得听的声音"},
+        ]}
+      />
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>反智主义：真正的靶子是「装」</div>
+        <Para>两位作者用了很大篇幅讨论反智主义，这个话题看起来离普通人很远——那是知识分子和大众之间的矛盾。但剥掉学术外壳，核心问题和每个人都有关：<strong>在一个信息爆炸、人人都能发声的时代，你怎么判断什么值得听、什么值得信、什么值得做？</strong></Para>
+
+        <Para>霍夫施塔特在1963年就指出，反智主义的靶子不是「知识」本身，而是那种高高在上的「智识主义」姿态——知识分子看起来脱离实际、重理性轻情感、而且道德上未必站得住。<strong>翻译成今天的语言：大众不是反对知识，而是反对「装」。</strong> 那些在短视频里用满嘴术语教你怎么做人的「知识网红」，和100年前在沙龙里高谈阔论的知识精英，犯的是同一个错误——他们在表演「有知识」，而不是在用知识解决你的问题。</Para>
+
+        <Para><strong>但这里有一个两位作者不太敢说的真话：反智主义兴起，知识分子自己要负一半责任。</strong> 严飞含蓄地提到了「知识分子喜欢越界」——社会学教授评论经济政策、经济学家指导防疫——专业壁垒一破，信任就崩了。刘擎也承认知识分子面临「疏离vs顺从」的困境。但他们没有直说的是：中国当下的反智潮流，很大程度上是因为太多知识分子在该说话的时候沉默了、在不该迎合的时候迎合了。当公众最需要独立声音的时候，学者们在忙着发论文、跑课题、维护人际关系。信任不是被「大众的愚昧」摧毁的，而是被知识分子的沉默和犬儒侵蚀的。</Para>
+
+        <Para>那么出路在哪？方纳提出「介入的超脱」——既不完全躲进象牙塔，也不完全投身流量场。<strong>翻译成每个人都能用的原则：在你擅长的事情上保持高标准，同时不要活在自己的小世界里。</strong></Para>
+
+        <Para>全书最后回到了瓦尔登湖。刘擎说出了全书最重要的一段话：</Para>
+        <Quote text="在忙忙碌碌的时光中不要迷失自己，不要忘却最初启程的心愿，以及最终想要抵达的理想目标。虽然实现理想还非常遥远，但我们在日常微小的努力中可以常常眺望那个理想的远景，从而微小的日常也被赋予了意义。" color={c}/>
+        <Para>这就是全书的终极回答。不是「找到一个伟大的答案」，而是<strong>在还没有找到答案的日子里，让每一天都不白过</strong>。</Para>
+      </Card>
+
+      <Divider color={c}/>
+
+      <CaseStory title="陈宝琛的14个字" color={c} icon="🏮">
+        <p style={{marginBottom:10}}><strong>场景</strong>：哈佛燕京学社一楼会议室挂着一副对联，是晚清陈宝琛84岁时题写的。</p>
+        <p style={{marginBottom:10}}><strong>冲突</strong>：当时中西方文化碰撞激烈，许多人在「全盘西化」和「固守传统」之间二选一。</p>
+        <p style={{marginBottom:10}}><strong>转折</strong>：陈宝琛写了14个字：「文明新旧能相益，心理东西本自同」——新旧文明可以互相增益，东西方的心理本质相同。</p>
+        <p><strong>结果</strong>：刘擎说看到这副对联的一刻「豁然开朗」——他做的所有工作都是在接续这个传统。一个84岁的晚清遗老，用14个字说清了100年来无数论文没说清的道理。这就是「介入的超脱」最好的例子：站在文明的门槛上，一只脚在新一只脚在旧，两边都看得见。</p>
+      </CaseStory>
+
+      <CaseStory title="「绚烂的贫乏」vs 严飞的「不一样的社会学观察」" color={c} icon="🔦">
+        <p style={{marginBottom:10}}><strong>反面——绚烂的贫乏</strong>：刘擎描述当下自媒体的状态——「绚烂的贫乏」。五光十色、各种花招、许多爆款，但在智性和美学上极其贫乏。流量成了唯一标准，搞噱头成了核心能力。</p>
+        <p style={{marginBottom:10}}><strong>正面——介入而不随波</strong>：严飞连续四年和一家书店合作，在世界读书日办「不一样的社会学观察」活动。从早9点到晚9点，学者和年轻人一起讨论。他还邀请流水线工人、外卖诗人、皮村打工文学参与者到清华课堂上分享。</p>
+        <p><strong>区别在哪？</strong> 不是高雅vs低俗的区别——流水线工人讲自己的故事，并不比教授讲理论更「低级」。区别在于：你是在制造「注意力陷阱」让人上瘾，还是在创造「思考空间」让人成长？</p>
+      </CaseStory>
+
+      <CaseStory title="50后的「地下读书会」：在所有年代都值得做的事" color={c} icon="📖">
+        <p style={{marginBottom:10}}><strong>场景</strong>：刘擎回忆「50后」一代——上山下乡时期的年轻人，没有高考、没有就业市场、看不到任何希望。</p>
+        <p style={{marginBottom:10}}><strong>冲突</strong>：按当时的「现实主义」，唯一合理的选择是躺平等待——反正读书也没用，努力也没出路。</p>
+        <p style={{marginBottom:10}}><strong>转折</strong>：但其中一些人没有虚度——他们偷偷读书、写作、交友、思考，组织地下读书会、传抄手抄本。他们不知道1978年会有改革开放，但他们还是做了。</p>
+        <p><strong>结果</strong>：后来时代变了，这些积累全部兑现了。但刘擎的重点不是「坚持就有回报」这碗鸡汤——<strong>他说的是：即便时代没有变，这些事情本身也是好的。</strong> 读书、写作、认真交友、磨炼技艺——这些事不依赖于外部条件，它们本身就有价值。这就是「在所有年代都值得做的事」。</p>
+      </CaseStory>
+
+      <CaseStory title="韦伯的「天职」与漂流时间" color={c} icon="⚓">
+        <p style={{marginBottom:10}}><strong>场景</strong>：严飞在哈佛访学即将结束时重读韦伯《以学术为业》——「学术生涯是一场鲁莽的赌博」。</p>
+        <p style={{marginBottom:10}}><strong>冲突</strong>：通过了长聘考核之后，很多学者反而迷茫了——奋斗的目标达到了，然后呢？后面还有二三十年的学术道路，意义何在？</p>
+        <p style={{marginBottom:10}}><strong>转折</strong>：韦伯说：「对于学术的热情，永远是指引前进的源动力。」——天职不是一种职位，而是一种召唤。你不是「选择了」学术，而是学术「召唤了」你。</p>
+        <p><strong>结果</strong>：这个道理适用于所有人。问自己：有没有一件事，即使没有人给你钱、没有人给你认可、没有人看得见，你也想一直做？<strong>如果有，那就是你的天职。如果暂时没有，那找到它就是你眼下最重要的事。</strong></p>
+      </CaseStory>
+
+      <Divider color={c}/>
+
+      <Expand title="「介入的超脱」行动清单" color={c} char="做">
+        <Step n={1} text="定义你的「专业」" detail="不一定是你的职业，而是你愿意花大量时间精进、并且有信心比大多数人做得好的事。可以是编程、写作、做饭、带娃、园艺——任何事。在这件事上，保持高标准，持续精进。" color={c}/>
+        <Step n={2} text="每月做一件「出圈」的事" detail="参加一次和你专业无关的活动——读书会、行业沙龙、社区志愿者、跨界讲座。不是为了「拓展人脉」（那是功利心态），而是为了让自己看到更大的世界。" color={c}/>
+        <Step n={3} text="找到你的「远景句」" detail="用一句话描述你希望三年后自己过什么样的生活。不需要很宏大，可以很具体：「每天下午三点能接孩子放学」「出版一本自己写的书」「在一个我喜欢的城市有自己的工作室」。把这句话写下来贴在你每天能看到的地方。" color={c}/>
+        <Step n={4} text="每天问一次「今天的远景进展」" detail="睡前花1分钟回顾——今天有没有做一件事，哪怕很小，是朝着我的远景走的？如果有，记下来。如果没有，明天做一件。" color={c}/>
+      </Expand>
+
+      <Expand title="「信息甄别」三问法（应对反智时代）" color={c} char="辨">
+        <Para>遇到任何公共言论时，问三个问题：</Para>
+        <Step n="①" text="专业性检验" detail="这个人在他自己的专业领域有可靠的成就吗？" color={c}/>
+        <Step n="②" text="态度检验" detail="他是在分享思考过程，还是在给你「标准答案」？" color={c}/>
+        <Step n="③" text="利益检验" detail="如果他说的是错的，他要付出什么代价？" color={c}/>
+        <Para>三个问题都过关的，值得认真听。否则，划走不亏。</Para>
+      </Expand>
+
+      <Divider color={c}/>
+
+      <Quote text="💎 全书的终极洞察不在第八章，而是散落在所有章节里的同一个信号：你不需要一个宏大的答案，你只需要一个诚实的开始。nowhere → now here，瓦尔登湖从名词变成动词，「在所有年代都值得做的事情」——这些说的都是同一件事：不要等。不要等到找到方向、等到财务自由、等到换个城市、等到想清楚了。此身、此时、此地——从你手边最小的事开始。明日世界的风景，都在今日世界的我们的手里。" color={c}/>
+
+      <ActionBox char="行">
+        <Para>今天就做（5分钟版）：拿出手机备忘录，写下你的「远景句」——一句话描述你三年后想过的生活。不需要完美，不需要「正确」，第一反应就好。然后在下面写：「为了这个远景，我明天可以做的最小一步是______。」填上去。明天做那件事。然后后天再填一个最小一步。你不需要跑得快，你只需要每天走一步。一年后回头看，你已经走了365步。</Para>
+      </ActionBox>
+    </div>
+  );
+}
+
+/* ===== APP ===== */
+function App(){
+  const[ch,setCh]=useState(0);
+  const[toc,setToc]=useState(false);
+  const chContent=[()=>React.createElement(BookMap,{onJump:setCh}),Ch1,Ch2,Ch3,Ch4,Ch5];
+  const CurrentCh=chContent[ch];
+
+  return(
+    <div style={{minHeight:"100vh",position:"relative"}}>
+      <PaperBg/>
+      <ReadBar progress={((ch+1)/CHS.length)*100}/>
+      <Sidebar chapters={CHS} current={ch} onSelect={setCh} open={toc} onClose={()=>setToc(false)}/>
+
+      <div style={{position:"sticky",top:0,zIndex:10,background:"linear-gradient(to bottom,rgba(245,240,232,0.98) 70%,rgba(245,240,232,0))",padding:"14px 24px 24px"}}>
+        <div style={{maxWidth:720,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <span onClick={()=>setToc(true)} style={{cursor:"pointer",opacity:0.5,fontSize:18}}>{"☰"}</span>
+            <span style={{fontSize:13,color:P.textMuted,letterSpacing:3}}>拆卷</span>
+            <span style={{fontSize:11,color:P.textMuted,opacity:0.4}}>·</span>
+            <span style={{fontSize:13,color:P.textMuted}}>世界作为参考答案</span>
+          </div>
+          <span style={{fontSize:11,color:P.textMuted}}>{ch+1}/{CHS.length}</span>
+        </div>
+      </div>
+
+      <div style={{maxWidth:720,margin:"0 auto",padding:"0 24px",position:"relative"}}>
+        <div style={{display:"flex",gap:0,borderBottom:`1px solid rgba(160,140,110,0.12)`,marginBottom:36,overflowX:"auto",scrollbarWidth:"none",msOverflowStyle:"none",WebkitOverflowScrolling:"touch"}}>
+          {CHS.map((t,i)=>(
+            <ChTab key={t.id} label={t.label} char={t.char} color={t.color} active={ch===i} onClick={()=>setCh(i)} isOverview={i===0}/>
+          ))}
+        </div>
+        <div style={{position:"absolute",top:0,right:24,width:40,height:"calc(100% - 36px)",pointerEvents:"none",background:`linear-gradient(to left,${P.paper},transparent)`}}/>
+      </div>
+
+      <div style={{maxWidth:720,margin:"0 auto",padding:"0 24px 40px",position:"relative",zIndex:1}}>
+        <CurrentCh/>
+        <PageNav current={ch} total={CHS.length} name={CHS[ch].label} onPrev={()=>{setCh(ch-1);window.scrollTo(0,0);}} onNext={()=>{setCh(ch+1);window.scrollTo(0,0);}}/>
+      </div>
+
+      <div style={{textAlign:"center",padding:"40px 24px 20px",position:"relative",zIndex:1}}>
+        <div style={{fontSize:12,color:P.textMuted,letterSpacing:4}}>拆卷 · 世界作为参考答案</div>
+        <div style={{fontSize:11,color:P.textMuted,opacity:0.5,marginTop:6}}>刘擎 严飞 · 上海人民出版社·世纪文景 · 2024年12月 · ISBN 9787208192287</div>
+      </div>
+      <div style={{maxWidth:560,margin:"0 auto",padding:"0 24px 48px",textAlign:"center"}}>
+        <div style={{background:P.paperDeep,borderRadius:8,padding:"14px 18px",border:`1px solid rgba(160,140,110,0.1)`}}>
+          <div style={{fontSize:11,color:P.textMuted,lineHeight:1.9,letterSpacing:0.5}}>
+            {"⚠ 免责声明：本页面内容仅供个人学习与读书笔记整理之用，不用于任何商业目的。书籍版权归原作者及出版社所有。如有侵权，请联系博主，将第一时间删除处理。"}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

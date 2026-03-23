@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《浪潮之巅》完整知识图谱 · 深度解析版</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0e1a;--card:#111827;--card2:#1e293b;--blue:#3b82f6;--cyan:#06b6d4;--purple:#8b5cf6;--emerald:#10b981;--amber:#f59e0b;--rose:#f43f5e;--orange:#f97316;--txt:#f1f5f9;--txt2:#94a3b8;--txt3:#64748b;--border:rgba(255,255,255,0.06)}
+body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.7;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+
+/* ========== HERO ========== */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(59,130,246,.15) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(139,92,246,.12) 0%,transparent 50%),radial-gradient(ellipse at 50% 80%,rgba(6,182,212,.1) 0%,transparent 50%)}
+.wave-box{position:absolute;bottom:0;left:0;width:100%;height:280px;overflow:hidden}
+.wave-box svg{position:absolute;bottom:0;left:-50%;width:200%;height:100%;animation:wm 8s ease-in-out infinite alternate}
+@keyframes wm{0%{transform:translateX(0)}100%{transform:translateX(2%) translateY(-8px)}}
+.hero-c{position:relative;text-align:center;z-index:2;padding:2rem}
+.hero-c .sub{font-size:1.2rem;color:var(--txt2);font-weight:300;margin-bottom:.5rem}
+.hero-c h1{font-size:clamp(3rem,8vw,5.5rem);font-weight:900;background:linear-gradient(135deg,#60a5fa,#a78bfa,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.8rem;letter-spacing:.05em}
+.hero-c .author{font-size:1rem;color:var(--txt3);margin-bottom:2.5rem}
+.hero-stats{display:flex;gap:2.5rem;justify-content:center;flex-wrap:wrap}
+.stat{text-align:center}
+.stat .n{font-size:2.2rem;font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat .l{font-size:.75rem;color:var(--txt3);text-transform:uppercase;letter-spacing:.15em}
+.scroll-h{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);animation:bounce 2s infinite;color:var(--txt3);font-size:.8rem}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}}
+
+/* ========== NAV ========== */
+.nav{position:sticky;top:0;z-index:100;background:rgba(10,14,26,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:.6rem 1rem;display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap}
+.nav a{text-decoration:none;border:1px solid rgba(255,255,255,.08);color:var(--txt2);padding:.4rem 1rem;border-radius:99px;font-size:.8rem;transition:all .3s;white-space:nowrap;cursor:pointer}
+.nav a:hover,.nav a.on{background:linear-gradient(135deg,var(--blue),var(--purple));border-color:transparent;color:#fff;box-shadow:0 0 16px rgba(99,102,241,.25)}
+
+/* ========== SECTIONS ========== */
+.sec{padding:4rem 1.5rem;max-width:1360px;margin:0 auto}
+.sh{text-align:center;margin-bottom:3rem}
+.tag{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.2em;padding:.3rem .8rem;border-radius:99px;margin-bottom:.8rem}
+.sh h2{font-size:2.2rem;font-weight:800;margin-bottom:.6rem}
+.sh p{color:var(--txt2);max-width:600px;margin:0 auto;font-size:1rem}
+
+/* ========== CARDS ========== */
+.card{background:var(--card);border-radius:16px;padding:1.5rem;border:1px solid var(--border);transition:all .3s}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+
+/* ========== TIMELINE ========== */
+.tl{position:relative;padding:1rem 0}
+.tl::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,transparent,var(--blue),var(--purple),var(--cyan),transparent);transform:translateX(-50%)}
+.tl-item{display:flex;align-items:flex-start;margin-bottom:2.5rem;position:relative}
+.tl-item:nth-child(odd){flex-direction:row}
+.tl-item:nth-child(even){flex-direction:row-reverse}
+.tl-dot{position:absolute;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;z-index:2;box-shadow:0 0 16px currentColor;top:1.5rem}
+.tl-card{width:43%;border-radius:16px;padding:1.5rem;background:var(--card);border:1px solid var(--border);transition:all .3s}
+.tl-card:hover{border-color:rgba(99,102,241,.25);box-shadow:0 8px 28px rgba(0,0,0,.25)}
+.tl-item:nth-child(odd) .tl-card{margin-right:auto;margin-left:1.5rem}
+.tl-item:nth-child(even) .tl-card{margin-left:auto;margin-right:1.5rem}
+.tl-era{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.4rem}
+.tl-name{font-size:1.2rem;font-weight:700;margin-bottom:.4rem}
+.tl-desc{font-size:.88rem;color:var(--txt2);margin-bottom:.6rem}
+.tl-tag{display:inline-block;font-size:.68rem;padding:.2rem .5rem;border-radius:4px;font-weight:600;margin-bottom:.8rem}
+/* expand area inside timeline */
+.tl-expand{margin-top:.6rem;padding:.8rem;border-radius:10px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04)}
+.tl-expand summary{cursor:pointer;font-size:.82rem;font-weight:600;color:var(--txt);list-style:none;display:flex;align-items:center;gap:.4rem}
+.tl-expand summary::before{content:'▶';font-size:.6rem;transition:transform .2s}
+.tl-expand[open] summary::before{transform:rotate(90deg)}
+.tl-expand .inner{margin-top:.6rem;font-size:.82rem;color:var(--txt2);line-height:1.75}
+.tl-expand .inner strong{color:var(--txt);font-weight:600}
+.tl-expand .inner .hl{display:inline;padding:0 .3rem;border-radius:3px;font-weight:600;font-size:.78rem}
+.tl-expand .lesson{margin-top:.6rem;padding:.6rem .8rem;border-radius:8px;border-left:3px solid;font-size:.8rem}
+
+/* ========== LAW CARDS ========== */
+.laws{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1.5rem}
+.law{position:relative;overflow:hidden}
+.law .bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0}
+.law-icon{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:1rem}
+.law h3{font-size:1.2rem;font-weight:700;margin-bottom:.2rem}
+.law .en{font-size:.78rem;color:var(--txt3);margin-bottom:.8rem}
+.law .desc{font-size:.9rem;color:var(--txt2);margin-bottom:.8rem}
+.law .formula{background:rgba(255,255,255,.03);border-radius:8px;padding:.7rem;text-align:center;font-family:Georgia,serif;font-size:.95rem;font-style:italic;border:1px solid rgba(255,255,255,.04);margin-bottom:.8rem}
+.law details{margin-top:.4rem}
+.law details summary{cursor:pointer;font-size:.82rem;font-weight:600;list-style:none;display:flex;align-items:center;gap:.4rem;color:var(--txt)}
+.law details summary::before{content:'▶';font-size:.55rem;transition:transform .2s}
+.law details[open] summary::before{transform:rotate(90deg)}
+.law details .dp{margin-top:.5rem;font-size:.82rem;color:var(--txt2);line-height:1.75}
+.law details .dp strong{color:var(--txt)}
+.law details .case-box{margin-top:.5rem;padding:.6rem .8rem;border-radius:8px;font-size:.8rem;border-left:3px solid}
+
+/* ========== GALAXY ========== */
+.galaxy{position:relative;width:100%;height:680px;margin:1rem auto}
+.galaxy .center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,.35),transparent);display:flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:700;text-align:center;z-index:10;box-shadow:0 0 50px rgba(59,130,246,.25);border:2px solid rgba(59,130,246,.25)}
+.galaxy .orbit{position:absolute;top:50%;left:50%;border-radius:50%;border:1px dashed rgba(255,255,255,.05)}
+.planet{position:absolute;border-radius:14px;padding:.55rem 1rem;background:var(--card);border:1px solid rgba(255,255,255,.07);font-size:.8rem;font-weight:600;z-index:5;white-space:nowrap;cursor:pointer;transition:all .3s}
+.planet:hover{transform:scale(1.08);z-index:20;box-shadow:0 0 24px rgba(0,0,0,.4)}
+.planet:active{transform:scale(.96)}
+
+/* ========== COMPANY MODAL ========== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:9999;display:none;align-items:center;justify-content:center;padding:1.5rem;opacity:0;transition:opacity .3s}
+.modal-overlay.show{display:flex;opacity:1}
+.modal-box{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:20px;max-width:640px;width:100%;max-height:85vh;overflow-y:auto;padding:2rem 2rem 1.5rem;position:relative;transform:scale(.92);transition:transform .3s}
+.modal-overlay.show .modal-box{transform:scale(1)}
+.modal-close{position:absolute;top:1rem;right:1rem;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--txt3);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-close:hover{background:rgba(255,255,255,.12);color:var(--txt)}
+.modal-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem}
+.modal-logo{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0}
+.modal-title{font-size:1.4rem;font-weight:800;letter-spacing:-.02em}
+.modal-subtitle{font-size:.8rem;color:var(--txt3);margin-top:.15rem}
+.modal-status{display:inline-flex;align-items:center;gap:5px;padding:.2rem .65rem;border-radius:20px;font-size:.72rem;font-weight:600;margin-top:.3rem}
+.modal-section{margin-top:1.2rem}
+.modal-section-title{font-size:.82rem;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.modal-section-title::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--blue)}
+.modal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+.modal-stat{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:.65rem .8rem;text-align:center}
+.modal-stat .val{font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.modal-stat .lbl{font-size:.68rem;color:var(--txt3);margin-top:.15rem}
+.modal-text{font-size:.84rem;line-height:1.85;color:var(--txt2)}
+.modal-text strong{color:var(--txt)}
+.modal-lesson{margin-top:.8rem;padding:.8rem 1rem;border-radius:12px;background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(139,92,246,.08));border:1px solid rgba(59,130,246,.12);font-size:.82rem;line-height:1.7;color:var(--txt2)}
+.modal-lesson-title{font-weight:700;color:var(--blue);margin-bottom:.3rem;font-size:.78rem}
+.modal-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
+.modal-tag{padding:.2rem .55rem;border-radius:6px;font-size:.7rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:var(--txt3)}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
+.dot-peak{background:var(--emerald);box-shadow:0 0 6px var(--emerald)}
+.dot-rise{background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+.dot-mid{background:var(--amber);box-shadow:0 0 6px var(--amber)}
+.dot-fall{background:var(--rose);box-shadow:0 0 6px var(--rose)}
+.legend{display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap;margin-top:.5rem}
+.legend span{display:flex;align-items:center;gap:5px;font-size:.75rem;color:var(--txt3)}
+
+/* ========== AI WAVE SECTION ========== */
+.ai-hero{text-align:center;padding:2rem 1.5rem;border-radius:20px;background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(59,130,246,.08),rgba(6,182,212,.06));border:1px solid rgba(139,92,246,.12);margin-bottom:2rem;position:relative;overflow:hidden}
+.ai-hero::before{content:'';position:absolute;top:-40%;right:-20%;width:300px;height:300px;background:radial-gradient(circle,rgba(139,92,246,.1),transparent);border-radius:50%}
+.ai-hero .ai-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .8rem;border-radius:20px;font-size:.72rem;font-weight:700;background:rgba(139,92,246,.15);color:var(--purple);margin-bottom:.8rem;letter-spacing:.05em}
+.ai-hero .ai-badge .pulse{width:8px;height:8px;border-radius:50%;background:var(--purple);animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(139,92,246,.5)}50%{opacity:.7;box-shadow:0 0 0 8px rgba(139,92,246,0)}}
+.ai-hero h3{font-size:1.3rem;font-weight:800;margin-bottom:.5rem}
+.ai-hero p{font-size:.85rem;color:var(--txt2);max-width:600px;margin:0 auto;line-height:1.7}
+
+/* wave position chart */
+.wave-position{display:flex;align-items:flex-end;justify-content:center;gap:0;height:180px;padding:1rem 0;margin:1.5rem auto;max-width:560px;position:relative}
+.wave-bar-group{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+.wave-bar{width:100%;max-width:60px;border-radius:8px 8px 0 0;position:relative;transition:all .4s}
+.wave-bar-label{font-size:.65rem;color:var(--txt3);margin-top:.4rem;text-align:center;line-height:1.3}
+.wave-bar-year{font-size:.6rem;color:var(--txt3);opacity:.6}
+.wave-marker{position:absolute;top:-28px;left:50%;transform:translateX(-50%);font-size:.7rem;font-weight:700;color:var(--purple);white-space:nowrap;padding:.15rem .5rem;background:rgba(139,92,246,.15);border-radius:10px;border:1px solid rgba(139,92,246,.3)}
+.wave-marker::after{content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid rgba(139,92,246,.3)}
+
+/* survival rules */
+.surv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.2rem}
+.surv-card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:1.4rem;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s}
+.surv-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.surv-card .surv-num{position:absolute;top:.8rem;right:1rem;font-size:2.5rem;font-weight:900;opacity:.06}
+.surv-card .surv-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:.8rem}
+.surv-card .surv-title{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.surv-card .surv-book{font-size:.78rem;color:var(--txt3);padding:.4rem .7rem;border-radius:8px;background:rgba(255,255,255,.03);border-left:3px solid;margin:.6rem 0}
+.surv-card .surv-action{font-size:.82rem;color:var(--txt2);line-height:1.75}
+.surv-card .surv-action strong{color:var(--txt)}
+.surv-card details summary{cursor:pointer;font-size:.8rem;font-weight:600;color:var(--txt3);list-style:none;display:flex;align-items:center;gap:.4rem;margin-top:.6rem}
+.surv-card details summary::before{content:'▶';font-size:.5rem;transition:transform .2s}
+.surv-card details[open] summary::before{transform:rotate(90deg)}
+.surv-card details .surv-expand{margin-top:.5rem;font-size:.8rem;color:var(--txt2);line-height:1.8;padding:.6rem .8rem;border-radius:10px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04)}
+
+/* DO & DON'T */
+.do-dont{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-top:1.5rem}
+@media(max-width:640px){.do-dont{grid-template-columns:1fr}}
+.do-col,.dont-col{border-radius:16px;padding:1.3rem;border:1px solid}
+.do-col{background:rgba(16,185,129,.04);border-color:rgba(16,185,129,.15)}
+.dont-col{background:rgba(244,63,94,.04);border-color:rgba(244,63,94,.15)}
+.do-col h4,.dont-col h4{font-size:.9rem;font-weight:700;margin-bottom:.8rem;display:flex;align-items:center;gap:.4rem}
+.do-col h4{color:var(--emerald)}
+.dont-col h4{color:var(--rose)}
+.do-item,.dont-item{display:flex;align-items:flex-start;gap:.5rem;margin-bottom:.7rem;font-size:.82rem;line-height:1.65;color:var(--txt2)}
+.do-item::before{content:'✓';color:var(--emerald);font-weight:700;flex-shrink:0;margin-top:1px}
+.dont-item::before{content:'✗';color:var(--rose);font-weight:700;flex-shrink:0;margin-top:1px}
+
+/* ========== FRAMEWORK ========== */
+.fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.fw .hd{display:flex;align-items:center;gap:.8rem;margin-bottom:1rem}
+.fw .hd-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.fw .hd-title{font-size:1.1rem;font-weight:700}
+.fw .steps{display:flex;flex-direction:column;gap:.5rem}
+.fw .step{display:flex;gap:.6rem;padding:.6rem;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.03)}
+.fw .sn{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0}
+.fw .st{font-weight:600;font-size:.88rem}.fw .sd{font-size:.8rem;color:var(--txt2);margin-top:.1rem}
+.fw details summary{cursor:pointer;font-size:.82rem;font-weight:600;list-style:none;display:flex;align-items:center;gap:.4rem;margin-top:.4rem;color:var(--txt)}
+.fw details summary::before{content:'▶';font-size:.55rem;transition:transform .2s}
+.fw details[open] summary::before{transform:rotate(90deg)}
+.fw details .ex{margin-top:.4rem;padding:.5rem .7rem;border-radius:6px;font-size:.78rem;color:var(--txt2);border-left:3px solid;line-height:1.7}
+
+/* ========== INSIGHTS ========== */
+.ins-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+.ins{position:relative;overflow:hidden}
+.ins .bg-n{position:absolute;top:-.5rem;right:.8rem;font-size:3.5rem;font-weight:900;opacity:.05;line-height:1}
+.ins h4{font-size:1rem;font-weight:700;margin-bottom:.5rem}
+.ins p{font-size:.85rem;color:var(--txt2)}
+.ins details{margin-top:.5rem}
+.ins details summary{cursor:pointer;font-size:.78rem;font-weight:600;list-style:none;display:flex;align-items:center;gap:.3rem;color:var(--txt)}
+.ins details summary::before{content:'▶';font-size:.5rem;transition:transform .2s}
+.ins details[open] summary::before{transform:rotate(90deg)}
+.ins details .ex{margin-top:.4rem;font-size:.78rem;color:var(--txt2);line-height:1.7}
+
+/* ========== ECOSYSTEM ========== */
+.eco{display:flex;flex-direction:column;align-items:center;gap:1.5rem;padding:2rem}
+.eco-row{display:flex;gap:1rem;align-items:center;flex-wrap:wrap;justify-content:center}
+.eco-node{padding:.7rem 1.1rem;border-radius:12px;font-size:.82rem;font-weight:600;text-align:center;min-width:130px;border:1px solid rgba(255,255,255,.08)}
+.eco-arrow{font-size:1.1rem;color:var(--txt3)}
+
+/* QUOTE */
+.quote{text-align:center;padding:4rem 2rem}
+.quote .qm{font-size:5rem;opacity:.08;font-family:Georgia,serif;line-height:1}
+.quote .qt{font-size:1.3rem;font-weight:300;max-width:680px;margin:0 auto 1rem;line-height:1.8}
+.quote .qa{color:var(--txt3);font-size:.88rem}
+.foot{text-align:center;padding:2rem;color:var(--txt3);font-size:.78rem;border-top:1px solid var(--border)}
+.fi{opacity:0;transform:translateY(22px);transition:all .5s ease-out}.fi.v{opacity:1;transform:translateY(0)}
+@media(max-width:900px){
+  .tl::before{left:1.5rem}.tl-item,.tl-item:nth-child(even){flex-direction:row}
+  .tl-card,.tl-item:nth-child(odd) .tl-card,.tl-item:nth-child(even) .tl-card{width:calc(100% - 4rem);margin-left:3.5rem!important;margin-right:0!important}
+  .tl-dot{left:1.5rem}
+  .fw-grid,.ins-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="wave-box">
+    <svg viewBox="0 0 1440 300" preserveAspectRatio="none">
+      <path d="M0,150 C360,50 720,250 1080,120 C1260,70 1380,180 1440,150 L1440,300 L0,300Z" fill="rgba(59,130,246,.07)"/>
+      <path d="M0,200 C240,120 480,260 720,180 C960,100 1200,240 1440,180 L1440,300 L0,300Z" fill="rgba(139,92,246,.05)"/>
+      <path d="M0,230 C180,180 540,260 900,200 C1260,140 1380,230 1440,210 L1440,300 L0,300Z" fill="rgba(6,182,212,.04)"/>
+    </svg>
+  </div>
+  <div class="hero-c">
+    <div class="sub">吴军 · 信息产业深度全景</div>
+    <h1>浪潮之巅</h1>
+    <div class="author">第四版 · 完整知识图谱 · 深度解析版</div>
+    <div class="hero-stats">
+      <div class="stat"><div class="n">20+</div><div class="l">科技巨头</div></div>
+      <div class="stat"><div class="n">6</div><div class="l">产业定律</div></div>
+      <div class="stat"><div class="n">150</div><div class="l">年产业史</div></div>
+      <div class="stat"><div class="n">5</div><div class="l">方法论</div></div>
+    </div>
+  </div>
+  <div class="scroll-h">↓ 向下滚动探索</div>
+</section>
+
+<!-- ==================== NAV ==================== -->
+<nav class="nav">
+  <a href="#waves" class="on">技术浪潮</a>
+  <a href="#laws">产业定律</a>
+  <a href="#galaxy">公司星图</a>
+  <a href="#framework">方法论</a>
+  <a href="#insights">核心洞察</a>
+  <a href="#ecosystem">生态闭环</a>
+  <a href="#aiwave">AI生存指南</a>
+</nav>
+
+<!-- ============================================================ -->
+<!-- SECTION 1 · TECHNOLOGY WAVES TIMELINE                        -->
+<!-- ============================================================ -->
+<section class="sec" id="waves">
+  <div class="sh fi">
+    <div class="tag" style="background:rgba(59,130,246,.15);color:var(--blue)">TECHNOLOGY WAVES</div>
+    <h2>技术浪潮编年</h2>
+    <p>近150年来，每一波技术浪潮都将一批公司推上巅峰，又将另一批淘汰出局。点击展开查看每个时代的深度解析。</p>
+  </div>
+
+  <div class="tl">
+
+    <!-- WAVE 1 -->
+    <div class="tl-item fi">
+      <div class="tl-dot" style="color:var(--amber);background:var(--amber)"></div>
+      <div class="tl-card">
+        <div class="tl-era" style="color:var(--amber)">1875 — 1925 · 电话革命</div>
+        <div class="tl-name">AT&T 百年帝国的崛起</div>
+        <div class="tl-desc">贝尔发明电话，AT&T建立起横跨全美的电信垄断帝国。贝尔实验室诞生了晶体管、UNIX、C语言等改变世界的发明，11位科学家获诺贝尔奖。</div>
+        <span class="tl-tag" style="background:rgba(245,158,11,.12);color:var(--amber)">垄断 → 拆分 → 消亡</span>
+        <details class="tl-expand">
+          <summary>🔍 深度解析：百年帝国如何三步走向死亡</summary>
+          <div class="inner">
+            <p><strong>通俗来说：</strong>AT&T就像一个含着金汤匙出生的巨人，拥有全美唯一的电话网络。它用营收的3%养了一个"超级实验室"（贝尔实验室），这个实验室发明了我们今天用的几乎所有通信技术。但最终，这个巨人被自己的贪婪和短视杀死了。</p>
+            <p style="margin-top:.5rem"><strong>三步死亡路径：</strong></p>
+            <p>① <span class="hl" style="background:rgba(16,185,129,.12);color:var(--emerald)">1984年第一次拆分</span> — 美国政府强制拆分AT&T为8家公司。但这反而像"修剪大树"，让AT&T更健康，10年后更强大。</p>
+            <p>② <span class="hl" style="background:rgba(244,63,94,.12);color:var(--rose)">1995年自杀式拆分</span> — 华尔街基金经理只关心"股票何时翻番"。高管们为了短期股价暴涨，主动把设备部门拆出成"朗讯公司"。朗讯股价4年涨了10倍，华尔街赚翻了，但贝尔实验室失去了AT&T这个靠山，从此无力再做基础研究。</p>
+            <p>③ <span class="hl" style="background:rgba(244,63,94,.12);color:var(--rose)">2005年被收购</span> — AT&T本体反而被当年拆出去的小公司SBC反向收购，128年帝国终结。</p>
+            <div class="lesson" style="border-color:var(--amber);background:rgba(245,158,11,.04)">
+              <strong style="color:var(--amber)">小白启示：</strong>AT&T的故事告诉我们——第一，别为了短期利益拆散核心团队或资源；第二，当公司高管的个人利益和公司长远利益不一致时，公司一定会出问题；第三，再强大的帝国，如果不能持续创新，终将被时代淘汰。
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- WAVE 2 -->
+    <div class="tl-item fi">
+      <div class="tl-dot" style="color:var(--blue);background:var(--blue)"></div>
+      <div class="tl-card">
+        <div class="tl-era" style="color:var(--blue)">1924 — 至今 · 计算机革命</div>
+        <div class="tl-name">IBM 蓝色巨人的三次转身</div>
+        <div class="tl-desc">从机械制表机到大型计算机，IBM引领电子技术革命。"保守的创新者"——保守让它避开错误，创新让它保持领先。郭士纳力挽狂澜，从硬件转型IT服务。</div>
+        <span class="tl-tag" style="background:rgba(59,130,246,.12);color:var(--blue)">转型 → 服务化 → 再生</span>
+        <details class="tl-expand">
+          <summary>🔍 深度解析：IBM如何"壮士断腕"活过三次危机</summary>
+          <div class="inner">
+            <p><strong>通俗来说：</strong>IBM是科技界的"不倒翁"。每次快要死的时候，总能找到一个厉害的领导人来救命。它最大的特点是"保守"——别人在追新技术的时候，IBM宁愿慢半拍也不冒险。</p>
+            <p style="margin-top:.5rem"><strong>基因密码：</strong>IBM的DNA是<span class="hl" style="background:rgba(59,130,246,.12);color:var(--blue)">服务大企业</span>。这决定了——</p>
+            <p>• 它做大型机服务器很成功（大企业需要）</p>
+            <p>• 做个人电脑挣扎了20年最终卖给联想（消费品不是它的基因）</p>
+            <p>• 郭士纳转型IT服务成功（还是在服务大企业，只是从卖硬件变成了卖服务）</p>
+            <p style="margin-top:.5rem"><strong>内部冲突的真相：</strong>IBM的大型机部门和个人电脑部门在内部"互相打架"。大型机利润高、话语权大，PC部门每遇到一点困难就被挤压。所以IBM的PC业务20年来反反复复，直到卖给联想。</p>
+            <div class="lesson" style="border-color:var(--blue);background:rgba(59,130,246,.04)">
+              <strong style="color:var(--blue)">小白启示：</strong>① 认清自己擅长什么——IBM擅长服务大公司，就应该专注于此，不该死磕消费电子；② 新业务和老业务如果打架，要么让新业务完全独立，要么趁早放弃；③ "保守"不是坏事，少犯错比多创新更重要。
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- WAVE 3 -->
+    <div class="tl-item fi">
+      <div class="tl-dot" style="color:var(--emerald);background:var(--emerald)"></div>
+      <div class="tl-card">
+        <div class="tl-era" style="color:var(--emerald)">1957 — 至今 · 半导体革命</div>
+        <div class="tl-name">英特尔与"八叛徒"</div>
+        <div class="tl-desc">仙童半导体的"八叛徒"从肖克利实验室出走，开创全球半导体产业。摩尔提出摩尔定律，英特尔用"Tick-Tock"策略持续领跑芯片制造。</div>
+        <span class="tl-tag" style="background:rgba(16,185,129,.12);color:var(--emerald)">摩尔定律驱动</span>
+        <details class="tl-expand">
+          <summary>🔍 深度解析：一条定律如何驱动半个世纪经济增长</summary>
+          <div class="inner">
+            <p><strong>通俗来说：</strong>1957年，8个年轻科学家不满老板肖克利的管理方式，集体出走创办了仙童半导体公司。后来这8个人又各自创业，衍生出英特尔、AMD等几十家公司——整个硅谷半导体产业，都可以追溯到这"八叛徒"。</p>
+            <p style="margin-top:.5rem"><strong>摩尔定律的威力：</strong>芯片性能每18个月翻一番、价格降一半。这意味着——</p>
+            <p>• 1892年从纽约打到芝加哥的电话费是每分钟2美元（相当于今天50美元），今天国际长途每分钟不到10美分</p>
+            <p>• 你手机里的芯片计算能力超过了1969年把人送上月球的整个NASA计算机中心</p>
+            <p>• 任何依赖硬件成本壁垒的生意，都会被摩尔定律碾碎——今天很贵的东西18个月后就是白菜价</p>
+            <div class="lesson" style="border-color:var(--emerald);background:rgba(16,185,129,.04)">
+              <strong style="color:var(--emerald)">小白启示：</strong>① 当下的AI大模型就是在"消耗"最新的GPU性能，和当年软件消耗CPU性能的逻辑完全一样；② 如果你的创业项目依赖"现在这个技术很贵所以有壁垒"，那壁垒很快会消失；③ 真正持久的壁垒是数据、用户关系和品牌，不是技术成本。
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- WAVE 4 -->
+    <div class="tl-item fi">
+      <div class="tl-dot" style="color:var(--purple);background:var(--purple)"></div>
+      <div class="tl-card">
+        <div class="tl-era" style="color:var(--purple)">1975 — 至今 · 个人电脑革命</div>
+        <div class="tl-name">微软帝国 & 苹果传奇</div>
+        <div class="tl-desc">盖茨用空手套白狼拿下PC操作系统市场，Windows+Office构建软件帝国。乔布斯两次改写历史——Mac定义个人电脑美学，iPhone重新定义手机。</div>
+        <span class="tl-tag" style="background:rgba(139,92,246,.12);color:var(--purple)">安迪-比尔定律</span>
+        <details class="tl-expand">
+          <summary>🔍 深度解析：盖茨的空手套白狼 vs 乔布斯的偏执美学</summary>
+          <div class="inner">
+            <p><strong>盖茨的经典操作（空手套白狼）：</strong></p>
+            <p>IBM需要PC操作系统 → 盖茨推荐别人但没谈拢 → IBM回头找盖茨 → 盖茨用7.5万美元从另一家小公司买下DOS（<strong>隐瞒了IBM是真正买家</strong>，否则价格会高100倍）→ 卖给IBM时只收版权费、不卖源码 → 从此所有PC厂商都要向微软交"买路钱"。</p>
+            <p style="margin-top:.5rem"><strong>盖茨的制胜哲学——平衡：</strong></p>
+            <p>• 战略上保守（不在技术不成熟时冒进），战术上冒险（敢空手套白狼）</p>
+            <p>• 等别人试错完，再"借鉴"做更好的版本（Windows借鉴Mac，IE借鉴Netscape）</p>
+            <p>• IE免费捆绑Windows → 直接干掉了网景浏览器。同样手法又干掉了RealPlayer</p>
+            <p style="margin-top:.5rem"><strong>乔布斯的逆袭：</strong></p>
+            <p>大学辍学 → 旁听书法课 → 车库创办苹果 → 做出全世界第一台有漂亮字体的个人电脑 → 被自己公司赶走 → 创办NeXT和Pixar → 回归苹果推出iMac/iPod/iPhone → 证明"被解雇不等于结束"。</p>
+            <div class="lesson" style="border-color:var(--purple);background:rgba(139,92,246,.04)">
+              <strong style="color:var(--purple)">小白启示：</strong>① 盖茨的"只收版权费不卖源码"本质是——卖使用权而非所有权，这是所有SaaS模式的鼻祖；② 后发制人的前提是你有垄断渠道（Windows预装）作为杠杆；③ 乔布斯证明"看似无用"的书法课成了核心竞争力——你永远不知道今天学的东西未来会怎样改变你。
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- WAVE 5 -->
+    <div class="tl-item fi">
+      <div class="tl-dot" style="color:var(--cyan);background:var(--cyan)"></div>
+      <div class="tl-card">
+        <div class="tl-era" style="color:var(--cyan)">1995 — 至今 · 互联网革命</div>
+        <div class="tl-name">Google · 雅虎 · Facebook</div>
+        <div class="tl-desc">雅虎开启门户时代但未能转型。Google以搜索+广告模式称霸互联网。Facebook开创社交网络时代，扎克伯格从哈佛宿舍走向全球。</div>
+        <span class="tl-tag" style="background:rgba(6,182,212,.12);color:var(--cyan)">平台经济崛起</span>
+        <details class="tl-expand">
+          <summary>🔍 深度解析：Google的印钞机 vs 雅虎的花生酱</summary>
+          <div class="inner">
+            <p><strong>Google凭什么赢？</strong></p>
+            <p>Google一开始想靠卖企业搜索服务赚钱，做得很辛苦、不盈利。<strong>关键转折：</strong>放弃ToB，转做"免费搜索+在线广告"→ 找到了印钞机模式。Google没有发明搜索技术，但发明了搜索的商业模式——技术不如商业模式重要。</p>
+            <p style="margin-top:.4rem">Yahoo曾出价30亿美元收购Google，佩奇拒绝了——他坚信公司值一万亿。后来Google市值真的超过了万亿。<strong>格局决定终局。</strong></p>
+            <p style="margin-top:.5rem"><strong>雅虎为什么死？</strong></p>
+            <p>内部高管发布了著名的"花生酱宣言"——公司的资源像花生酱一样薄薄地摊了一大片。搜索第二、即时通讯第三、求职第二、旅游第三——每个都做、没一个第一。</p>
+            <p>到2014年，Google利润142亿 vs 雅虎利润2.4亿——差距60倍。2017年，曾经的互联网之王以48亿美元贱卖。</p>
+            <p style="margin-top:.5rem"><strong>Facebook的崛起密码：</strong></p>
+            <p>扎克伯格最初走"高端精英路线"（只限哈佛学生注册），发展太慢。<strong>关键转折：</strong>改走草根路线+开放平台 → 实现指数级增长。但他也有基因局限——Facebook在信息搜索和电商领域的尝试基本都失败了，因为社交基因和信息处理/交易基因不一样。</p>
+            <div class="lesson" style="border-color:var(--cyan);background:rgba(6,182,212,.04)">
+              <strong style="color:var(--cyan)">小白启示：</strong>① 宁做一个领域的第一，不做十个领域的第二（雅虎的教训）；② 商业模式比技术更重要——Google没有发明搜索但发明了搜索的赚钱方式；③ 创业方向会变，关键是适应能力——Google和Facebook都经历过重大转向。
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- WAVE 6 -->
+    <div class="tl-item fi">
+      <div class="tl-dot" style="color:var(--rose);background:var(--rose)"></div>
+      <div class="tl-card">
+        <div class="tl-era" style="color:var(--rose)">2010 — 至今 · 智能革命</div>
+        <div class="tl-name">特斯拉 · AI · 新能源</div>
+        <div class="tl-desc">AlphaGo战胜李世石标志AI新纪元。特斯拉和Waymo引领电动汽车与自动驾驶革命。一场更深刻的智能革命正在展开。</div>
+        <span class="tl-tag" style="background:rgba(244,63,94,.12);color:var(--rose)">正在发生的未来</span>
+        <details class="tl-expand">
+          <summary>🔍 深度解析：为什么吴军说"不必担心错过上一波"</summary>
+          <div class="inner">
+            <p><strong>通俗来说：</strong>很多人觉得互联网红利已经结束了。但吴军说：别担心，新的一场更深刻的智能革命已经拉开序幕。2016年AlphaGo战胜围棋世界冠军，标志着机器智能达到了新高度——这只是开始。</p>
+            <p style="margin-top:.5rem"><strong>历史规律告诉我们：</strong></p>
+            <p>人类历史上最富有的75人中，1/5出生在1830-1840年代的美国（赶上工业革命浪潮）。第二批富豪出生在1950-1970年代（赶上信息革命浪潮）。他们有一个共同点——<strong>在30-40岁时（年富力强的时候）恰好赶上了一波大浪潮</strong>。</p>
+            <p style="margin-top:.5rem">现在的AI浪潮 = 我们这代人的信息革命。预测未来做不到，但了解规律、保持学习、具备适应能力——这比预测更重要。</p>
+            <div class="lesson" style="border-color:var(--rose);background:rgba(244,63,94,.04)">
+              <strong style="color:var(--rose)">小白启示：</strong>① 每一代人都有属于自己的浪潮，关键是在浪来的时候你准备好了；② 适应比预测更重要——Google最初做企业搜索、Facebook最初走高端路线，都是在摸索中找到方向的；③ 三个建议：赶上浪潮、保持创新、学会合作——这是吴军给信息时代每个人的忠告。
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- QUOTE 1 -->
+<section class="quote">
+  <div class="qm">"</div>
+  <div class="qt">对于一个弄潮的年轻人来讲，最幸运的，莫过于赶上一波大潮。</div>
+  <div class="qa">—— 吴军《浪潮之巅》</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 2 · INDUSTRY LAWS                                     -->
+<!-- ============================================================ -->
+<section class="sec" id="laws">
+  <div class="sh fi">
+    <div class="tag" style="background:rgba(139,92,246,.15);color:var(--purple)">INDUSTRY LAWS</div>
+    <h2>IT产业六大定律</h2>
+    <p>驱动信息产业半个世纪发展的底层规律。点击展开，用真实案例帮你读懂每条定律。</p>
+  </div>
+
+  <div class="laws">
+
+    <div class="card law fi">
+      <div class="bar" style="background:linear-gradient(to right,var(--blue),var(--cyan))"></div>
+      <div class="law-icon" style="background:rgba(59,130,246,.12)">⚡</div>
+      <h3>摩尔定律</h3><div class="en">Moore's Law · 1965</div>
+      <div class="desc">集成电路性能每18个月翻一番，价格降一半。这条定律驱动了半个世纪的全球经济增长。</div>
+      <div class="formula" style="border-color:rgba(59,130,246,.12)">性能 ∝ 2^(t/18月)</div>
+      <details>
+        <summary>📖 通俗理解 + 实际案例</summary>
+        <div class="dp">
+          <p><strong>大白话：</strong>你今天花5000块买的手机，18个月后同样的钱能买到性能翻倍的手机。这不是偶然，而是整个半导体行业像发了誓一样遵守了60年的"铁律"。</p>
+          <p style="margin-top:.4rem"><strong>连锁反应：</strong>芯片变强 → 软件公司做更复杂的功能消耗这些性能 → 你觉得手机/电脑"又卡了" → 不得不换新设备 → 硬件公司又赚到钱继续研发。这个飞轮转了50年。</p>
+          <div class="case-box" style="border-color:var(--blue);background:rgba(59,130,246,.04)">💡 <strong>对你的启示：</strong>如果你创业做的东西依赖"现在这个技术很贵"作为壁垒——小心，18个月后它就是白菜价。真正的壁垒是数据、用户信任和品牌。</div>
+        </div>
+      </details>
+    </div>
+
+    <div class="card law fi">
+      <div class="bar" style="background:linear-gradient(to right,var(--purple),var(--rose))"></div>
+      <div class="law-icon" style="background:rgba(139,92,246,.12)">🔄</div>
+      <h3>安迪-比尔定律</h3><div class="en">Andy and Bill's Law</div>
+      <div class="desc">安迪（英特尔CEO）给什么，比尔（盖茨）拿走什么。软件不断消耗硬件性能提升，驱动IT产业增长飞轮。</div>
+      <div class="formula" style="border-color:rgba(139,92,246,.12)">硬件提速 → 软件膨胀 → 用户升级</div>
+      <details>
+        <summary>📖 通俗理解 + 实际案例</summary>
+        <div class="dp">
+          <p><strong>大白话：</strong>英特尔每年拼命让芯片跑得更快，但你的电脑为什么永远觉得"还是不够快"？因为微软的Windows和Office也在变得更大更臃肿，把芯片多出来的性能全"吃掉了"。</p>
+          <p style="margin-top:.4rem"><strong>谁赢了？</strong>三方都赢了——英特尔卖更多芯片，微软卖更贵的软件，你获得了更好的体验。这就是IT产业的增长引擎。</p>
+          <div class="case-box" style="border-color:var(--purple);background:rgba(139,92,246,.04)">💡 <strong>当下的映射：</strong>GPU性能提升（英伟达=新安迪）→ AI大模型越来越大消耗这些算力（OpenAI=新比尔）→ 用户买更好的设备来跑AI → 这个飞轮正在以前所未有的速度转动。</div>
+        </div>
+      </details>
+    </div>
+
+    <div class="card law fi">
+      <div class="bar" style="background:linear-gradient(to right,var(--emerald),var(--amber))"></div>
+      <div class="law-icon" style="background:rgba(16,185,129,.12)">📊</div>
+      <h3>70-20-10 定律</h3><div class="en">Market Share Rule</div>
+      <div class="desc">在IT领域，成熟市场一般容纳三个竞争者，份额大致为70%、20%、10%。老大利润丰厚，老二勉强度日，老三挣扎求生。</div>
+      <div class="formula" style="border-color:rgba(16,185,129,.12)">市场 = 70%(王者) + 20%(挑战者) + 10%(其他)</div>
+      <details>
+        <summary>📖 通俗理解 + 实际案例</summary>
+        <div class="dp">
+          <p><strong>大白话：</strong>科技行业是"赢家通吃"的世界。不像卖衣服可以有100个品牌共存，搜索引擎只需要一个Google就够了。老二雅虎的利润只有Google的零头（142亿 vs 2.4亿），老三几乎不存在。</p>
+          <p style="margin-top:.4rem"><strong>实际验证：</strong>搜索=Google 70%+；PC操作系统=Windows 90%+；手机芯片=高通/苹果瓜分市场。几乎每个IT细分领域都验证了这条定律。</p>
+          <div class="case-box" style="border-color:var(--emerald);background:rgba(16,185,129,.04)">💡 <strong>对你的启示：</strong>创业选赛道时，先问自己：这个领域是否已经有了70%份额的霸主？如果有，正面竞争几乎不可能赢。要么找它做不好的细分市场当那个领域的"老大"，要么别做。</div>
+        </div>
+      </details>
+    </div>
+
+    <div class="card law fi">
+      <div class="bar" style="background:linear-gradient(to right,var(--amber),var(--orange))"></div>
+      <div class="law-icon" style="background:rgba(245,158,11,.12)">🧬</div>
+      <h3>基因决定论</h3><div class="en">Company DNA Theory</div>
+      <div class="desc">公司的基因（核心文化与能力）在创立早期就被确定，决定其命运。跨越基因边界极其困难。</div>
+      <div class="formula" style="border-color:rgba(245,158,11,.12)">基因 = 创始团队能力 + 早期成功路径</div>
+      <details>
+        <summary>📖 通俗理解 + 实际案例</summary>
+        <div class="dp">
+          <p><strong>大白话：</strong>就像人有基因决定了你是高是矮，公司也有"基因"决定了它能做好什么。微软的基因是"卖软件"，所以它做搜索引擎（免费模式）怎么都做不好——因为免费和卖软件的基因相冲突。</p>
+          <p style="margin-top:.4rem"><strong>案例一览：</strong></p>
+          <p>• 微软做MSN搜索十几年不盈利（卖软件基因 vs 免费广告模式冲突）</p>
+          <p>• Google做社交网络Google+惨败（信息处理基因 vs 社交沟通基因不匹配）</p>
+          <p>• IBM做个人电脑挣扎20年卖给联想（服务大企业基因 vs 消费品基因不匹配）</p>
+          <p>• AT&T扼杀自家发明的传真机（电话基因排斥任何可能取代电话的新技术）</p>
+          <div class="case-box" style="border-color:var(--amber);background:rgba(245,158,11,.04)">💡 <strong>个人版：</strong>你的职业"基因"=你早期最成功的路径。靠技术上位的人，转管理就是"跨基因"——要么全身心转型，要么别转。认清自己的基因，比盲目补短板重要得多。</div>
+        </div>
+      </details>
+    </div>
+
+    <div class="card law fi">
+      <div class="bar" style="background:linear-gradient(to right,var(--cyan),var(--emerald))"></div>
+      <div class="law-icon" style="background:rgba(6,182,212,.12)">🌐</div>
+      <h3>反垄断法则</h3><div class="en">Anti-Monopoly Dynamics</div>
+      <div class="desc">贯穿IT史的核心命题：AT&T被拆分、IBM被限制、微软被诉。反垄断法既修剪大树，也为新企业腾出空间。</div>
+      <div class="formula" style="border-color:rgba(6,182,212,.12)">垄断 → 监管 → 拆分/限制 → 新机会</div>
+      <details>
+        <summary>📖 通俗理解 + 实际案例</summary>
+        <div class="dp">
+          <p><strong>大白话：</strong>反垄断法就像花园里的园丁剪刀——大树长得太大会遮住阳光，剪掉一些枝条反而让花园更繁茂。AT&T被拆分后，释放出来的"碎片"孕育了新一代电信公司。</p>
+          <p style="margin-top:.4rem"><strong>最神奇的案例：</strong>1956年AT&T被迫签订协议，不得进入计算机行业，并且把晶体管专利免费开放。这看似"惩罚"→ 实际上催生了整个半导体和计算机产业 → 硅谷的诞生间接拜此所赐。</p>
+          <div class="case-box" style="border-color:var(--cyan);background:rgba(6,182,212,.04)">💡 <strong>对你的启示：</strong>政策监管不一定是坏事。每次大公司被限制，就是小公司的机会。关注政策变化=关注创业机会。</div>
+        </div>
+      </details>
+    </div>
+
+    <div class="card law fi">
+      <div class="bar" style="background:linear-gradient(to right,var(--rose),var(--purple))"></div>
+      <div class="law-icon" style="background:rgba(244,63,94,.12)">🏗️</div>
+      <h3>诺威格定理</h3><div class="en">Norvig's Theorem</div>
+      <div class="desc">当一家公司市场占有率超过50%，就无法再使市占率翻番。巨头们必须不断开辟新战场。</div>
+      <div class="formula" style="border-color:rgba(244,63,94,.12)">市占率 > 50% → 增长天花板 → 必须找第二曲线</div>
+      <details>
+        <summary>📖 通俗理解 + 实际案例</summary>
+        <div class="dp">
+          <p><strong>大白话：</strong>当你的蛋糕已经占了一半以上的桌子，你不可能再把蛋糕翻倍了——桌子就这么大。Google搜索占了90%市场后怎么增长？答案：做Android（手机操作系统）、YouTube（视频）、Cloud（云计算）→ 去找新的桌子。</p>
+          <p style="margin-top:.4rem">苹果在iPhone占了高端手机大部分市场后 → 推出Apple Watch、AirPods、Apple Services → 都是在找新的增长点。</p>
+          <div class="case-box" style="border-color:var(--rose);background:rgba(244,63,94,.04)">💡 <strong>对你的启示：</strong>无论是公司还是个人，当核心业务接近天花板时，必须提前布局"第二曲线"。等到增长停滞再找新方向就来不及了。</div>
+        </div>
+      </details>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 3 · COMPANY GALAXY                                    -->
+<!-- ============================================================ -->
+<section class="sec" id="galaxy">
+  <div class="sh fi">
+    <div class="tag" style="background:rgba(6,182,212,.15);color:var(--cyan)">COMPANY GALAXY</div>
+    <h2>科技公司星图</h2>
+    <p>从百年帝国到新兴巨头，每家公司都曾站在浪尖之上。绿色=巅峰，青色=上升，黄色=转型，红色=衰落。</p>
+  </div>
+  <div class="galaxy fi">
+    <div class="center">技术<br>浪潮</div>
+    <div class="orbit" style="width:270px;height:270px;transform:translate(-50%,-50%)"></div>
+    <div class="orbit" style="width:420px;height:420px;transform:translate(-50%,-50%)"></div>
+    <div class="orbit" style="width:580px;height:580px;transform:translate(-50%,-50%)"></div>
+    <div class="planet" style="top:16%;left:50%;transform:translateX(-50%)" data-company="google" onclick="showCompany('google')"><span class="dot dot-peak"></span>Google</div>
+    <div class="planet" style="top:26%;left:20%" data-company="apple" onclick="showCompany('apple')"><span class="dot dot-peak"></span>Apple</div>
+    <div class="planet" style="top:26%;right:20%" data-company="facebook" onclick="showCompany('facebook')"><span class="dot dot-peak"></span>Facebook</div>
+    <div class="planet" style="top:50%;left:5%" data-company="microsoft" onclick="showCompany('microsoft')"><span class="dot dot-peak"></span>Microsoft</div>
+    <div class="planet" style="top:50%;right:5%" data-company="tesla" onclick="showCompany('tesla')"><span class="dot dot-rise"></span>Tesla</div>
+    <div class="planet" style="top:66%;left:14%" data-company="ibm" onclick="showCompany('ibm')"><span class="dot dot-mid"></span>IBM</div>
+    <div class="planet" style="top:66%;right:14%" data-company="intel" onclick="showCompany('intel')"><span class="dot dot-peak"></span>Intel</div>
+    <div class="planet" style="bottom:10%;left:50%;transform:translateX(-50%)" data-company="att" onclick="showCompany('att')"><span class="dot dot-fall"></span>AT&T</div>
+    <div class="planet" style="bottom:16%;left:16%" data-company="yahoo" onclick="showCompany('yahoo')"><span class="dot dot-fall"></span>Yahoo</div>
+    <div class="planet" style="bottom:16%;right:16%" data-company="nokia" onclick="showCompany('nokia')"><span class="dot dot-fall"></span>Nokia</div>
+    <div class="planet" style="top:8%;left:8%" data-company="oracle" onclick="showCompany('oracle')"><span class="dot dot-mid"></span>Oracle</div>
+    <div class="planet" style="top:8%;right:8%" data-company="sun" onclick="showCompany('sun')"><span class="dot dot-fall"></span>Sun</div>
+    <div class="planet" style="bottom:4%;left:33%" data-company="cisco" onclick="showCompany('cisco')"><span class="dot dot-fall"></span>Cisco</div>
+    <div class="planet" style="bottom:4%;right:33%" data-company="huawei" onclick="showCompany('huawei')"><span class="dot dot-rise"></span>华为</div>
+  </div>
+  <div class="legend">
+    <span><span class="dot dot-peak"></span>巅峰期</span>
+    <span><span class="dot dot-rise"></span>上升期</span>
+    <span><span class="dot dot-mid"></span>转型期</span>
+    <span><span class="dot dot-fall"></span>衰落/消亡</span>
+  </div>
+  <p style="text-align:center;font-size:.75rem;color:var(--txt3);margin-top:.8rem;opacity:.7">👆 点击任意公司查看详细信息与深度解析</p>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 4 · METHODOLOGY FRAMEWORK                             -->
+<!-- ============================================================ -->
+<section class="sec" id="framework">
+  <div class="sh fi">
+    <div class="tag" style="background:rgba(16,185,129,.15);color:var(--emerald)">METHODOLOGY</div>
+    <h2>方法论框架</h2>
+    <p>从硅谷成功经验中提炼的可直接应用于创业、投资、职业发展的操作框架</p>
+  </div>
+
+  <div class="fw-grid">
+
+    <div class="card fw fi">
+      <div class="hd"><div class="hd-icon" style="background:rgba(59,130,246,.12)">🏔️</div><div class="hd-title">硅谷成功三要素</div></div>
+      <div class="steps">
+        <div class="step"><div class="sn" style="background:rgba(59,130,246,.12);color:var(--blue)">1</div><div><div class="st">人才至上</div><div class="sd">重视人才与利益分配。大学教授直接把发明变成公司，获得财务自由。</div></div></div>
+        <div class="step"><div class="sn" style="background:rgba(59,130,246,.12);color:var(--blue)">2</div><div><div class="st">竞争淘汰</div><div class="sd">硅谷生活成本持续上升 → 只有最强的企业和人才留下 → 自然筛选机制。</div></div></div>
+        <div class="step"><div class="sn" style="background:rgba(59,130,246,.12);color:var(--blue)">3</div><div><div class="st">全球视野</div><div class="sd">技术驱动创新，产品面向全世界。小小硅谷拥有全球市值前五中的三家。</div></div></div>
+      </div>
+      <details>
+        <summary>💡 对个人的具体启示</summary>
+        <div class="ex" style="border-color:var(--blue)">① 你在职场的"利益分配"很重要——如果你的贡献和回报长期不匹配，要么谈判要么换平台；② 持续提升自己的"不可替代性"，因为竞争淘汰是永恒的；③ 不要只看本地市场，技术能力+全球视野=最高溢价。</div>
+      </details>
+    </div>
+
+    <div class="card fw fi">
+      <div class="hd"><div class="hd-icon" style="background:rgba(139,92,246,.12)">💰</div><div class="hd-title">风投评估项目的铁律</div></div>
+      <div class="steps">
+        <div class="step"><div class="sn" style="background:rgba(139,92,246,.12);color:var(--purple)">1</div><div><div class="st">市场是否十亿美元级？</div><div class="sd">风投第一问："你怎么保证把一块钱变成五十块？"市场太小直接毙掉。</div></div></div>
+        <div class="step"><div class="sn" style="background:rgba(139,92,246,.12);color:var(--purple)">2</div><div><div class="st">能否横向扩展？</div><div class="sd">软件做一份复制万份=好。每个客户需要定制=差。太阳能电池受限于产能=差。</div></div></div>
+        <div class="step"><div class="sn" style="background:rgba(139,92,246,.12);color:var(--purple)">3</div><div><div class="st">是革命还是进化？</div><div class="sd">DVD机（进化）→ 几百家竞争无利润。PayPal（革命）→ 全新支付模式 = 可投。</div></div></div>
+      </div>
+      <details>
+        <summary>💡 PayPal正面案例 vs 手机软件反面案例</summary>
+        <div class="ex" style="border-color:var(--purple)"><strong>PayPal为何获得投资：</strong>全球每年交易几十万亿美元→市场巨大；用户增长带来更多用户→网络效应→指数级增长；技术不稀奇但商业模式是革命性的。<br><br><strong>手机软件为何被毙：</strong>全球手机年销10亿台×预装费0.08美元×20%份额=年营收仅2000万美元→市场太小。15%利润率×20倍PE=6000万估值→远达不到风投要求的"十亿美元生意"。</div>
+      </details>
+    </div>
+
+    <div class="card fw fi">
+      <div class="hd"><div class="hd-icon" style="background:rgba(6,182,212,.12)">⚔️</div><div class="hd-title">企业兴衰三条铁律</div></div>
+      <div class="steps">
+        <div class="step"><div class="sn" style="background:rgba(6,182,212,.12);color:var(--cyan)">①</div><div><div class="st">贪婪致死</div><div class="sd">AT&T为短期股价三次拆分，从百年帝国沦为被收购的对象。</div></div></div>
+        <div class="step"><div class="sn" style="background:rgba(6,182,212,.12);color:var(--cyan)">②</div><div><div class="st">基因限制</div><div class="sd">公司DNA决定能做好什么。跨界往往失败——微软做搜索、Google做社交。</div></div></div>
+        <div class="step"><div class="sn" style="background:rgba(6,182,212,.12);color:var(--cyan)">③</div><div><div class="st">少犯错胜过多创新</div><div class="sd">甲骨文之所以赢，不在于做对了多少，而在于对手犯了更多错误。</div></div></div>
+      </div>
+      <details>
+        <summary>💡 "少犯错"策略的具体应用</summary>
+        <div class="ex" style="border-color:var(--cyan)"><strong>盖茨的保守哲学：</strong>不在技术不成熟时冒进，等别人试完了再"借鉴"做更好的版本。Windows借鉴Mac，IE借鉴Netscape。<br><br><strong>甲骨文的耐心：</strong>IBM、Sybase等竞争对手自己犯了各种错误（产品方向失误、管理混乱）→ 甲骨文只需要稳扎稳打就成了"剩者为王"。<br><br><strong>对你的启示：</strong>职场和创业中，大部分人不是赢在自己多厉害，而是赢在对手犯了更多错误。保持稳定、减少失误，长期来看回报最高。</div>
+      </details>
+    </div>
+
+    <div class="card fw fi">
+      <div class="hd"><div class="hd-icon" style="background:rgba(16,185,129,.12)">🌊</div><div class="hd-title">个人成长指南</div></div>
+      <div class="steps">
+        <div class="step"><div class="sn" style="background:rgba(16,185,129,.12);color:var(--emerald)">❶</div><div><div class="st">赶上浪潮</div><div class="sd">适应比预测重要。了解规律、保持学习、在大时代顺势而为。</div></div></div>
+        <div class="step"><div class="sn" style="background:rgba(16,185,129,.12);color:var(--emerald)">❷</div><div><div class="st">创新精神</div><div class="sd">技术快速迭代，这个时代从来不吝惜对创新的奖励。一项技术会很快过时。</div></div></div>
+        <div class="step"><div class="sn" style="background:rgba(16,185,129,.12);color:var(--emerald)">❸</div><div><div class="st">合作共赢</div><div class="sd">芯片→系统→软件→服务环环相扣。没有人能脱离产业链独立存在。</div></div></div>
+      </div>
+      <details>
+        <summary>💡 吴军给年轻人的具体建议</summary>
+        <div class="ex" style="border-color:var(--emerald)"><strong>关于浪潮：</strong>不必担心错过了互联网红利——智能革命才刚刚开始。在你30-40岁年富力强时，这波浪潮正好成熟。<br><br><strong>关于合作：</strong>安迪-比尔定律告诉我们，硬件和软件必须共同进步。个人也一样——独狼时代已经结束，学会与产业链上下游合作，你的价值才会最大化。<br><br><strong>关于创新：</strong>Google的20%时间制度——允许员工用20%工作时间做自己的项目。Gmail、Google News都诞生于此。哪怕你是打工人，也可以用业余时间做"自己的20%项目"。</div>
+      </details>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 5 · CORE INSIGHTS                                     -->
+<!-- ============================================================ -->
+<section class="sec" id="insights">
+  <div class="sh fi">
+    <div class="tag" style="background:rgba(245,158,11,.15);color:var(--amber)">CORE INSIGHTS</div>
+    <h2>九大核心洞察</h2>
+    <p>穿越150年信息产业史沉淀出的智慧结晶。点击展开查看具体案例。</p>
+  </div>
+  <div class="ins-grid">
+
+    <div class="card ins fi"><div class="bg-n">01</div><h4 style="color:var(--blue)">浪潮不等人</h4><p>站在浪尖即使不做任何事也可以顺势漂十年。错过浪潮再努力也追不上。</p>
+      <details><summary>展开案例</summary><div class="ex">乔布斯和盖茨都出生在1955年前后，30岁时恰好赶上个人电脑浪潮。佩奇和布林在斯坦福读博士时赶上互联网浪潮。<strong>时机+准备=成功。</strong></div></details>
+    </div>
+
+    <div class="card ins fi"><div class="bg-n">02</div><h4 style="color:var(--purple)">帝国必有终</h4><p>没有一家公司能永远站在巅峰。AT&T、IBM、诺基亚都曾不可撼动。</p>
+      <details><summary>展开案例</summary><div class="ex">AT&T统治电信128年→消亡。诺基亚统治手机10年→被iPhone颠覆。雅虎统治互联网门户10年→48亿贱卖。<strong>浪潮更替不以人的意志为转移。</strong></div></details>
+    </div>
+
+    <div class="card ins fi"><div class="bg-n">03</div><h4 style="color:var(--cyan)">贪婪是毒药</h4><p>AT&T高管短视与贪婪，让贝尔实验室成果化为乌有。华尔街追逐短利摧毁基业。</p>
+      <details><summary>展开案例</summary><div class="ex">贝尔实验室发明了比当时最快传真机还快10倍的技术→AT&T内部以"会降低固话收入"为由扼杀→日本公司后来垄断了全球传真机市场。<strong>保护现金牛=放弃未来。</strong></div></details>
+    </div>
+
+    <div class="card ins fi"><div class="bg-n">04</div><h4 style="color:var(--emerald)">专注者胜出</h4><p>产品线长的公司竞争不过专注的公司。做十个第二不如做一个第一。</p>
+      <details><summary>展开案例</summary><div class="ex">雅虎"花生酱宣言"——CEO公开承认资源摊得太薄。搜索第二、IM第三、求职第二→每个都做没一个赢。反观Google只做搜索+广告做到极致→成就万亿帝国。</div></details>
+    </div>
+
+    <div class="card ins fi"><div class="bg-n">05</div><h4 style="color:var(--amber)">人才定乾坤</h4><p>风险投资的本质是投人。一流的人能把二流项目做成一流。</p>
+      <details><summary>展开案例</summary><div class="ex">风投教父威廉·德雷帕的铁律：风险投资就是投人。NetScreen的天使投资人请相面先生看了三位创始人的面相后决定投50万→最终获百倍回报。<strong>早期项目看不清前景，只能评估人。</strong></div></details>
+    </div>
+
+    <div class="card ins fi"><div class="bg-n">06</div><h4 style="color:var(--rose)">适应胜预测</h4><p>预测未来做不到，但了解规律、培养方法、适应变化——这比预测更重要。</p>
+      <details><summary>展开案例</summary><div class="ex">Google最初做企业搜索→失败→转做免费搜索+广告。Facebook最初走高端路线→太慢→转草根+开放平台。<strong>方向会变，适应能力才是核心竞争力。</strong></div></details>
+    </div>
+
+    <div class="card ins fi"><div class="bg-n">07</div><h4 style="color:var(--orange)">科技无国界</h4><p>大学+工业界+投资界三位一体的"硅谷模式"创造了人类历史上最密集的创新。</p>
+      <details><summary>展开案例</summary><div class="ex">斯坦福1950年代创办工业园→硅谷前身。教授肖克利带来晶体管→"八叛徒"创办仙童→衍生英特尔等几十家公司。1972年KPCB在沙丘路成立→风投产业爆发。<strong>三角联动=创新引擎。</strong></div></details>
+    </div>
+
+    <div class="card ins fi"><div class="bg-n">08</div><h4 style="color:var(--blue)">商业模式为王</h4><p>技术优秀≠商业成功。发明搜索的不是Google，但"免费搜索+广告"的模式让它最赚钱。</p>
+      <details><summary>展开案例</summary><div class="ex">PayPal技术上没有独到之处，但"中间人担保支付"的商业模式是革命性的→面对十万亿美元的交易市场→2009年已达700亿交易额且20%+增速。<strong>技术壁垒会被摩尔定律碾碎，商业模式壁垒才持久。</strong></div></details>
+    </div>
+
+    <div class="card ins fi"><div class="bg-n">09</div><h4 style="color:var(--purple)">格局决定终局</h4><p>佩奇在Google还没盈利时就坚信公司值万亿——后来他做到了。</p>
+      <details><summary>展开案例</summary><div class="ex">Yahoo出价30亿收购Google→佩奇拒绝。当时Google还没找到盈利模式，所有人都觉得佩奇疯了。多年后Google市值超万亿美元。<strong>创始人看到的是未来5年的世界，普通人只看到眼前的数字。</strong></div></details>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 6 · ECOSYSTEM                                         -->
+<!-- ============================================================ -->
+<section class="sec" id="ecosystem">
+  <div class="sh fi">
+    <div class="tag" style="background:rgba(244,63,94,.15);color:var(--rose)">ECOSYSTEM</div>
+    <h2>信息产业生态闭环</h2>
+    <p>大学、产业界、风险投资、投行、政府——五股力量共同驱动信息产业螺旋式上升</p>
+  </div>
+
+  <div class="eco fi">
+    <div class="eco-row">
+      <div class="eco-node" style="background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.25);color:var(--blue)">🎓 大学<br><span style="font-size:.7rem;color:var(--txt2)">斯坦福·MIT·清华</span></div>
+      <div class="eco-arrow">→ 人才+技术 →</div>
+      <div class="eco-node" style="background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.25);color:var(--emerald)">🏢 科技公司<br><span style="font-size:.7rem;color:var(--txt2)">Google·Apple·华为</span></div>
+      <div class="eco-arrow">→ IPO →</div>
+      <div class="eco-node" style="background:rgba(244,63,94,.08);border-color:rgba(244,63,94,.25);color:var(--rose)">🏦 投资银行<br><span style="font-size:.7rem;color:var(--txt2)">高盛·摩根士丹利</span></div>
+    </div>
+    <div class="eco-row">
+      <div class="eco-node" style="background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.25);color:var(--purple)">💵 风险投资<br><span style="font-size:.7rem;color:var(--txt2)">KPCB·红杉·天使</span></div>
+      <div class="eco-arrow">↔ 资金+战略 ↔</div>
+      <div class="eco-node" style="background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.25);color:var(--emerald)">🏢 科技公司<br><span style="font-size:.7rem;color:var(--txt2)">创业→成长→上市</span></div>
+      <div class="eco-arrow">↔ 监管 ↔</div>
+      <div class="eco-node" style="background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.25);color:var(--amber)">⚖️ 政府/反垄断<br><span style="font-size:.7rem;color:var(--txt2)">司法部·FCC</span></div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-top:1.5rem" class="fi">
+    <div class="card">
+      <div style="font-size:.88rem;font-weight:700;margin-bottom:.4rem">🎓→🏢 大学造血</div>
+      <div style="font-size:.82rem;color:var(--txt2)">斯坦福1950年代创办工业园→硅谷前身。教授和学生把发明直接变成公司。"八叛徒"从斯坦福系出发，创造了整个半导体产业。</div>
+    </div>
+    <div class="card">
+      <div style="font-size:.88rem;font-weight:700;margin-bottom:.4rem">💵→🏢 风投催熟</div>
+      <div style="font-size:.82rem;color:var(--txt2)">天使轮投10万→A轮投500万→B轮投1500万→IPO。越早投回报越高：天使124倍→A轮24倍→B轮4倍。但风险也越高——红杉投Google那轮基金十几亿美元，只有Google一家成功。</div>
+    </div>
+    <div class="card">
+      <div style="font-size:.88rem;font-weight:700;margin-bottom:.4rem">🏦→🏢 投行双刃剑</div>
+      <div style="font-size:.82rem;color:var(--txt2)">投行是"吹鼓手"——帮公司上市、制造繁荣。但也是"腐蚀者"——为了短期利润逼AT&T拆分、逼雅虎卖身。成也萧何败也萧何。</div>
+    </div>
+    <div class="card">
+      <div style="font-size:.88rem;font-weight:700;margin-bottom:.4rem">⚖️→🏢 政府修剪</div>
+      <div style="font-size:.82rem;color:var(--txt2)">反垄断法是"园丁的剪刀"——AT&T被迫开放晶体管专利→催生半导体产业。每次巨头被限制=小公司的创业机会。没有反垄断就没有硅谷。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 7 · AI WAVE SURVIVAL GUIDE                            -->
+<!-- ============================================================ -->
+<section class="sec" id="aiwave">
+  <div class="sh fi">
+    <div class="tag" style="background:rgba(139,92,246,.15);color:var(--purple)">AI WAVE · 2026</div>
+    <h2>AI浪潮生存指南</h2>
+    <p>用《浪潮之巅》的规律框架，解读第五次技术浪潮——普通人如何站稳脚跟</p>
+  </div>
+
+  <!-- AI Hero Banner -->
+  <div class="ai-hero fi">
+    <div class="ai-badge"><span class="pulse"></span>我们正身处其中</div>
+    <h3>AI浪潮，走到哪一步了？</h3>
+    <p>书中每一次技术浪潮都遵循同样的节奏：技术突破 → 商业化探索 → 资本涌入 → 泡沫膨胀 → 泡沫破裂 → 真正赢家浮出水面。2026年的AI，正处于"资本疯狂涌入、商业化刚刚起步"的阶段——类比互联网时代，大约是1997-1998年。</p>
+  </div>
+
+  <!-- Wave Position Chart -->
+  <div style="background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem" class="fi">
+    <div style="font-size:.9rem;font-weight:700;text-align:center;margin-bottom:.3rem">📊 浪潮周期定位：AI vs 历史浪潮对照</div>
+    <div style="font-size:.75rem;text-align:center;color:var(--txt3);margin-bottom:1rem">每次浪潮都经历 "技术萌芽→资本狂热→泡沫破裂→真正赢家" 的完整周期</div>
+    <div class="wave-position">
+      <div class="wave-bar-group">
+        <div class="wave-bar" style="height:30px;background:linear-gradient(180deg,rgba(59,130,246,.4),rgba(59,130,246,.15))"></div>
+        <div class="wave-bar-label">技术<br>萌芽</div>
+        <div class="wave-bar-year">~2018</div>
+      </div>
+      <div class="wave-bar-group">
+        <div class="wave-bar" style="height:65px;background:linear-gradient(180deg,rgba(59,130,246,.5),rgba(59,130,246,.2))"></div>
+        <div class="wave-bar-label">概念<br>验证</div>
+        <div class="wave-bar-year">2020-22</div>
+      </div>
+      <div class="wave-bar-group" style="position:relative">
+        <div class="wave-marker">⬇ 我们在这里</div>
+        <div class="wave-bar" style="height:110px;background:linear-gradient(180deg,rgba(139,92,246,.6),rgba(139,92,246,.2));border:2px solid rgba(139,92,246,.4)"></div>
+        <div class="wave-bar-label">资本<br>涌入</div>
+        <div class="wave-bar-year">2023-26</div>
+      </div>
+      <div class="wave-bar-group">
+        <div class="wave-bar" style="height:160px;background:linear-gradient(180deg,rgba(244,63,94,.3),rgba(245,158,11,.15));opacity:.4;border:1px dashed rgba(255,255,255,.1)"></div>
+        <div class="wave-bar-label">泡沫<br>膨胀？</div>
+        <div class="wave-bar-year">202X</div>
+      </div>
+      <div class="wave-bar-group">
+        <div class="wave-bar" style="height:70px;background:linear-gradient(180deg,rgba(244,63,94,.25),rgba(244,63,94,.1));opacity:.3;border:1px dashed rgba(255,255,255,.1)"></div>
+        <div class="wave-bar-label">泡沫<br>破裂？</div>
+        <div class="wave-bar-year">202X</div>
+      </div>
+      <div class="wave-bar-group">
+        <div class="wave-bar" style="height:140px;background:linear-gradient(180deg,rgba(16,185,129,.3),rgba(16,185,129,.1));opacity:.3;border:1px dashed rgba(255,255,255,.1)"></div>
+        <div class="wave-bar-label">赢家<br>浮现</div>
+        <div class="wave-bar-year">203X</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.6rem;margin-top:1rem">
+      <div style="font-size:.75rem;color:var(--txt3);padding:.5rem .7rem;border-radius:8px;background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.1)"><strong style="color:var(--blue)">类比PC时代：</strong>相当于1985年左右，IBM PC刚普及，Windows还没出现</div>
+      <div style="font-size:.75rem;color:var(--txt3);padding:.5rem .7rem;border-radius:8px;background:rgba(139,92,246,.05);border:1px solid rgba(139,92,246,.1)"><strong style="color:var(--purple)">类比互联网：</strong>相当于1997年，Amazon刚上市，Google还在车库里</div>
+      <div style="font-size:.75rem;color:var(--txt3);padding:.5rem .7rem;border-radius:8px;background:rgba(6,182,212,.05);border:1px solid rgba(6,182,212,.1)"><strong style="color:var(--cyan)">类比移动互联：</strong>相当于2009年，iPhone刚出来两年，微信还没诞生</div>
+    </div>
+  </div>
+
+  <!-- Book Frameworks Applied to AI -->
+  <div style="background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem" class="fi">
+    <div style="font-size:.9rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.4rem">📖 书中定律在AI时代的映射</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem">
+      <div style="padding:.8rem 1rem;border-radius:12px;border-left:3px solid var(--blue);background:rgba(59,130,246,.04)">
+        <div style="font-size:.82rem;font-weight:700;color:var(--blue);margin-bottom:.3rem">摩尔定律 → AI算力定律</div>
+        <div style="font-size:.8rem;color:var(--txt2);line-height:1.7">GPU算力每18个月翻倍，AI模型参数量从十亿飙到万亿。<strong>通俗来说：</strong>就像书中英特尔芯片越来越快一样，AI也在以指数级速度变强。今天觉得"AI做不了"的事，18个月后可能轻松搞定。</div>
+      </div>
+      <div style="padding:.8rem 1rem;border-radius:12px;border-left:3px solid var(--purple);background:rgba(139,92,246,.04)">
+        <div style="font-size:.82rem;font-weight:700;color:var(--purple);margin-bottom:.3rem">安迪-比尔定律 → 英伟达-OpenAI定律</div>
+        <div style="font-size:.8rem;color:var(--txt2);line-height:1.7">英伟达给多少算力，大模型就吃掉多少。GPU越强→模型越大→需要更强GPU。<strong>通俗来说：</strong>英伟达是这轮浪潮中的Intel，但书中也警告——Intel最终被ARM弯道超车，英伟达也可能面临新架构的挑战。</div>
+      </div>
+      <div style="padding:.8rem 1rem;border-radius:12px;border-left:3px solid var(--cyan);background:rgba(6,182,212,.04)">
+        <div style="font-size:.82rem;font-weight:700;color:var(--cyan);margin-bottom:.3rem">70-20-10法则 → 大模型终局</div>
+        <div style="font-size:.8rem;color:var(--txt2);line-height:1.7">书中说成熟市场最终只有3家存活。现在几百家AI公司在竞争，但终局可能只剩2-3家头部大模型。<strong>通俗来说：</strong>就像搜索引擎最终只剩Google一样，大模型也会"赢者通吃"，大部分创业公司会消失。</div>
+      </div>
+      <div style="padding:.8rem 1rem;border-radius:12px;border-left:3px solid var(--emerald);background:rgba(16,185,129,.04)">
+        <div style="font-size:.82rem;font-weight:700;color:var(--emerald);margin-bottom:.3rem">公司DNA理论 → AI时代的基因错配</div>
+        <div style="font-size:.8rem;color:var(--txt2);line-height:1.7">Google做AI有天然DNA优势，苹果会走设备端AI路线，微软靠投资OpenAI弥补基因。<strong>通俗来说：</strong>不是所有公司都能做好AI，就像诺基亚做不好智能手机一样——基因不对，努力白费。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 Survival Rules -->
+  <div style="font-size:.9rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.4rem" class="fi">🛡️ 普通人的五条AI生存法则</div>
+  <div class="surv-grid fi">
+
+    <div class="surv-card">
+      <div class="surv-num">01</div>
+      <div class="surv-icon" style="background:rgba(245,158,11,.12)">⛏️</div>
+      <div class="surv-title">卖水人思维：不做AI，做AI需要的人</div>
+      <div class="surv-book" style="border-color:var(--amber)">📖 书中原理：淘金热中，卖铲子的Levi's和卖水的人比淘金者赚得更稳。Cisco在互联网热潮中卖路由器，短期内赚得盆满钵满。</div>
+      <div class="surv-action"><strong>具体行动：</strong>你不需要会训练大模型，但要成为"会用AI的专业人士"。一个会用AI辅助诊断的医生、一个会用AI提效的律师、一个会用AI工具的设计师——这些人的价值会指数级增长。核心公式：<strong>你的专业能力 × AI工具 = 超级个体</strong>。</div>
+      <details>
+        <summary>📌 展开：具体怎么做？</summary>
+        <div class="surv-expand">① 先花2周时间把主流AI工具（ChatGPT、Claude、Midjourney等）全部用一遍，找到和你工作最相关的3个工具；② 每天用AI完成至少1项实际工作任务——不是尝鲜，是真正地融入工作流；③ 在你的行业中，找到"AI还做不好但人做得好"的环节，这就是你的核心价值区。</div>
+      </details>
+    </div>
+
+    <div class="surv-card">
+      <div class="surv-num">02</div>
+      <div class="surv-icon" style="background:rgba(244,63,94,.12)">🏄</div>
+      <div class="surv-title">识别范式转换：当游戏规则改变时</div>
+      <div class="surv-book" style="border-color:var(--rose)">📖 书中原理：诺基亚不是不努力，而是游戏从"硬件制造"变成了"软件生态"。AT&T不是不赚钱，而是通信从"电话"变成了"互联网"。范式转换时，旧的核心优势会变成累赘。</div>
+      <div class="surv-action"><strong>具体行动：</strong>问自己一个残酷的问题——<strong>"我的工作核心是不是信息搬运？"</strong>如果你的主要工作是翻译、整理资料、写初级报告、做基础数据分析，这些AI正在快速取代。但如果你的核心是判断力、创意、人际关系、实操经验——恭喜你，这些能力因为AI的存在反而更值钱。</div>
+      <details>
+        <summary>📌 展开：哪些能力会升值？</summary>
+        <div class="surv-expand"><strong>升值的能力：</strong>审美判断力（AI能生成100个方案，谁来选最好的？）、跨领域整合能力（AI擅长单一领域，人擅长连接不同领域）、情感沟通能力（客户信任人不信任机器）、提问能力（会问问题的人比会找答案的人更稀缺）。<br><br><strong>贬值的能力：</strong>信息搜集整理、模板化写作、初级翻译、基础编程、标准化数据分析——这些AI已经做得比大多数人好了。</div>
+      </details>
+    </div>
+
+    <div class="surv-card">
+      <div class="surv-num">03</div>
+      <div class="surv-icon" style="background:rgba(59,130,246,.12)">⏰</div>
+      <div class="surv-title">摩尔定律心态：技术不会等你</div>
+      <div class="surv-book" style="border-color:var(--blue)">📖 书中原理：摩尔定律说芯片性能18个月翻倍。每一波浪潮中最先被淘汰的，不是最笨的，而是"再等等看"的人。雅虎等Google成熟了再做搜索——结果永远追不上了。</div>
+      <div class="surv-action"><strong>具体行动：</strong>"等AI稳定了再学"是最危险的想法。AI的进步速度比你想象的快得多——今天的GPT-4o在一年前还不存在。<strong>现在立刻开始用，边用边学，允许自己犯错。</strong>你不需要理解AI的原理，就像你不需要理解发动机原理也能开车一样。</div>
+      <details>
+        <summary>📌 展开：最小行动清单</summary>
+        <div class="surv-expand">🔹 <strong>本周：</strong>注册一个AI工具账号，把你下一个工作任务交给它做一遍，对比效果<br>🔹 <strong>本月：</strong>找到3个你工作中可以用AI提效的场景，固化成习惯<br>🔹 <strong>本季度：</strong>在你的专业领域形成一套"人+AI协作"的工作流，效率至少提升50%<br>🔹 <strong>今年：</strong>成为你所在团队/公司的"AI使用专家"，这个标签本身就是一种竞争力</div>
+      </details>
+    </div>
+
+    <div class="surv-card">
+      <div class="surv-num">04</div>
+      <div class="surv-icon" style="background:rgba(16,185,129,.12)">🧬</div>
+      <div class="surv-title">找到你的DNA：专业×AI=护城河</div>
+      <div class="surv-book" style="border-color:var(--emerald)">📖 书中原理：公司DNA决定能做好什么——微软做搜索失败，Google做社交失败，苹果做云服务平庸。不是不努力，是基因不对。人也一样，你的知识背景和行业经验就是你独一无二的DNA。</div>
+      <div class="surv-action"><strong>具体行动：</strong>不要焦虑地去"转行做AI"，而是思考——<strong>"我的专业经验+AI能产生什么化学反应？"</strong>一个有10年教育经验的老师+AI，能做出比任何AI公司都好的教育产品；一个资深医生+AI，比纯AI诊断系统更可靠更被信任。你的行业know-how是AI永远学不会的。</div>
+      <details>
+        <summary>📌 展开：如何找到自己的AI结合点？</summary>
+        <div class="surv-expand">问自己三个问题：<br>❶ <strong>"我的工作中，哪些环节最耗时间但附加值低？"</strong>——这些交给AI<br>❷ <strong>"我的工作中，哪些环节需要经验、直觉、人情？"</strong>——这些是你的护城河<br>❸ <strong>"如果AI帮我处理了80%的杂活，剩下的20%时间我能创造什么新价值？"</strong>——这就是你未来的方向<br><br>例子：一个地产经纪人，让AI生成房源描述、市场分析报告、客户邮件，自己专注于带看、谈判、维护客户关系——效率翻3倍，收入翻2倍。</div>
+      </details>
+    </div>
+
+    <div class="surv-card">
+      <div class="surv-num">05</div>
+      <div class="surv-icon" style="background:rgba(139,92,246,.12)">🔭</div>
+      <div class="surv-title">长期主义：不要只看眼前的钱</div>
+      <div class="surv-book" style="border-color:var(--purple)">📖 书中原理：AT&T手握贝尔实验室却只盯着季度财报，结果百年帝国崩塌。雅虎为了眼前广告收入放弃搜索技术投入，最终被淘汰。佩奇在Google没盈利时就拒绝30亿收购——后来Google值万亿。</div>
+      <div class="surv-action"><strong>具体行动：</strong>AI时代最危险的心态是<strong>"我现在的工作还行，不需要变"</strong>。每周拿出3-5小时投资自己——学新工具、了解行业动态、建立新技能。这些时间短期看是"浪费"，长期看是你唯一的保险。记住书中的规律：每次浪潮淘汰的都不是最弱的人，而是最固执的人。</div>
+      <details>
+        <summary>📌 展开：时间投资的具体分配</summary>
+        <div class="surv-expand"><strong>推荐的"721时间法则"：</strong><br>🔸 <strong>70%时间</strong>做好当前工作（保住饭碗）<br>🔸 <strong>20%时间</strong>用AI优化当前工作流（提高效率和质量）<br>🔸 <strong>10%时间</strong>探索AI带来的新机会（发现新方向）<br><br>不要一夜之间全部推翻重来，而是像书中微软在纳德拉领导下的转型一样——在保持核心业务的同时，逐步向新方向倾斜。</div>
+      </details>
+    </div>
+
+  </div>
+
+  <!-- DO & DON'T -->
+  <div class="do-dont fi">
+    <div class="do-col">
+      <h4>✅ DO · 这样做</h4>
+      <div class="do-item">把AI当作"超级实习生"——它能力很强但需要你指导方向和把关质量</div>
+      <div class="do-item">在自己的专业领域深耕，用AI放大你的专业优势而非替代它</div>
+      <div class="do-item">现在就开始用，从最简单的场景入手，边用边学</div>
+      <div class="do-item">关注AI在你所在行业的具体落地案例，而不是泛泛的"AI要取代人"</div>
+      <div class="do-item">建立"人+AI"的协作思维：你负责判断、决策、创意；AI负责执行、搜索、生成</div>
+      <div class="do-item">像书中的佩奇一样，看5年后的世界而不只是眼前</div>
+    </div>
+    <div class="dont-col">
+      <h4>❌ DON'T · 不要这样做</h4>
+      <div class="dont-item">不要焦虑地转行去"做AI"——除非你本来就是技术背景</div>
+      <div class="dont-item">不要说"等成熟了再学"——书中每个失败者都是这么说的</div>
+      <div class="dont-item">不要完全依赖AI的输出——AI会自信地给出错误答案，你的判断力才是最终防线</div>
+      <div class="dont-item">不要忽视AI的局限——它不懂你的客户、你的行业潜规则、你的人际关系</div>
+      <div class="dont-item">不要只学工具不练思维——工具会换代，但"如何提出好问题"的能力永不过时</div>
+      <div class="dont-item">不要像AT&T一样只盯着短期利益，忽视长期能力建设</div>
+    </div>
+  </div>
+
+  <!-- Final Insight Box -->
+  <div style="margin-top:1.5rem;padding:1.5rem;border-radius:16px;background:linear-gradient(135deg,rgba(139,92,246,.06),rgba(59,130,246,.06));border:1px solid rgba(139,92,246,.12);text-align:center" class="fi">
+    <div style="font-size:1.5rem;margin-bottom:.6rem">🌊</div>
+    <div style="font-size:.95rem;font-weight:700;margin-bottom:.5rem">一句话总结</div>
+    <div style="font-size:.88rem;color:var(--txt2);line-height:1.8;max-width:580px;margin:0 auto">《浪潮之巅》告诉我们：每一次浪潮都会淘汰一批人，也会成就一批人。区别不在于谁更聪明，而在于<strong style="color:var(--purple)">谁更早行动、谁更懂得借力、谁能在变化中找到自己的位置</strong>。AI浪潮已经来了，你不需要成为弄潮儿，但至少要学会游泳。</div>
+  </div>
+
+</section>
+
+<!-- FINAL QUOTE -->
+<section class="quote">
+  <div class="qm">"</div>
+  <div class="qt">我们所能做的，就是了解过去和现在，熟悉科技产业的发展规律，培养正确的做事方法，适应未来的变化和挑战。</div>
+  <div class="qa">—— 吴军《浪潮之巅》</div>
+</section>
+
+<div class="foot">基于吴军《浪潮之巅》第四版 · 完整知识图谱 · 深度解析版 · 含AI浪潮生存指南</div>
+
+<!-- Company Detail Modal -->
+<div class="modal-overlay" id="companyModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+const companyData={
+  google:{
+    name:'Google',emoji:'🔍',color:'#4285F4',
+    sub:'1998年创立 · 搜索引擎 → 全球科技帝国',
+    status:'巅峰期',statusColor:'var(--emerald)',
+    stats:[{val:'$1.7万亿',lbl:'市值（2023）'},{val:'97%',lbl:'搜索市场份额'},{val:'18万+',lbl:'员工数'}],
+    story:'<strong>崛起之路：</strong>拉里·佩奇和谢尔盖·布林在斯坦福的博士论文变成了改变世界的公司。Google的核心竞争力是PageRank算法——把网页之间的链接关系看作"投票"，被引用越多的网页越重要。这个思路看似简单，却彻底打败了雅虎的人工分类模式。<br><br><strong>商业模式革命：</strong>Google真正赚钱靠的是AdWords竞价广告。搜索本身免费，但每次搜索背后都有商业意图——有人搜"装修公司"，装修公司就愿意花钱排在前面。这种"精准匹配需求"的广告模式，让Google的广告效率是传统广告的50倍以上。<br><br><strong>大白话：</strong>Google就像一个超级图书管理员，不仅帮你找书，还能在你找书的时候，悄悄地把最相关的广告递到你手里——而且你还不觉得烦。',
+    lesson:'Google教会我们：<strong>技术优势+商业模式创新=不可战胜</strong>。很多公司只有技术没有商业化能力（如早期的Unix），或者只会赚钱但技术不行（如雅虎后期）。Google两者兼备，所以成为最终赢家。',
+    tags:['搜索引擎','AdWords','PageRank','安卓','云计算','AI'],
+  },
+  apple:{
+    name:'Apple',emoji:'🍎',color:'#A2AAAD',
+    sub:'1976年创立 · 车库创业 → 全球最高市值公司',
+    status:'巅峰期',statusColor:'var(--emerald)',
+    stats:[{val:'$2.9万亿',lbl:'市值（2023）'},{val:'2次',lbl:'乔布斯被赶出又回归'},{val:'iPhone',lbl:'重新定义手机'}],
+    story:'<strong>跌宕起伏的传奇：</strong>苹果的故事是硅谷最戏剧化的——创始人乔布斯被自己请来的CEO赶出公司，流浪12年后回归，把濒死的苹果变成全球最值钱的公司。<br><br><strong>乔布斯的秘密：</strong>书中指出，乔布斯不是技术天才，而是"品味天才"。他坚持硬件+软件+内容的封闭生态，每个产品都追求极致用户体验。iPod不是第一个MP3播放器，iPhone不是第一个智能手机，iPad不是第一个平板——但它们都是最好用的那个。<br><br><strong>大白话：</strong>苹果告诉我们，不需要做第一个吃螃蟹的人，但一定要做把螃蟹做成最好吃的人。关键不是"有没有"，而是"好不好"。',
+    lesson:'苹果的核心启示：<strong>封闭生态系统如果做到极致，比开放系统更有粘性</strong>。一旦你用了iPhone，就会买Mac、iPad、AirPods、Apple Watch……每多一个苹果设备，你离开的成本就高一分。这就是"生态锁定"。',
+    tags:['iPhone','Mac','乔布斯','封闭生态','用户体验','设计'],
+  },
+  facebook:{
+    name:'Facebook (Meta)',emoji:'👥',color:'#1877F2',
+    sub:'2004年创立 · 社交网络 → 元宇宙豪赌',
+    status:'巅峰期',statusColor:'var(--emerald)',
+    stats:[{val:'30亿+',lbl:'月活用户'},{val:'$170亿',lbl:'收购WhatsApp'},{val:'$1000亿+',lbl:'元宇宙投入'}],
+    story:'<strong>社交帝国：</strong>扎克伯格在哈佛宿舍创建了Facebook，最初只是一个大学生的社交花名册。但它踩中了人类最基本的需求——社交和窥探欲。书中分析，Facebook的护城河是"网络效应"：你的朋友都在上面，你就不可能离开。<br><br><strong>收购策略：</strong>Facebook最聪明的地方是"买不到就抄，抄不过就买"。Instagram和WhatsApp的收购让它封杀了几乎所有社交领域的竞争对手。<br><br><strong>大白话：</strong>Facebook就像一个超级大的同学录+朋友圈，你可以不喜欢它，但你的朋友都在上面，所以你离不开。这就是"网络效应"的可怕之处。',
+    lesson:'Facebook教会我们：<strong>在互联网时代，用户关系网比产品本身更值钱</strong>。产品可以被复制，但30亿人的社交关系网不可能被复制。这也是为什么社交产品一旦做大就几乎不可能被颠覆。',
+    tags:['社交网络','网络效应','Instagram','WhatsApp','元宇宙','广告'],
+  },
+  microsoft:{
+    name:'Microsoft',emoji:'🪟',color:'#00A4EF',
+    sub:'1975年创立 · DOS → Windows → 云计算转型',
+    status:'巅峰期',statusColor:'var(--emerald)',
+    stats:[{val:'$2.8万亿',lbl:'市值（2023）'},{val:'90%+',lbl:'PC操作系统份额'},{val:'3次',lbl:'成功转型次数'}],
+    story:'<strong>安迪-比尔定律的最大受益者：</strong>书中提出的"安迪-比尔定律"说：安迪（Intel）给什么，比尔（微软）就拿走什么。意思是硬件的性能提升总会被软件的臃肿消耗掉。微软正是靠不断升级Windows和Office，让用户不得不更新硬件，形成了和Intel的"Wintel联盟"。<br><br><strong>错过互联网又赶上云计算：</strong>微软曾严重低估互联网，差点被Google和苹果甩开。但在纳德拉的带领下，微软全力转向云计算（Azure），又通过投资OpenAI搭上了AI的快车。<br><br><strong>大白话：</strong>微软就像一个学霸，考砸了几次但底子好，换了个好老师（纳德拉）之后又考回了年级第一。关键是它有Windows和Office这两个"铁饭碗"，给了它犯错的资本。',
+    lesson:'微软的启示：<strong>拥有"现金牛"业务的公司能承受更多试错</strong>。Windows和Office每年带来稳定现金流，让微软可以在搜索（Bing）上赔钱、在手机（Windows Phone）上赔钱，但最终在云计算上赌对了。',
+    tags:['Windows','Office','Azure','AI','Wintel联盟','纳德拉'],
+  },
+  tesla:{
+    name:'Tesla',emoji:'⚡',color:'#CC0000',
+    sub:'2003年创立 · 电动汽车 → 能源+AI革命',
+    status:'上升期',statusColor:'var(--cyan)',
+    stats:[{val:'$7800亿',lbl:'市值（2023）'},{val:'180万+',lbl:'年交付量'},{val:'第1',lbl:'全球电动车品牌'}],
+    story:'<strong>硅谷思维造汽车：</strong>特斯拉不是一个汽车公司，而是一个用硅谷方式做汽车的科技公司。传统车企的思路是"造好一辆车卖出去"，特斯拉的思路是"卖出一辆能不断升级的电脑"。通过OTA（空中升级），你买的车会越用越好。<br><br><strong>马斯克的第一性原理：</strong>电池贵？马斯克不问"怎么买到便宜电池"，而是问"电池的原材料值多少钱？"——发现原材料其实很便宜，贵的是中间环节。于是自建电池工厂，成本直降40%。<br><br><strong>大白话：</strong>特斯拉告诉我们，颠覆一个行业不一定要更懂这个行业，而是用完全不同的思维方式来重新做这件事。就像用互联网思维做出租车，就有了Uber。',
+    lesson:'特斯拉的启示：<strong>跨界颠覆者最可怕，因为他们不受行业惯性思维的束缚</strong>。当所有车企都在优化发动机时，特斯拉直接跳过发动机做电机。当所有车企都在4S店卖车时，特斯拉直接网上下单。',
+    tags:['电动汽车','自动驾驶','第一性原理','OTA升级','马斯克','能源'],
+  },
+  ibm:{
+    name:'IBM',emoji:'💼',color:'#054ADA',
+    sub:'1911年创立 · 百年蓝色巨人的转型之路',
+    status:'转型期',statusColor:'var(--amber)',
+    stats:[{val:'112年',lbl:'公司历史'},{val:'5次',lbl:'重大转型'},{val:'$1240亿',lbl:'市值（2023）'}],
+    story:'<strong>从打孔机到人工智能：</strong>IBM是科技行业的活化石，从1911年做打孔制表机起步，经历了大型机、PC、服务、云计算、AI等多次转型。书中把IBM比作"大象"——体型庞大但不够灵活。<br><br><strong>关键教训——PC的失误：</strong>IBM发明了PC，却犯了致命错误：把操作系统外包给微软，把芯片外包给Intel。结果微软和Intel成了PC时代的真正赢家，IBM反而成了"打工仔"。这个案例告诉我们：在产业链中，<strong>掌握核心环节比组装成品更重要</strong>。<br><br><strong>大白话：</strong>IBM就像一个老牌大公司，什么都做过，什么都懂，但在每一波新浪潮中都慢了半拍。不是因为它不聪明，而是因为它太大了，掉头太慢。',
+    lesson:'IBM的启示：<strong>"公司DNA"决定了它能做好什么</strong>。IBM的DNA是服务大企业客户，所以它做to-B（企业服务）永远比to-C（消费者产品）好。找到自己的DNA并坚守，比盲目追热点更重要。',
+    tags:['大型机','PC','Watson','企业服务','转型','公司DNA'],
+  },
+  intel:{
+    name:'Intel',emoji:'🔬',color:'#0071C5',
+    sub:'1968年创立 · 摩尔定律的缔造者',
+    status:'巅峰期',statusColor:'var(--emerald)',
+    stats:[{val:'58年',lbl:'摩尔定律延续'},{val:'80%+',lbl:'PC芯片份额巅峰'},{val:'$2120亿',lbl:'市值（2023）'}],
+    story:'<strong>摩尔定律的创造者和受益者：</strong>英特尔联合创始人戈登·摩尔提出了著名的摩尔定律——芯片性能每18个月翻一倍。这不仅是一个技术预言，更成了整个半导体行业的"自我实现的预言"。因为所有公司都按这个节奏投资研发，结果就真的做到了。<br><br><strong>Wintel联盟的威力：</strong>Intel和微软形成了"Wintel联盟"——Intel提供更快的芯片，微软提供更吃性能的软件，用户不得不持续升级。这个循环让两家公司统治了PC时代长达20年。<br><br><strong>大白话：</strong>Intel就像跑步比赛中那个永远在提速的领跑者——它跑得越快，所有人都得跟着跑，而大多数人跟不上就被淘汰了。',
+    lesson:'Intel的启示：<strong>制定行业标准的公司永远是最大赢家</strong>。Intel把摩尔定律变成了"行业节拍器"，所有人都跟着它的节奏走。但也要警惕——当ARM架构的手机芯片崛起时，Intel因为坚守x86架构而错过了移动互联网。',
+    tags:['摩尔定律','Wintel联盟','半导体','x86','芯片','制程'],
+  },
+  att:{
+    name:'AT&T',emoji:'📞',color:'#009FDB',
+    sub:'1877年创立 · 百年电信帝国的陨落',
+    status:'衰落期',statusColor:'var(--rose)',
+    stats:[{val:'146年',lbl:'存续时间'},{val:'3次',lbl:'被拆分/收购'},{val:'贝尔实验室',lbl:'诞生了8位诺奖'}],
+    story:'<strong>从垄断帝国到被收购：</strong>AT&T曾经是世界上最大的公司，垄断了美国所有电话通信。它旗下的贝尔实验室发明了晶体管、Unix操作系统、C语言——这些是整个计算机时代的基础。但这个百年帝国最终因为贪婪和短视而倒下。<br><br><strong>致命的三次拆分：</strong>书中详细分析了AT&T的三次拆分决策。每一次都是管理层为了短期股价而牺牲长期发展。第一次反垄断拆分后，AT&T本来还有机会成为互联网时代的霸主，但它选择了"赚快钱"——结果越拆越小，最终被SBC收购，只剩下一个名字。<br><br><strong>大白话：</strong>AT&T就像一个含着金汤匙出生的富二代，手握全世界最牛的实验室和最赚钱的垄断业务，却因为只想着眼前的钱，把家底败光了。',
+    lesson:'AT&T的教训：<strong>贪婪是企业最大的敌人</strong>。当管理层只盯着季度财报和股价时，公司就失去了做长期投资的能力。贝尔实验室发明了晶体管，但AT&T没有因此进入半导体行业——因为"不够赚钱"。',
+    tags:['电信垄断','贝尔实验室','反垄断','拆分','短视','教训'],
+  },
+  yahoo:{
+    name:'Yahoo',emoji:'📰',color:'#6001D2',
+    sub:'1994年创立 · 互联网先驱的陨落',
+    status:'衰落期',statusColor:'var(--rose)',
+    stats:[{val:'$1250亿',lbl:'巅峰市值'},{val:'$48亿',lbl:'最终卖身价'},{val:'2次',lbl:'错过收购Google'}],
+    story:'<strong>起了个大早，赶了个晚集：</strong>雅虎是互联网时代最早的"门户网站"，在Google出现之前，几乎所有人上网的第一站就是Yahoo。但书中指出，雅虎犯了一个根本性错误——它把自己定位为"媒体公司"而不是"技术公司"。<br><br><strong>两次错过Google：</strong>2002年，雅虎本可以用30亿美元买下Google，没买。后来Google市值超过了3000亿。更讽刺的是，雅虎曾经把搜索业务外包给Google，等于免费帮Google训练了用户习惯。<br><br><strong>大白话：</strong>雅虎就像一个占了最好位置的商铺老板，但他不好好经营自己的店，反而把最赚钱的业务（搜索）交给隔壁的Google做，最后隔壁做大了，自己反而关门了。',
+    lesson:'雅虎的教训：<strong>在技术行业，不重视技术就是慢性自杀</strong>。雅虎有最多的用户、最大的流量，但因为把钱花在"买内容"而不是"做技术"上，最终被Google、Facebook等技术驱动的公司淘汰。',
+    tags:['门户网站','搜索外包','错失良机','媒体vs技术','杨致远','梅耶尔'],
+  },
+  nokia:{
+    name:'Nokia',emoji:'📱',color:'#124191',
+    sub:'1865年创立 · 手机之王的坠落',
+    status:'衰落期',statusColor:'var(--rose)',
+    stats:[{val:'40%',lbl:'全球手机份额巅峰'},{val:'$72亿',lbl:'被微软收购价'},{val:'14年',lbl:'称霸功能机时代'}],
+    story:'<strong>功能机时代的绝对霸主：</strong>在iPhone出现之前，诺基亚几乎就等于手机。它的手机信号好、耐摔、电池耐用，在全球拥有40%的市场份额。但2007年iPhone发布后，一切都变了。<br><br><strong>输在哪里？</strong>书中分析，诺基亚不是不知道智能手机的趋势，而是它的"公司DNA"决定了它做不好——诺基亚的核心能力是硬件制造和供应链管理，而智能手机时代的核心是软件和生态系统。诺基亚的Symbian系统在触屏时代显得笨拙无比。<br><br><strong>大白话：</strong>诺基亚就像一个体育课跑步第一名的学生，突然学校把考试改成了游泳——它不是不努力，而是基因不对。做硬件的思维和做软件的思维是完全不同的。',
+    lesson:'诺基亚的教训：<strong>行业范式转换时，原有的核心能力可能变成累赘</strong>。诺基亚最大的优势（硬件制造能力）在智能手机时代变得不再重要。CEO约玛·奥利拉说过："我们什么都没做错，但不知为何我们输了。"',
+    tags:['功能机','Symbian','公司DNA','范式转换','硬件思维','iPhone冲击'],
+  },
+  oracle:{
+    name:'Oracle',emoji:'🗄️',color:'#F80000',
+    sub:'1977年创立 · 数据库之王',
+    status:'转型期',statusColor:'var(--amber)',
+    stats:[{val:'$3200亿',lbl:'市值（2023）'},{val:'#1',lbl:'全球数据库份额'},{val:'100+',lbl:'收购企业数'}],
+    story:'<strong>靠"少犯错"赢得市场：</strong>书中分析，甲骨文的创始人拉里·埃里森并不是最有技术远见的人，但他有一个特殊能力——在对手犯错时果断出手。数据库市场上，IBM的DB2太封闭，Sybase经营不善，Informix高管涉嫌欺诈——甲骨文不需要做到完美，只需要比对手少犯错。<br><br><strong>收购机器：</strong>甲骨文被称为"科技界的收购机器"，通过收购PeopleSoft、Sun、BEA等公司，不断扩大版图。埃里森的哲学是：自己做不如买现成的，然后整合优化。<br><br><strong>大白话：</strong>甲骨文就像一个不太会创新但特别会"捡漏"的商人——别人倒闭了它去收购，别人犯错了它去抢客户。不需要最聪明，只需要最稳。',
+    lesson:'甲骨文的启示：<strong>在成熟市场中，"少犯错"策略比"多创新"策略更有效</strong>。当行业格局已经确定时，不需要冒险创新，只需要稳扎稳打，等对手自己出局。',
+    tags:['数据库','企业软件','收购策略','埃里森','少犯错','云转型'],
+  },
+  sun:{
+    name:'Sun Microsystems',emoji:'☀️',color:'#E8A317',
+    sub:'1982年创立 · 工作站先驱的消亡',
+    status:'消亡',statusColor:'var(--rose)',
+    stats:[{val:'$2000亿',lbl:'巅峰市值'},{val:'$74亿',lbl:'被Oracle收购价'},{val:'Java',lbl:'最大遗产'}],
+    story:'<strong>技术理想主义的悲剧：</strong>Sun（斯坦福大学网络，Stanford University Network）是一家极具技术理想主义的公司。它发明了Java语言、开发了Solaris操作系统、制造了顶级工作站。但书中指出，Sun犯了一个致命错误——"技术至上，商业至下"。<br><br><strong>为什么死掉？</strong>Sun把Java免费开放，却没找到靠Java赚钱的方式。它的工作站在PC性能提升后失去了市场。它拒绝了IBM的收购提议，最终以极低的价格被Oracle买走。<br><br><strong>大白话：</strong>Sun就像一个极有天赋的艺术家，作品（Java）被全世界使用，但自己却饿死了——因为它只会做好东西，不会卖好东西。',
+    lesson:'Sun的教训：<strong>技术上的成功不等于商业上的成功</strong>。如果你的技术成果无法转化为持续的商业收入，那再伟大的发明也救不了公司。Java改变了世界，但没有救活Sun。',
+    tags:['Java','工作站','Solaris','技术理想主义','开源悖论','被收购'],
+  },
+  cisco:{
+    name:'Cisco',emoji:'🌐',color:'#049FD9',
+    sub:'1984年创立 · 互联网基础设施之王',
+    status:'衰落期',statusColor:'var(--rose)',
+    stats:[{val:'$5550亿',lbl:'巅峰市值（2000）'},{val:'$2150亿',lbl:'当前市值'},{val:'85%',lbl:'路由器巅峰份额'}],
+    story:'<strong>互联网的"卖水人"：</strong>如果说互联网是一场淘金热，那Cisco就是卖铲子和水的人。它生产的路由器和交换机是互联网的基础设施，几乎所有的数据都要经过Cisco的设备传输。<br><br><strong>成也泡沫，败也泡沫：</strong>在2000年互联网泡沫最顶峰时，Cisco一度成为全球市值最高的公司（超过5000亿美元）。但泡沫破灭后，客户纷纷削减网络设备投资，Cisco的市值蒸发了80%以上，至今未恢复。<br><br><strong>大白话：</strong>Cisco就像互联网时代的修路公司——互联网繁荣时大家都要修路，它赚得盆满钵满。但路修完了之后呢？就没那么多生意了。而且华为等竞争对手的设备又便宜又好用。',
+    lesson:'Cisco的教训：<strong>基础设施公司的命运与行业周期深度绑定</strong>。当行业高速增长时利润惊人，但一旦增长放缓，就会面临产能过剩和价格战的双重压力。',
+    tags:['路由器','互联网基础设施','泡沫','硬件商品化','华为竞争','网络设备'],
+  },
+  huawei:{
+    name:'华为',emoji:'🏗️',color:'#CF0A2C',
+    sub:'1987年创立 · 从代理商到全球通信巨头',
+    status:'上升期',statusColor:'var(--cyan)',
+    stats:[{val:'$990亿',lbl:'2022年营收'},{val:'17万+',lbl:'员工数'},{val:'#1',lbl:'全球通信设备份额'}],
+    story:'<strong>中国科技公司的代表：</strong>书中将华为列为全球通信领域的重要力量。华为从代理香港交换机起步，到自主研发通信设备，再到5G时代成为全球领先者，走过了一条典型的"从模仿到超越"之路。<br><br><strong>狼性文化与研发投入：</strong>华为每年将营收的15%以上投入研发，这个比例在全球科技公司中名列前茅。任正非的"狼性文化"虽然争议不断，但确实打造了一支极强的执行力团队。<br><br><strong>大白话：</strong>华为就像中国科技行业的一面镜子——证明了中国公司不仅能模仿，还能在某些领域做到全球第一。虽然面临打压，但技术自研能力让它扛住了压力。',
+    lesson:'华为的启示：<strong>核心技术必须掌握在自己手中</strong>。华为因为有自研芯片（海思）和5G核心专利，即使面临制裁，仍然有谈判筹码和生存空间。这也是书中"技术立本"的核心主张。',
+    tags:['5G','海思芯片','通信设备','研发投入','自主创新','任正非'],
+  }
+};
+
+function showCompany(id){
+  const d=companyData[id];if(!d)return;
+  const m=document.getElementById('companyModal');
+  const c=document.getElementById('modalContent');
+  let statsHtml=d.stats.map(s=>`<div class="modal-stat"><div class="val">${s.val}</div><div class="lbl">${s.lbl}</div></div>`).join('');
+  let tagsHtml=d.tags.map(t=>`<span class="modal-tag">${t}</span>`).join('');
+  c.innerHTML=`
+    <div class="modal-header">
+      <div class="modal-logo" style="background:${d.color}22;border:2px solid ${d.color}44">${d.emoji}</div>
+      <div>
+        <div class="modal-title">${d.name}</div>
+        <div class="modal-subtitle">${d.sub}</div>
+        <div class="modal-status" style="background:${d.statusColor}18;color:${d.statusColor};border:1px solid ${d.statusColor}33"><span class="dot" style="background:${d.statusColor};box-shadow:0 0 6px ${d.statusColor};width:6px;height:6px;margin-right:4px"></span>${d.status}</div>
+      </div>
+    </div>
+    <div class="modal-section"><div class="modal-section-title">关键数据</div><div class="modal-stats">${statsHtml}</div></div>
+    <div class="modal-section"><div class="modal-section-title">书中深度解析</div><div class="modal-text">${d.story}</div></div>
+    <div class="modal-lesson"><div class="modal-lesson-title">💡 小白启示录</div>${d.lesson}</div>
+    <div class="modal-section"><div class="modal-section-title">关键标签</div><div class="modal-tags">${tagsHtml}</div></div>
+  `;
+  m.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('companyModal').classList.remove('show');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+const o=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('v')})},{threshold:.06});
+document.querySelectorAll('.fi').forEach(el=>o.observe(el));
+document.querySelectorAll('.nav a').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth',block:'start'});document.querySelectorAll('.nav a').forEach(b=>b.classList.remove('on'));a.classList.add('on')})});
+const ss=document.querySelectorAll('.sec');const ns=document.querySelectorAll('.nav a');
+window.addEventListener('scroll',()=>{let c='';ss.forEach(s=>{if(pageYOffset>=s.offsetTop-180)c=s.id});ns.forEach(n=>{n.classList.remove('on');if(n.getAttribute('href')&&n.getAttribute('href').includes(c))n.classList.add('on')})});
+</script>
+</body>
+</html>

@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>不上班咖啡馆 · 深度知识图谱</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f0f2f7; font-family: 'Noto Serif SC', 'PingFang SC', 'Hiragino Sans GB', Georgia, serif; }
+  html { scroll-behavior: smooth; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+/* ============ DESIGN TOKENS ============ */
+const COLORS = {
+  bg: "#f0f2f7",
+  white: "#ffffff",
+  cardBg: "#ffffff",
+  text: "#1a1a1a",
+  textLight: "#666666",
+  textMuted: "#999999",
+  border: "#e0e0e0",
+
+  /* Chapter colors */
+  amber: "#D4A847",
+  rose: "#E8587A",
+  blue: "#4A90D9",
+
+  /* Support colors */
+  green: "#3dba8b",
+  purple: "#9b6dd7",
+  cyan: "#4dc9c2",
+};
+
+/* ============ FULL DEEP CONTENT DATA ============ */
+const DATA = {
+  chapters: [
+    {
+      id: "positioning",
+      storyChar: "小明",
+      storyLabel: "迷茫北漂广告人",
+      icon: "🧭",
+      color: COLORS.amber,
+      title: "职业定位系统",
+      tagline: "从职位中醒来",
+      sections: [
+        {
+          title: "三坐标定位法",
+          type: "methodology",
+          formula: "定位 = 行业 × 企业 × 职位",
+          insight: "世界上任何一个职位，都能通过三个坐标锁定位置。行业=专业知识，企业=人脉关系，职位=能力积累。转型时保住一到两项不变——像解密码锁，先锁定一项，调动另一项。用密码锁思维看身边的职业变化就清晰了：公司内升职=只转动「职位」；行业内跳槽=只转动「企业」；大公司人跳到同行小公司做高管=同时转动「企业+职位」，难度更大。三个全变=攀岩时整个人腾空，没有抓手。",
+          steps: [
+            { step: "写出你当前的三坐标", detail: "例：广告传媒 × S公司 × AE客户执行。然后写出每个坐标背后的资产盘点：行业积累了哪些专业知识？企业结识了哪些人脉？职位培养了哪些能力？" },
+            { step: "评估每个坐标的健康度", detail: "行业是上升还是下降？企业是否稳定？你的职位能力在市场上有多大迁移性？哪个坐标出了问题，就重点调整哪个。小明的行业整个不行了，所以他要转动「行业」。" },
+            { step: "确定转动哪一个坐标", detail: "一次只动一个！行业内跳槽=转动企业。同公司换岗=转动职位。带技能进新行业=转动行业。如果你需要同时动两个甚至三个，就要分步走——先动一个稳住，再动下一个。" },
+            { step: "规划过渡路径（四步拆解法）", detail: "把大跨度拆成小步骤。书中示范：制造业×国企×HR → 心理×机构×HR(换行业积累资源) → 心理×培训×讲师(换企业培养讲师能力) → 心理×一人企业×讲师(培养品牌做自由讲师)。记得：生命是旷野，但职场是网格，要一步步切过去。" },
+          ],
+          cases: [
+            { label: "教培运营→新能源运营", desc: "教培行业被叫停，运营主管锁住「运营能力」不变，只转动「行业」进入新能源汽车。过去搞定300个妈妈群的人，现在哄一群极客大男孩，简直是热刀切黄油。" },
+            { label: "小明的完整盘点", desc: "定位：广告传媒×S公司×AE。专业知识：广告营销理论/各平台媒体趋势/提案模板/交付SOP。迁移技能：销售/演讲表达/维护客户/项目管理/协作沟通。人脉：大客户公司/合作同事/直属上司/张老师。五年积累长在自己身上，没有随行业衰退失去。" },
+            { label: "HR到心理讲师（错误vs正确路径）", desc: "错误做法：辞职→自学考证→折腾几年没成功→回去做HR行业认知生疏→只能去更差的公司。正确路径：每次只转一个选项。制造HR→心理机构HR→心理培训讲师→自由讲师。" },
+          ],
+          exercise: "现在就写下你的「行业×企业×职位」坐标，盘点你的专业知识、迁移技能和人脉资源。接下来准备转动哪一个坐标？写出你的2-3步过渡路径。",
+        },
+        {
+          title: "八大职能与三种属性",
+          type: "framework",
+          formula: "任何职位 = 八种职能的组合",
+          insight: "职位名千差万别，本质都是八种职能的重新组合：市场、销售、生产与服务、研发、财务、人力、行政、经营管理。而职场有三种属性类型，决定了你的护城河在哪里。找优势像淘金——把工作中不起眼的闪光点收集起来变成「金豆」，然后不断给金豆「抛光」（宣传强调），让它越来越亮。",
+          steps: [
+            { step: "拆解你当前职位的职能构成", detail: "例：AE客户执行 = 大客户销售(40%) + 高级客服(30%) + 初级营销策划(30%)。把比例写出来。万金油不是贬义词——就像游戏里能力均衡的角色，可以自由设定升级方向，灵活性很强。" },
+            { step: "识别三种属性类型", detail: "🗡战士系(能力型)：市场/销售/财务/人力/行政，跨行容易，护城河=守住「职位」。今天卖楼明天也能卖车。🔮魔法师系(专业型)：研发/生产/服务，深耕一个领域，护城河=锁定「行业」。行业衰退对他们影响最大。没想好玩魔法师就不要猛点魔力值。👑资源系(高阶)：经营管理，靠团队和大佬，护城河=守住「平台」。先把专业或技能做好再玩高阶。" },
+            { step: "淘金术：找到并放大你的金豆", detail: "在工作的各职能里找闪光点。小明发现：他不擅长狼性销售，但方案做得踏实客户反馈好、回头客最多、擅长组织协作推进项目阻力小。这些不起眼的闪光点聚合成金豆=懂营销+真心服务+推进协作。" },
+            { step: "给金豆抛光+兑换", detail: "不断强调宣传你的金豆。比如汇报时说「我虽然不擅长销售，但我是最XXX的AE」，有一两个品牌故事反复讲。讲得越多金豆越发光→接到更多适合的业务→金豆更大。持久的兴趣也是优势——因为感兴趣你会投入更多，成长比别人快。去新行业兑换金豆价值，加上行业红利，金豆变金条。" },
+          ],
+          cases: [
+            { label: "房地产策划→跨境电商", desc: "战士系典型：老曾做房地产策划总监，2012年房产调控时注意到「跨境电商」在财经新闻中高频出现。他的销售核心能力(洞察需求+取得信任)完美迁移，两年后全力投入，年营收超十亿。" },
+            { label: "CFO跨行业迁移", desc: "能力型护城河：某电商巨头CFO，从政府税务到电子、房地产、快消、电商，财务职能让他几乎在任何行业都能立足。后来得了渐冻症，辞去职务全力从事攻克渐冻症的研究创业——践行「什么拯救过你就用它帮助更多人」。" },
+            { label: "辅导员的忠告", desc: "「如果你热爱一个专业领域就去追求更高学历（魔法师路线）。但如果不喜欢专业又没想好做什么，为逃避就业去读研读博反而会摔得更惨——越是投资专业，反而越没有迁移能力。」" },
+          ],
+          exercise: "拆分你的职位含有哪些职能(给每个打百分比)。你是战士系、魔法师系还是资源系？在哪些职能上你比别人强？你的金豆是什么？怎么给它抛光？",
+        },
+        {
+          title: "转行实操六步法",
+          type: "action",
+          formula: "停止找工作，开始卖自己",
+          insight: "「找」工作是被动等待，「卖」自己是主动出击——了解客户需求、包装优势、精准触达。和做营销策划一样：先摸市场找精准客群，理解需求，然后针对性包装。职位描述就是客户语言——就像做焦点小组访谈时抓取的关键词，背后是购买动机。",
+          steps: [
+            { step: "① 行业探测（六大探测器）", detail: "❶ 投资媒体(36氪/艾瑞/虎嗅)看融资新闻 ❷ AI搜索「行业招聘趋势报告」❸ 翻三个本行业大神自媒体 ❹ 关注行业峰会文章 ❺ 朋友圈持续看到某行业热点 ❻（最重要！）打听公司主动离职员工的去向——他们的方向很可能是新趋势。" },
+            { step: "② 产业链研究（上帝视角）", detail: "搜索「XX产业链」了解上中下游。小明搜新能源汽车发现：电池正极和负极材料是两个不同行业，然后是三电(电池/电机/电控)，最后汇聚到整车制造和经销商。一眼看出哪些网红吹的「上门喂宠物」其实是末端最没竞争力的板块。" },
+            { step: "③ 头部公司JD分析", detail: "去3-5家头部公司官网（不是招聘网站）看社招信息。提炼两类词：高频出现的词=核心要求，行业术语=需要学习的知识。这些就是「客户语言」。现在AI很方便，只要问对问题，三四天的学习，入行足够了。" },
+            { step: "④ 简历关键词四处植入", detail: "四个位置：自我描述(加「对新能源汽车新媒体感兴趣」)、项目经验(相关项目前置，如汽车品牌策划放最前)、实习培训(学习证明)、工作描述(强调可迁移能力如「品牌策划/渠道管理/数据分析」)。原则：少而精，重点前置。可以包装（放大闪光点），但绝不能说谎。" },
+            { step: "⑤ 调研报告超级加分项", detail: "参加行业展会，研究竞品销售流程，写一份调研报告和改进方案。面试时展示出来——一个参展经理告诉小明，他就是靠这招完成转行的。" },
+            { step: "⑥ 内容输出建立连接", detail: "把学习心得和调研写成文章发布。不是当网红，而是倒逼输出+认识同行。小明半年写20多篇积累2000粉丝，最终通过一个读者内推获得H公司offer。同时在老工作上以跳出职位的角度看业务，「就在老工作这条驴背上，学会了所有未来的骑马技术」。" },
+          ],
+          cases: [
+            { label: "小明的转行全过程时间线", desc: "研究产业链+行业探测→锁定新能源/健康/宠物三个行业→三个标准筛选→选定新能源→订阅行业新闻/逛门店/观察买车人→10月参加展会→写公众号积累行业认知→通过读者内推获H公司offer→重庆上岗。他发现：有了自己的目标，难熬的工作也有趣了。某种程度上觉得老板变成了「实现自己目标的工具人」。" },
+            { label: "小明的心态转换", desc: "以自己为中心，以问题为导向，以改变为终点——知识只有和自己的切身问题连接到一起才是真的。小事走脑，大事靠心——人生重要决策上，感觉很重要。行动咒语：要追不要逃；别把眼睛交给别人；想都是问题做才是答案；勇敢上路。" },
+          ],
+          exercise: "今天就去3家目标行业头部公司官网，看招聘要求。提炼「高频词」和「术语」。针对高频词梳理简历，针对术语做调研。记得：15天不做，你永远不会做。",
+        },
+        {
+          title: "选城市、选公司与人生规律",
+          type: "decision",
+          formula: "一线学习，二线发展，三线安居",
+          insight: "做选择的原则：先看选项再看选择，优先选「选择权更大」的——选了A能退回B，但选了B不能选A，就先选A。选择权更大意味着更自由。在新行业里鸡头比凤尾离凤头更近——小公司核心岗让你创造新价值，能力长在自己身上，平台光环不属于你。人生也是有规律的，把时间尺度拉长看，当下最重要的是让自己发展起来。",
+          steps: [
+            { step: "城市评估维度", detail: "大城市：机会多/收入高/消费高/商业导向/公平竞争/人才红利高。小城市：机会少/收入低/消费低/资源导向/看重人际/生活舒适。关键看当下最看重什么。但人生不是马拉松而是操场跑圈——没有终点也没有起点，明知不公平还和别人比是「永无宁日的自我恐怖主义」。" },
+            { step: "鸡头vs凤尾", detail: "核心问题：去了之后是你在创造新价值，还是只是占便宜？去SpaceX做HR，火箭上天和你有什么必然关系？在新行业里大公司常表现不佳(船大不好调头)，小公司更务实接地气，能真正成长。" },
+            { step: "保护选择权（33岁考公示例）", detail: "33岁前在大城市=保留考公选择权(35岁后失去资格)。如果父母突然需要照顾，随时可以回去——这是最大限度保护人生选择权。选择有更多选择的那个。" },
+            { step: "人生计算题（父母三阶段）", detail: "60-70岁「精力期」：旅游追梦帮带孩子，不需要你。70-80岁「维持期」：身体出毛病，帮他们改造房子/搬舒适处，这时在老家多交医生朋友。80-90岁「衰老期」：最需要陪伴+医疗，你48-58岁时才是关键照顾期。到时候你凭什么照顾好他们？需要未来20年让自己强大起来。" },
+            { step: "职业发展四阶段", detail: "20-30岁：在职业里找自己，选择长远方向。30-40岁：专业和管理上深度发展。40-50岁：稳固自己的位置。50-60岁：寻找人生的第二座山，寻找意义。数字和概率是参考，真实的人生才重要。" },
+          ],
+          cases: [
+            { label: "深圳→东莞→惠州模式", desc: "年轻时在深圳华强北做手机(一线学习)→创业总部放东莞降低成本(二线发展)→惠州西湖边买房接父母(三线安居)。每天一小时高铁跨城，和北京通勤差不多。高铁时代的新可能。" },
+            { label: "小明的选择", desc: "H公司在重庆，离老家毕节只有4小时高铁。一线学习(北京5年)→二线发展(重庆新能源)→未来可三线安居。不纠结北京不北京，选择权最大的方案。" },
+            { label: "纪录片《含泪活着》", desc: "1954年生人的父亲35岁离开妻女去日本打工，黑户15年做最基础体力活，寄钱供女儿美国读医学博士。15年只见妻儿各一面。他的任务结束后回上海买了房。不是说要这样活，而是说每个人的此时此刻都是好几代人因缘际会的结果——个人力量在这种背景下微不足道，不嫉恨。" },
+          ],
+          exercise: "列出大城市vs小城市所有维度并打分。算算父母的三阶段年龄。问自己：当下最看重什么？哪个选择的选择权更大？你的职业发展在哪个阶段？",
+        },
+      ],
+    },
+    {
+      id: "role",
+      storyChar: "木子",
+      storyLabel: "全职妈妈设计师",
+      icon: "🎬",
+      color: COLORS.rose,
+      title: "角色觉醒系统",
+      tagline: "从角色里醒来",
+      sections: [
+        {
+          title: "全职妈妈的真实工作量",
+          type: "reality",
+          formula: "每周77~105小时 > 996的72小时",
+          insight: "社会学家安·奥克利把家庭主妇当职位来研究。她发现主妇工作虽统称「家务」，其实包含六种工作：清洁、购物、做饭、洗碗、洗衣、照顾孩子。清洁做饭洗碗洗衣周而复始身体最累；购物最轻松（能出去透气见人）；带孩子精神压力最大——神经一直紧绷的精神苦役。47个家庭调查，无一女性说天生热爱家务，七成满意度很低。心理学家试图证明女性有「希望事情井井有条的神经质」被证明是一派胡言。奥克利称女性为「看不见的女人，被困在隔音的家庭里无声地工作」。",
+          steps: [
+            { step: "让看不见的被看见（开灯）", detail: "用数据和事实让家人理解你的工作量——像做报告一样呈现。吵架也是一种沟通，至少比不沟通好。男性基本不参与家务、默认都是女性做，他们自认为分担的「带孩子」其实只是每天陪玩十五分钟，最漫长琐碎的部分根本不知道。" },
+            { step: "打破单面镜", detail: "人们以为自己在看别人，其实看的是单面镜中的自己。老赵不是坏人，只是活在自己的单面镜世界。当你房间的灯打开（用数据事实开灯），他们就能正视你的处境。当看不见的女人被看见，就会有更多人醒来——这个改变会带来整个家庭系统的改变。" },
+            { step: "找到「黑暗时刻」与「闪光时刻」", detail: "黑暗时刻：时间不受控、心累失眠、越查资料越焦虑（网红的「六个月一定要…否则就会…」让人越看越觉得自己不配当妈）。闪光时刻：孩子每个第一次（人类登月的第一步根本没有宝宝第一步伟大）、家里干净整洁时、好好睡了一觉、和闺蜜聊天。这两个清单是后续所有行动的基础。" },
+          ],
+          cases: [
+            { label: "草莓事件与尿不湿事件", desc: "木子买两盒草莓想和妈妈们分享，婆婆指责大手大脚。同时老赵当众换了一条尿不湿就被全家围观夸奖「爸爸真厉害」。木子日夜照顾却理所当然——那一瞬间她觉得当妈毫无价值。本质：全职妈妈的劳动价值从未被「看见」。" },
+            { label: "老赵的醒来", desc: "胖子算账：这份工作(77小时/周、高技能、无替代性)按市面两三倍工资都未必够。如果把全职妈妈的沉没成本算上（放弃了设计师职业发展），大部分男性收入未必支付得起。老赵沉默了——想起了当年方案会上浑身发光的木子。" },
+          ],
+          exercise: "分别写下你的「黑暗时刻」和「闪光时刻」各5个，具体到时间、地点、人物、心情。这是一切改变的起点。",
+        },
+        {
+          title: "掌控力三件套",
+          type: "methodology",
+          formula: "提前规划 + 拉帮结派 + 管理期待",
+          insight: "掌控感的三个层面：掌控时间（模糊焦虑变清晰日程表——看得见的魔鬼比看不见的可怕，脑子里琐碎事特别占内存，写出来就放空了）、成为不完美主义者（降低短期标准提高坚持长度）、能量回流（安排和自己的约会）。连最苛刻的老板都认同休息是为了更好工作。这个时代女性可以更自私一些——如果有人歌颂母亲无私奉献，可能只是想做个节日促销。",
+          steps: [
+            { step: "时间掌控：做日程表", detail: "左列=时间线(精确到半小时)。前几列先排家人固定时间(爸爸/奶奶/宝宝作息)——不能动，优先列出。剩余空隙=你的自由时间，分配给：学习、成长、上课、家庭时间、悦己时间（让自己开心的时间）、绿洲时间（想干什么都行的机动时间）。在餐巾纸上就能画，不完美主义。" },
+            { step: "不完美主义心法（斯蒂芬·盖斯）", detail: "完美主义自毁循环：高标准→焦虑放血30%→怀疑自我价值放血40%→剩50%更没法完成→更焦虑→循环。对兴趣=三分钟热度拖延；对必须做的事(带娃)=每定一高标准就给自我价值割一刀=心理凌迟。破解：长期高预期+短期低到不可能失败。胖子写作：1000字→300字→大纲→标题→面对空白文档随便敲字。「这是我的文章，我有写出全世界最烂东西的权利。」" },
+            { step: "只分「做」和「没做」两类", detail: "写一行字=做了。房间布置再好=没做。找资料=没做。不依赖环境，完全依赖行动。完成比完美重要，能量比才华重要，做了比不做更重要。害怕不完美的动力撑不过一晚，追求小成就的动力可以延续一生。" },
+            { step: "管理期待（被猫反向训练的故事）", detail: "胖子养猫：猫一饿就叫他就喂→猫整天缠着叫。训练师说「你被猫反向训练了，猫把你当自动投食机」。要管理期待，建立「你好我也好」的习惯——否则最后养不下去送人，猫也受罪。宝宝/老公/婆婆/老板同理。没有边界随时响应→变成人肉抱枕/移动公章/救火队员/递话语音条。建立的不是对方最舒服的习惯，而是双方都感觉舒服的习惯。" },
+            { step: "能量回流 + 价值变现", detail: "能量回流：把闪光时刻安排进日程，当成和朋友的约会一样保护——你不会爽约朋友，凭什么爽约自己？价值变现：把内在价值变成看得见的成果（孩子成长记录/自媒体号/育儿心得），这些是你的「价值锚点」，沮丧时看到它们就像攀岩的钉子把你固定在原位。" },
+          ],
+          cases: [
+            { label: "妈妈日程表实例", desc: "时间管理专家学员案例：早7:00-7:30宝宝起床/喂奶，8:00-9:00奶奶带娃+妈妈运动，9:00-11:30妈妈学习(宝宝上午睡)，午间午饭，13:00-15:00奶奶哄睡+妈妈自由时间……每个时间块都有主人。木子在餐巾纸上画了版画级的Q版日程表，加了哭闹宝宝、监工婆婆、和稀泥老公(真的在和稀泥)的小人。" },
+            { label: "育儿三个目标（释放焦虑）", desc: "育儿专家告诉焦虑的妈妈：「孩子只要达到三个目标就算成功：①身体健康不得大病②不要自杀③生活能自理。未来的路你管不了也管不着。」无条件的爱是方向不是目标——顶级心理咨询师最好状态也只能坚持一小时。你一天保持15分钟无条件陪伴就是很好的开始。我们哪个小时候没被爸妈骂过揍过？也没变成孤独可怜的恒河猴。" },
+            { label: "近藤麻理惠的升阶", desc: "收纳之神生三个娃后公开说「放弃整理房间了」。不是塌房是升阶——重要的不是整理房间而是整理内心。她不再从做家务获得快乐，而是买舒服的真丝睡衣喝热茶看旧照片放松。当角色不再支撑想要的人生就换掉，这是清醒的人生导演该做的事。" },
+          ],
+          exercise: "现在就画一个日程表(餐巾纸上也行)。先排家人固定时间，再找出你的空隙。安排至少一个「和自己的约会」时间。坚持三周，每周两次，每次30分钟，不要爽约。",
+        },
+        {
+          title: "话筒递给好朋友",
+          type: "tool",
+          formula: "展现脆弱 = 更大的勇敢",
+          insight: "每个人脑子里不止一个自我：有好朋友的自己、完美主义的自己、尖酸刻薄的自己……像鸡尾酒会一样乱哄哄说话。你是酒会主人，有能力选择把话筒递给谁。日常你把话筒递给了刻薄的自己(你不行/你真差)——但为什么不重要，如何做才重要。你不需要完全理解原生家庭理论才开始疗愈，那也是个完美主义的诡计。鸟不懂空气动力学也飞得好好的。",
+          steps: [
+            { step: "觉察内心话筒在谁手里", detail: "当状态不好时，注意你心里对自己说的话。「你这个笨蛋」「你根本不配」=刻薄的自己在拿话筒。小心翼翼活在别人评价里一点点消磨价值感的人，就在接受心理上的凌迟。" },
+            { step: "想象好朋友面对同样处境", detail: "如果闺蜜讲述同样困境，你绝不会说「你真差」。你会说「放过自己吧。你别忘了虽然有两岁的孩子，但你也只是两岁的妈妈啊，你也会犯错。孩子有自己的命运，我们只是陪着他长大。你又不是人民币！」" },
+            { step: "把话筒递给那个声音", detail: "可以递给好朋友/外婆/导师……找到最能无条件接纳你的角色。木子找到外婆——闻到老房子味道变回扎羊角辫的孩子。外婆说：「木子娃娃，你好厉害啊。你去了那么多外婆没去过的大城市。你已经做得很好了。不管怎样外婆都很爱很爱你。」" },
+            { step: "勇敢说出脆弱的话", detail: "对信任的人说出最折磨你的话。木子说出「我一直觉得我不是个称职的妈妈」——担心的事完全没发生。在真正爱你的人心里，暴露脆弱和缺点不可怕反而带来力量。越端着内心越无力，大家顶多羡慕不会真的喜欢。不完美是生命的机会，人类社会就是通过个体的不完美连接起来的。" },
+          ],
+          cases: [
+            { label: "木子的终极宣言", desc: "从「我觉得自己很失败」→到「我只是做得不够好，大家依然会爱我」→到最后脱口而出「如果做不到反正我也尽力了，其他的管他娘！」——这是真实的她，不是小仙女人设。这种通畅感被胖子写进了打折卡。" },
+            { label: "吴念真父亲的半分钟拥抱", desc: "一家七口睡通铺，孩子们最喜欢父亲上小夜班回来——他把睡乱的孩子抱起放回原位盖好被子。这半分钟拥抱所有孩子都假装睡着来等。后来兄弟姐妹互相坦白「我也是假装的！」。教育最好的方式是给孩子很多很多爱——是很多很多，不一定是很长很长。" },
+          ],
+          exercise: "当状态不好时问自己：话筒在谁手里？试着递给你的好朋友/外婆/导师，写下他们会对你说的话。然后找一个信任的人，试着说出你最脆弱的一面，看看有什么感受。",
+        },
+        {
+          title: "人生剧本与万花筒生涯",
+          type: "methodology",
+          formula: "万花筒生涯 = 真我 × 挑战 × 平衡",
+          insight: "所有行为由逻辑层次五层决定（罗伯特·迪尔茨）：剧本→角色→价值观→能力→行动。重要改变都自上而下——在同一层面使劲变化不大。木子被领导说「不负责任」=从价值观层面被PUA→所有能力封印→开始摆烂。直到另一位女领导委以重任才解封。不喜欢现在的剧本？你是导演可以改写。小红马的觉醒：「我不喜欢这个故事，我要去别的故事！」撒开蹄子跑进旷野——你就是那匹小红马。",
+          steps: [
+            { step: "回溯剧本来源（三人提炼法）", detail: "列出影响你最深的3个人。你的剧本=他们故事的组合再创。从每人身上提炼最喜欢和最不喜欢的关键词。" },
+            { step: "创造人生主题句", detail: "把关键词组合成一句话用「我」开头。木子：外婆=爱(不要隐忍)、女领导=智慧与坚韧(教室外坐七节课才被允许旁听)、May=自由(不要孤独)。→「我，木子，要成为智慧、坚韧、能给予身边人真正的爱的人。在旅途中永远保持内心的自由。」" },
+            { step: "角色拥堵四问法", detail: "28-35岁最容易拥堵(工作者/母亲/妻子/女儿/学生/朋友/休闲者全想先过)。四问：①缺了你演不了的？(母亲) ②特别看重的？(把时间拉到极端选一个——木子选设计师) ③现在不演未来能演的？(女儿/学生/朋友先等) ④能整合吗？(周末家庭出游=母亲+休闲者+妻子；和老赵学家庭教育=妈妈+妻子；带娃上一天班=职场人+妈妈)。委曲求全只有委屈没有全。" },
+            { step: "转动万花筒 + 角色整合术", detail: "万花筒三色片：真我/挑战/平衡，不同阶段转出不同图案。人生不是战场是游乐场。小黄的「妈妈体式」：瑜伽战士三式领悟——平衡是一种能力，仅靠一处发力没法平衡。资源整合三种：自己(能力+时间)+人力(老公/婆婆/父母/阿姨/朋友)+财力。时间叠加术：吃饭=拓展人脉=带孩子=温习营养学；教瑜伽=赚钱=拓展市场=自媒体素材=夫妻交流。" },
+          ],
+          cases: [
+            { label: "小红的弯道超车三不停", desc: "广告大神小红生娃前就规划复出计划：列出想读的书/想学的课/想拜访的人。「工作可以停，但三件事不能停：持续学习、见人、输出。」产假期间学短视频+系统学艺术史，复出时手握新技能老板大喜过望。" },
+            { label: "小黄的家庭会谈卡（八个问题）", desc: "和家人聊：①家庭财务目标/各自职业理想？②双方收入能否达到？③给孩子什么教育环境/如何照顾父母？④需要什么储备计划/如何分工？⑤目前财务状况？⑥父母能否帮忙/能否请阿姨？⑦公司周边便利？⑧事业成长空间/需投入多少时间精力？提醒：专找空闲时间换场景/不求一次聊完/谋求沟通不是共识/让对方先说5分钟内不打断不评价。" },
+            { label: "木子的角色排序结果", desc: "母亲(必需)→设计师(最看重)→休闲者(能量回流)→妻子→女儿(父母60出头不急)→学生(以后再说)。事没减少心情却轻松了——因为不再左右互搏。别太早定义自己的人生，万花筒下一次转动可能就是续集创作计划。" },
+          ],
+          exercise: "列出影响你最深的3人，提炼喜欢/不喜欢的关键词，写出人生主题句。盘点当前所有角色用四问法排优先级。然后问自己：下一次转动万花筒是什么时候？",
+        },
+      ],
+    },
+    {
+      id: "breakthrough",
+      storyChar: "王鹏 & 天蓝",
+      storyLabel: "程序员 & 运营人",
+      icon: "⚡",
+      color: COLORS.blue,
+      title: "专业突破与自由职业",
+      tagline: "从专业和自由中醒来",
+      sections: [
+        {
+          title: "30+的六条出路",
+          type: "framework",
+          formula: "年龄不是价值 · 专业不是壁垒 · 公司不是家",
+          insight: "黄金年龄(Golden Age)：发达国家35-50岁，中国30-45岁，程序员更早。三条曲线：①体力+流体智力(记忆力/反应力=大脑硬件)→30岁顶峰后下降，锻炼只能减缓 ②晶体智力(语言/社会/环境/常识理解力=软实力)→持续上升到75岁 ③经济压力→30岁后房贷+孩子+老人前所未有地高。体力下降+角色分散+经济上升=技术含量顶不住。35岁危机30岁就开始了。盲眼狂奔用忙碌掩饰焦虑只是把自己填满，不用面对未来的黑洞。与其终日警惕不如识别问题。",
+          steps: [
+            { step: "认清三个真相", detail: "①年龄不是价值：收入不随年龄自动增长，前5年专业成长快每年涨薪，之后就放慢了。②专业不是壁垒：专业=信息差，但信息差在缩小(AI/新人追赶)。收入不由你的能力决定，而是由愿意最低价出售同等能力的人决定——就像工业革命时童工抢了父母饭碗。③公司不是家：中国公司均寿2.97年，世界500强也只有40年，你要工作30-40年。" },
+            { step: "理解三种资本转换", detail: "要减持「体力股」，加仓「经验股」和「社交股」。要么提高专业让单位时间更值钱，要么做管理用别人时间创造价值，要么换个地方释放积累。一位关键时刻愿意帮你的大佬、一群并肩打过大仗的伙伴，这种关系不是新人能替代的。" },
+            { step: "选择你的出路", detail: "六条路：①专业线(领域专家) ②管理线(组织贡献者) ③转型线(带积累去新行业/体制) ④平衡线(家庭优先度过压力期) ⑤自由职业线(创造自己的职业) ⑥创业线(创办公司)。" },
+            { step: "走通价值链（放下成见）", detail: "完整链条：客户→市场(影响)→销售(分析需求达成交易)→产品(细化方案)→研发(实现)→交付→客服(售后)。支撑：财务(分钱)/HR(找人)/行政(支持)。每个环节都增加价值缺一不可。你的工资是销售找的客户出钱发的，你的工位是行政提供的，你的活是项目经理分配的。卡住自己的不是外面的路而是思维里的墙。放下成见人间处处是生机。" },
+          ],
+          cases: [
+            { label: "三个石匠的故事(德鲁克)", desc: "三个石匠修教堂。第一个「我要建最美的教堂」=愿景型可做领导。第二个「我要雕最精美的花纹」=狭隘专业主义可能是最大障碍（花纹可能不是重点，现在该立柱子）。第三个「养家糊口」=普通人加上好管理也能成就非凡事。过度追求专业不仅不增加整体价值有时反而是障碍。" },
+            { label: "王鹏的价值链走访", desc: "走访销售冠军(内向但懂倾听、技术背景是长板)→产品经理(技术翻译官、欢迎技术人员)→项目经理强哥(「人出来混总得吃点苦，不吃成长的苦就吃憋屈的苦」)→技术大神(专业成长三阶段Know Why=见自己/Know How=见天地/Know Whom=见众生，从技术到艺术需要通过艺术哲学自然科学理解人性)。" },
+          ],
+          exercise: "画出你所在公司的价值链(从客户到交付)，标出你在哪个环节。在专业成长三阶段(Know Why/How/Whom)你在哪个阶段？你准备走六条路中的哪条？",
+        },
+        {
+          title: "技术转管理实操",
+          type: "methodology",
+          formula: "管理闭环 = 计划→组织→指挥协调→控制",
+          insight: "管理不是天赋是技术，和学编程语言没区别。核心心智转换：从个人贡献者变组织贡献者，从特种兵变排长。胖子带朋友出游自己骑摩托冲上山头，朋友开轿车上不去——「我把摩托车思维带入了团队旅行」。不需要放弃摩托车只需增加管理技能。技能是工具箱，做加法不做减法。可以是灵魂车手也可以是妇女之友。",
+          steps: [
+            { step: "识别四大天坑", detail: "🔥救火队员：什么都自己上→团队越带越弱。你越解决大家越依赖，恶性循环。转变：增加一种新成就感——帮别人拿到成果（复仇者联盟一群人一起做成事的感觉）。💤被动管理：不提前规划只事后补救。1-10-100法则：计划=1/事中改进=10/事后修正=100。最好的管理是无惊无险(No Surprise)。😤清高：只关心专业成长不关心团队真实需求（底线心情舒畅/中线学东西/高线升官发财）。🔬技术崇拜：觉得除了技术其他都low。" },
+            { step: "养鱼管理学（王鹏的顿悟）", detail: "「养鱼先养水。计划养几条鱼→决定水箱容量→配置照明灯/过滤器/换水装置→看预算→依次安装到合适位置→排水管口径不一致会漏水要自己用胶水安装→珊瑚大片死了说明水出问题→赶紧测量酸碱度盐度除掉绿藻……」胖子打断：这不就是你的管理闭环吗？设计水缸=计划，安装设备=组织，排查问题=指挥协调，温度计酸碱度=控制。能管好一缸生态就能管好团队。" },
+            { step: "管好「普通人」的心法", detail: "专家的大误区=认为团队动力和能力都和自己一样。「头儿如果我能这么好就不在你手下当兵了。如果你真的那么牛也不用管我们这群大头兵了。」大部分打工人是第三种石匠。管理就是带领平凡人成就非凡事。不是「显而易见」，不是「这不就是什么什么吗」——你显而易见的事他们想破脑袋。" },
+            { step: "保护你的团队", detail: "向上汇报时提他们、为他们争取机会和资源、保护他们不被其他部门欺负——你是最后一道屏障。如果你怕烦让他们自己解决，别人会怎么想？如果不能成就他们至少要保护他们，不枉叫你一声「头儿」。" },
+            { step: "王鹏的管理贪嗔痴", detail: "身为管理者还抢一线成就感=贪。别人达不到要求就生气=嗔。对别人需求视而不见只认技术=痴。管理是面镜子照出了一身毛病。「职场如道场，当问题被看见就已经解决了一半。」过去心不可得——经历了就经历了不纠缠不足，重要的是未来怎么做。路不是设计出来的是走出来的，做好手头事机会自然出现。" },
+          ],
+          cases: [
+            { label: "胖子的摩托车团游教训", desc: "胖子说「来那里风景好」就冲上去了，朋友轿车根本上不去还有几个抛锚。牛人做管理最大问题=以为别人和自己一样强。朋友们最怕的一句话：「我知道有一条近路……」。大家需要的只是走出城市转转不是冒险。" },
+            { label: "强哥的实话", desc: "「单纯做技术像搬砖年龄一到体力不行。专业+管理收入高，出路多——万一大厂不行了去小公司国企好歹做个管理岗收入才能拉平。而且在我们这四十多被刚毕业的小年轻管着心里不是滋味。」" },
+          ],
+          exercise: "回忆你做过的一个管理经历(哪怕组织一次聚餐)。在计划→组织→指挥协调→控制四环节做对了什么漏了什么？你最常踩的天坑是哪个？",
+        },
+        {
+          title: "超级个体定位术",
+          type: "methodology",
+          formula: "超级个体 = 独特优势 × 小众需求",
+          insight: "自由职业的难点不是自由而是职业。每种自由背后都有责任，责任背后都需要能力。大公司用组织力量满足大众需求(外圈)，你一个人反着来——用独特优势满足小众需求(内圈)。不要把注意力放在外圈，好好发掘自己。总盯着别人的人没法自由。丢掉「跟随模式」(Me Too=你干啥我干啥最后谁都赚不到钱)用「创造模式」。你的优势不是「寻找」到的而是「认领」的——牧羊少年走遍世界发现宝藏就在出发的教堂下面。",
+          steps: [
+            { step: "梳理三类独特优势", detail: "①专业优势：学历/证书/培训中的独特点。②职业优势：项目成就/帮人解决过的问题/积累的人脉。③生命优势：你自己解决过的人生难题——这才是最独特的！天蓝的生命优势：经历过严重抑郁靠写作走出来、有一套健康减肥方法(过去是胖女孩)、用运营方式经营自己让人生平衡。" },
+            { step: "找到你的个人议题", detail: "什么拯救过你就用它来拯救世界。如果向外找不到不妨向内找自己的人生议题——往往能触达更多同路人。小黄被瑜伽从产后肥胖中救出来→做瑜伽教练帮其他妈妈。" },
+            { step: "识别小众需求=别人的真实问题", detail: "不是你觉得别人需要什么(扶老太太过马路——她不想过！小明你今天怎么来晚了？因为学雷锋扶老太太。为什么这么久？因为她不肯过啊)。需求的最小单位是问题。站在别人角度设身处地理解痛苦慢慢引导进专业才是真的助人。不是「你应该」而是「我可以」。" },
+            { step: "Do Something You Want", detail: "做你自己需要的产品。你就是第一个用户。你的境遇不孤独——你有这个困惑世界上一定很多人也有。你解决过这个难题也一定有人需要你的方案。烦恼即菩提缘分即问题——遇到问题就是遇到缘分。" },
+          ],
+          cases: [
+            { label: "老吴的适老化改造（商业计算）", desc: "60岁退休EMBA想做银发经济，对着中国地图算3亿老人市场→无从下手。胖子让他回到自己：你为父母做的适老化改造就是独特优势，EMBA同学都有需求。一个方案8-20万均12万，一半毛利，一年只需15个客户=稳稳百万。第二年还有转介绍。「丢掉中国地图打开手机通讯录吃上十顿饭就够了。」" },
+            { label: "天蓝四次碰壁的本质", desc: "做课→没人买(不知道需求只是悦己)。出书→要自购3000册(没影响力)。旅游号→几十阅读(没差异化)。读书号→门槛太低(内卷比职场还厉害)。所有碰壁都因为「跟随模式」找别人的路。最终方向：用文字疗愈帮人缓解压力+用运营方法教人经营人生——这是她自己走过的路。一个客户说「你像天上飞的天鹅很美但我脚踩泥巴里」→她决定从大理回北京靠近用户。" },
+          ],
+          exercise: "梳理你的三类优势(专业/职业/生命)。然后问：什么拯救过我？我可以帮过去的自己做一款什么产品？打开通讯录看看谁可能需要。",
+        },
+        {
+          title: "成为专家的五阶梯",
+          type: "framework",
+          formula: "求助者→探索家→建筑师→助人者→专家",
+          insight: "三个秘密——秘密1：所有专家都曾是病人，五阶梯是通用成长路。秘密2：从「探索家」就可以开始积累用户(养成式专家)——分享探索知识、解决自己问题的过程、号召同行交流。秘密3（商业秘密）：求助者+探索家占80%，专家席位不超过20个，竞争专家席位累死人。初级才是最大的市场。你一旦成为建筑师就可以正式营业。不要成为高手才上路，现在就走上高手之路。永远站在鸡蛋这边（村上春树：坚固的高墙和撞墙破碎的鸡蛋我总是站在鸡蛋一边）。",
+          steps: [
+            { step: "求助者：被问题困住", detail: "你正在经历某种痛苦四处求助。这是起点也是最大资产——你比任何专家都更懂这种痛苦的滋味。" },
+            { step: "探索家：四处学习寻找答案", detail: "拜访名师钻研书籍各种尝试。此时就可以开始积累用户！「我准备挑战xxx」的成长账号、打卡群、早起跑步群都是探索家在做的事。等你成为建筑师客群也都准备好了——大家看着你成长反而更信任你。" },
+            { step: "建筑师：搭建解决体系", detail: "把学到的东西在自己身上验证形成体系。此时可以正式营业——先免费帮人做出口碑效果再收费。天蓝第一期免费效果非常好→定合适价格→流程越跑越顺→做账号扩招生。" },
+            { step: "助人者：体系用在别人身上", detail: "发现有些对别人也有用有些不适用。持续学习改进体系越来越通用。" },
+            { step: "专家：形成领域标准", detail: "你的体系成为行业参考。但记住——专家往往看不上求助者和探索家觉得很初级，也早忘了自己当年的样子。即使成为专家也要时刻发自内心为初级用户服务。" },
+          ],
+          cases: [
+            { label: "小黄的瑜伽之路（3年）", desc: "求助者(产后胖到140斤自卑不敢出门)→探索家(接触瑜伽开始练习)→建筑师(6个月减40斤形成方法)→助人者(瑜伽馆做助教+自媒体积累客户)→目标成为专业教练。好的教练=专业瑜伽+运动医学+营养师+舞蹈底子+客户资源。「什么拯救过你就用它来拯救世界。」" },
+            { label: "亲子读书老师的困境", desc: "学完发展心理学想做家庭教育(更本质)→但家长最大问题是没时间，送孩子上学就是为了自己歇一会儿。重新定位：继续做孩子培训+赠送线上家长课堂(解决时间焦虑)+为高认知家长开家庭教育班。尊重对方的问题而不是你的专业。" },
+          ],
+          exercise: "在你想做的方向上走到了五阶梯哪一步？如果在求助者或探索家阶段现在就可以开始记录分享你的探索过程。",
+        },
+        {
+          title: "压力管理与初心游戏",
+          type: "tool",
+          formula: "拔出第二支箭 → 找到初心",
+          insight: "压力如毒药——汉斯·赛尔给小白鼠注射药剂发现杀死它们的不是药剂而是注射过程的压力→免疫力下降。弹簧模型：适度压力更有弹性表现好，过度压力永久变形(头痛/失眠/肩膀酸痛→记忆力差/情绪波动/攻击性→免疫下降/炎症/心血管/脑梗)。好人不长命——在系统里最高的弹簧最先被压垮，像两人抬煤气罐力大的最累何况他还是好人不敢放下。脑子里有两个我：「思维的我」(负责规划思考必须表现全知全能会编造记忆)和「元认知的我」(观察自己思维的那个——佛陀叫般若王阳明叫良知)。压力下的思维是个恐怖片导演不断剪辑恐怖片给你看。",
+          steps: [
+            { step: "识别压力源打分(1-10)", detail: "五大类：身体/工作学业/家庭/财务/人际。把人际单独列出因为模式相通。王鹏发现人际9分远超其他——对兄弟的责任感(讲了美丽愿景怕对不起)和丈母娘的关系(用脚关门被说摔门)。" },
+            { step: "拔出第二支箭", detail: "佛学故事：被箭射中本来很痛，但开始想谁射的？为什么射我？万一死了怎么办？……第一支箭=真实困难(忘词了)。第二支箭=灾难化想象(看不起我→合不了作→公司黄→女儿受欺负)。大部分人死于万箭穿心。破解：感知当下(数呼吸/心跳/感觉右脚第二个脚趾位置)→「醒来」跳出恐怖片。远离颠倒梦想究竟涅槃。" },
+            { step: "增加弹簧力量（三种方法）", detail: "①释放压力：运动/冥想/大自然当成日程逼自己做。②减少压力源：降低要求/推后不必要的事/适当「逃」(王鹏：周末单独带老婆孩子出去住一天就能回弹)。③认知调整：识别第二支箭并拔掉。" },
+            { step: "初心游戏（完整六步流程）", detail: "❶找到最近最难受但不得不做的事 ❷不断追问「如果不做更糟糕的是什么？」❸记录答案继续追问A→B→C…… ❹描述会从事件慢慢变成某种「生命状态/身份」❺直到答案是「不为什么就是这样」=初心 ❻讲出初心时整个人兴奋有力量。全程不评价。当一个人知道了为何他就能承受一切如何。我们不怕苦难怕苦得没有意义。不怕难怕难得没有价值。" },
+          ],
+          cases: [
+            { label: "粪坑里的007（完整故事）", desc: "平安夜11:35，007礼服/马提尼/金发美女/壁炉。电话响了走出门口→一辆车三挺机关枪扫射→跑→进死胡同→发现地板活动木板→下面是齐腰粪水→跳进去→敌人在上面走→12点钟声响起。007在粪水里——他笑了。因为守住了最重要的东西。他不会后悔出门接电话因为「如果当时……」是人生最大的谎言。他每次选择都在保护勇气和生命。" },
+            { label: "王鹏的初心追问链", desc: "不做创业→公司黄→没法和兄弟交代→35岁被淘汰→只能回老家找闲职→一眼到头的人生→人生毫无意义。→所以他一直保护的是「人生的可能性——看看自己能走到哪里发挥多大价值」。找到初心那刻他热泪盈眶——看到从小镇到县城到大学到北京到创业的每个选择都在为这个初心服务。" },
+            { label: "自由之鱼（王鹏和天蓝的领悟）", desc: "王鹏：「虽然每个角色都让我无法自由自在但我找到了初心，每个时刻都真实自主地围绕它做选择，尽心去做对结果不在乎所以很自由。」天蓝：「完全没约束也就没意义。从生命里创造产品用经历帮到人和喜欢的人连在一起=真正的自由。」→没有约束的自由根本不存在。真正自由是面对选择忠于自己面对未知勇敢行动。" },
+          ],
+          exercise: "找到你最近最难受但不得不做的事。不断问「如果不做更糟糕的是什么？」追问5-7层直到答案变成生命状态。讲出那句话时你整个人是兴奋有力量的——那就是你的初心。全程不评价自己或对方。",
+        },
+      ],
+    },
+  ],
+};
+
+/* ============ STYLES ============ */
+const GLOBAL_STYLES = `
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+    }
+    to {
+      opacity: 1;
+      max-height: 500px;
+      overflow: visible;
+    }
+  }
+
+  @keyframes glow {
+    0%, 100% { filter: drop-shadow(0 0 6px rgba(212,168,71,0.3)); }
+    50% { filter: drop-shadow(0 0 16px rgba(212,168,71,0.6)); }
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: ${COLORS.bg};
+    color: ${COLORS.text};
+    font-family: 'Noto Serif SC', 'PingFang SC', Georgia, serif;
+    line-height: 1.6;
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #999;
+  }
+`;
+
+/* ============ COMPONENT ============ */
+function App() {
+  const [currentView, setCurrentView] = useState("home");
+  const [currentChapter, setCurrentChapter] = useState(0);
+  const [currentSection, setCurrentSection] = useState(0);
+
+  return (
+    <div style={{ minHeight: "100vh", background: COLORS.bg }}>
+      <style>{GLOBAL_STYLES}</style>
+
+      {currentView === "home" ? (
+        <HomeView
+          onSelectChapter={(idx) => {
+            setCurrentChapter(idx);
+            setCurrentSection(0);
+            setCurrentView("detail");
+          }}
+        />
+      ) : (
+        <DetailView
+          chapter={DATA.chapters[currentChapter]}
+          chapterIdx={currentChapter}
+          section={DATA.chapters[currentChapter].sections[currentSection]}
+          sectionIdx={currentSection}
+          onBack={() => setCurrentView("home")}
+          onSelectChapter={(idx) => {
+            setCurrentChapter(idx);
+            setCurrentSection(0);
+          }}
+          onSelectSection={(idx) => setCurrentSection(idx)}
+          onPrevSection={() => currentSection > 0 && setCurrentSection(currentSection - 1)}
+          onNextSection={() => currentSection < DATA.chapters[currentChapter].sections.length - 1 && setCurrentSection(currentSection + 1)}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ============ HOME VIEW ============ */
+function HomeView({ onSelectChapter }) {
+  return (
+    <div style={{ animation: "fadeUp 0.6s ease" }}>
+      {/* HEADER */}
+      <header style={{
+        textAlign: "center",
+        padding: "60px 20px 40px",
+        background: `linear-gradient(135deg, ${COLORS.white}, #f9f7f3)`,
+        borderBottom: `1px solid ${COLORS.border}`,
+      }}>
+        <div style={{
+          fontSize: 64,
+          marginBottom: 16,
+          animation: "glow 3s infinite",
+          display: "inline-block",
+        }}>
+          👁
+        </div>
+        <h1 style={{
+          fontSize: 48,
+          fontWeight: 900,
+          background: `linear-gradient(135deg, ${COLORS.amber} 0%, #C4944F 100%)`,
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          marginBottom: 12,
+          letterSpacing: 2,
+          fontFamily: "'Noto Serif SC', Georgia, serif",
+        }}>
+          不上班咖啡馆
+        </h1>
+        <p style={{
+          fontSize: 16,
+          color: COLORS.textLight,
+          marginBottom: 8,
+          fontFamily: "'Noto Serif SC', Georgia, serif",
+          fontWeight: 500,
+        }}>
+          打工人的12个觉醒时刻 · 深度知识图谱
+        </p>
+        <p style={{
+          fontSize: 13,
+          color: COLORS.textMuted,
+          fontStyle: "italic",
+        }}>
+          古典 著 — 全书方法论 · 实操案例 · 行动指南
+        </p>
+      </header>
+
+      {/* CHAPTERS */}
+      <div style={{
+        maxWidth: 860,
+        margin: "0 auto",
+        padding: "40px 16px",
+      }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+          gap: 24,
+          marginBottom: 48,
+        }}>
+          {DATA.chapters.map((ch, idx) => (
+            <ChapterCard
+              key={idx}
+              chapter={ch}
+              onSelect={() => onSelectChapter(idx)}
+            />
+          ))}
+        </div>
+
+        {/* FORMULAS */}
+        <section style={{ marginBottom: 48 }}>
+          <h2 style={{
+            fontSize: 20,
+            fontWeight: 800,
+            color: COLORS.text,
+            marginBottom: 24,
+            textAlign: "center",
+            letterSpacing: 1,
+          }}>
+            核心公式速览
+          </h2>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+            gap: 16,
+          }}>
+            {[
+              { formula: "定位 = 行业 × 企业 × 职位", desc: "像解密码锁，先锁定一项调动另一项", color: COLORS.amber },
+              { formula: "带着优势切趋势", desc: "没趋势收益不高，没优势收益不长", color: COLORS.green },
+              { formula: "淘金术：闪光点→金豆→抛光", desc: "找到优势，聚合放大，不断宣传", color: COLORS.amber },
+              { formula: "不找工作，而是卖自己", desc: "六大探测器+产业链研究+JD分析", color: COLORS.amber },
+              { formula: "不完美主义 > 完美主义", desc: "长期高预期+短期低到不可能失败", color: COLORS.rose },
+              { formula: "话筒递给好朋友", desc: "你是酒会主人，选择把话筒递给谁", color: COLORS.rose },
+              { formula: "剧本→角色→价值观→能力→行动", desc: "重要改变自上而下，在同层使劲变化不大", color: COLORS.rose },
+              { formula: "万花筒 = 真我×挑战×平衡", desc: "不同阶段转出不同图案，人生是游乐场", color: COLORS.purple },
+              { formula: "超级个体 = 独特优势×小众需求", desc: "丢掉地图打开通讯录，向内发掘宝藏", color: COLORS.blue },
+              { formula: "专家五阶：求助→探索→建筑→助人→专家", desc: "从探索家就可以开始营业(养成式专家)", color: COLORS.cyan },
+              { formula: "管理闭环 = 计划→组织→协调→控制", desc: "最好的管理是No Surprise", color: COLORS.blue },
+              { formula: "拔出第二支箭 → 找到初心", desc: "不怕苦难怕苦得没意义，不怕难怕难得没价值", color: "#ef4444" },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                style={{
+                  background: COLORS.cardBg,
+                  borderRadius: 12,
+                  padding: "16px",
+                  border: `1px solid ${COLORS.border}`,
+                  borderLeft: `4px solid ${item.color}`,
+                  transition: "all 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.08)";
+                  e.currentTarget.style.transform = "translateY(-4px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.transform = "none";
+                }}
+              >
+                <div style={{
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: COLORS.text,
+                  marginBottom: 8,
+                  lineHeight: 1.4,
+                }}>
+                  {item.formula}
+                </div>
+                <div style={{
+                  fontSize: 12,
+                  color: COLORS.textLight,
+                  lineHeight: 1.5,
+                }}>
+                  {item.desc}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* MANTRAS */}
+        <section style={{
+          background: `linear-gradient(135deg, ${COLORS.amber}08, ${COLORS.rose}08)`,
+          borderRadius: 16,
+          padding: 32,
+          borderTop: `2px solid ${COLORS.border}`,
+          borderBottom: `2px solid ${COLORS.border}`,
+        }}>
+          <h2 style={{
+            fontSize: 20,
+            fontWeight: 800,
+            color: COLORS.text,
+            marginBottom: 24,
+            textAlign: "center",
+          }}>
+            行动咒语
+          </h2>
+          <div style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 12,
+            justifyContent: "center",
+            marginBottom: 24,
+          }}>
+            {["要追不要逃", "别把眼睛交给别人", "想都是问题 做才是答案", "勇敢上路", "下班后才是最清醒的时刻", "问题比答案重要", "完成比完美重要", "15天不做就永远不会做", "小事走脑 大事走心", "真正的自由是面对真实心无杂念", "以自己为中心 以问题为导向", "烦恼即菩提 缘分即问题", "故事是苦难的滑滑梯"].map((mantra, idx) => (
+              <div
+                key={idx}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: 20,
+                  fontSize: 12,
+                  fontWeight: 500,
+                  border: `1px solid ${COLORS.border}`,
+                  color: COLORS.amber,
+                  background: `${COLORS.amber}10`,
+                  transition: "all 0.3s ease",
+                  cursor: "default",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = `${COLORS.amber}20`;
+                  e.currentTarget.style.transform = "scale(1.05)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = `${COLORS.amber}10`;
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
+              >
+                「{mantra}」
+              </div>
+            ))}
+          </div>
+          <p style={{
+            textAlign: "center",
+            fontSize: 13,
+            color: COLORS.textLight,
+            fontStyle: "italic",
+            lineHeight: 1.8,
+          }}>
+            「故事是苦难的滑滑梯。我们不准备成为胖子，我们只能成长为，自己的样子。」
+          </p>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+/* ============ CHAPTER CARD ============ */
+function ChapterCard({ chapter, onSelect }) {
+  return (
+    <div
+      onClick={onSelect}
+      style={{
+        background: COLORS.cardBg,
+        borderRadius: 12,
+        padding: 24,
+        border: `1px solid ${COLORS.border}`,
+        borderLeft: `4px solid ${chapter.color}`,
+        cursor: "pointer",
+        transition: "all 0.3s ease",
+        position: "relative",
+        overflow: "hidden",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = "0 12px 32px rgba(0,0,0,0.12)";
+        e.currentTarget.style.transform = "translateY(-8px)";
+        e.currentTarget.style.borderLeftColor = chapter.color;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = "none";
+        e.currentTarget.style.transform = "none";
+      }}
+    >
+      <div style={{
+        position: "absolute",
+        top: -30,
+        right: -30,
+        fontSize: 120,
+        opacity: 0.05,
+        fontWeight: 900,
+      }}>
+        {chapter.icon}
+      </div>
+      <div style={{
+        position: "relative",
+        zIndex: 1,
+      }}>
+        <div style={{
+          fontSize: 36,
+          marginBottom: 12,
+        }}>
+          {chapter.icon}
+        </div>
+        <div style={{
+          fontSize: 11,
+          fontWeight: 700,
+          color: chapter.color,
+          letterSpacing: 0.5,
+          marginBottom: 8,
+        }}>
+          {chapter.storyChar} · {chapter.storyLabel}
+        </div>
+        <h3 style={{
+          fontSize: 18,
+          fontWeight: 800,
+          color: COLORS.text,
+          marginBottom: 8,
+        }}>
+          {chapter.title}
+        </h3>
+        <p style={{
+          fontSize: 13,
+          color: COLORS.textLight,
+          marginBottom: 12,
+        }}>
+          {chapter.tagline}
+        </p>
+        <div style={{
+          fontSize: 11,
+          color: chapter.color,
+          fontWeight: 600,
+        }}>
+          共 {chapter.sections.length} 个深度模块 →
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============ DETAIL VIEW ============ */
+function DetailView({
+  chapter,
+  chapterIdx,
+  section,
+  sectionIdx,
+  onBack,
+  onSelectChapter,
+  onSelectSection,
+  onPrevSection,
+  onNextSection,
+}) {
+  return (
+    <div style={{ animation: "fadeUp 0.6s ease" }}>
+      {/* STICKY NAV */}
+      <nav style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 100,
+        background: `${COLORS.white}F0`,
+        backdropFilter: "blur(12px)",
+        borderBottom: `1px solid ${COLORS.border}`,
+        padding: "12px 16px",
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+      }}>
+        <button
+          onClick={onBack}
+          style={{
+            background: "none",
+            border: `1px solid ${COLORS.border}`,
+            borderRadius: 6,
+            padding: "6px 12px",
+            fontSize: 12,
+            fontWeight: 500,
+            cursor: "pointer",
+            color: COLORS.textLight,
+            transition: "all 0.2s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = `${COLORS.amber}10`;
+            e.currentTarget.style.borderColor = COLORS.amber;
+            e.currentTarget.style.color = COLORS.amber;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "none";
+            e.currentTarget.style.borderColor = COLORS.border;
+            e.currentTarget.style.color = COLORS.textLight;
+          }}
+        >
+          ← 返回总览
+        </button>
+        <div style={{ display: "flex", gap: 8, overflowX: "auto", flex: 1 }}>
+          {DATA.chapters.map((ch, idx) => (
+            <button
+              key={idx}
+              onClick={() => onSelectChapter(idx)}
+              style={{
+                background: idx === chapterIdx ? `${ch.color}15` : "transparent",
+                border: `1px solid ${idx === chapterIdx ? `${ch.color}40` : "transparent"}`,
+                borderRadius: 6,
+                padding: "6px 12px",
+                fontSize: 11,
+                fontWeight: 600,
+                cursor: "pointer",
+                color: idx === chapterIdx ? ch.color : COLORS.textMuted,
+                transition: "all 0.2s ease",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {ch.icon} {ch.storyChar}
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      {/* MAIN CONTENT */}
+      <div style={{
+        maxWidth: 860,
+        margin: "0 auto",
+        padding: "40px 16px 60px",
+      }}>
+        {/* CHAPTER HEADER */}
+        <div style={{
+          textAlign: "center",
+          marginBottom: 40,
+        }}>
+          <div style={{
+            fontSize: 56,
+            marginBottom: 16,
+          }}>
+            {chapter.icon}
+          </div>
+          <h1 style={{
+            fontSize: 32,
+            fontWeight: 900,
+            color: COLORS.text,
+            marginBottom: 8,
+          }}>
+            {chapter.title}
+          </h1>
+          <p style={{
+            fontSize: 13,
+            color: chapter.color,
+            fontWeight: 600,
+          }}>
+            {chapter.storyChar} · {chapter.tagline}
+          </p>
+        </div>
+
+        {/* SECTION PILLS */}
+        <div style={{
+          display: "flex",
+          gap: 8,
+          flexWrap: "wrap",
+          justifyContent: "center",
+          marginBottom: 32,
+        }}>
+          {chapter.sections.map((s, idx) => (
+            <button
+              key={idx}
+              onClick={() => onSelectSection(idx)}
+              style={{
+                background: idx === sectionIdx ? `${chapter.color}20` : COLORS.cardBg,
+                border: `1px solid ${idx === sectionIdx ? `${chapter.color}50` : COLORS.border}`,
+                borderRadius: 8,
+                padding: "8px 16px",
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: "pointer",
+                color: idx === sectionIdx ? chapter.color : COLORS.textLight,
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                if (idx !== sectionIdx) {
+                  e.currentTarget.style.background = `${chapter.color}10`;
+                  e.currentTarget.style.borderColor = `${chapter.color}30`;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (idx !== sectionIdx) {
+                  e.currentTarget.style.background = COLORS.cardBg;
+                  e.currentTarget.style.borderColor = COLORS.border;
+                }
+              }}
+            >
+              {s.title}
+            </button>
+          ))}
+        </div>
+
+        {/* SECTION CONTENT */}
+        <div style={{ animation: "fadeUp 0.4s ease" }}>
+          <SectionContent section={section} chapterColor={chapter.color} />
+
+          {/* SECTION NAV */}
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: 16,
+            marginTop: 32,
+          }}>
+            <button
+              onClick={onPrevSection}
+              disabled={sectionIdx === 0}
+              style={{
+                background: "none",
+                border: `1px solid ${sectionIdx === 0 ? COLORS.border : COLORS.border}`,
+                borderRadius: 8,
+                padding: "10px 16px",
+                fontSize: 12,
+                fontWeight: 500,
+                cursor: sectionIdx === 0 ? "default" : "pointer",
+                color: sectionIdx === 0 ? COLORS.textMuted : COLORS.text,
+                transition: "all 0.2s ease",
+                opacity: sectionIdx === 0 ? 0.5 : 1,
+              }}
+            >
+              ← 上一节
+            </button>
+            <button
+              onClick={onNextSection}
+              disabled={sectionIdx === chapter.sections.length - 1}
+              style={{
+                background: sectionIdx === chapter.sections.length - 1 ? "none" : `${chapter.color}15`,
+                border: `1px solid ${sectionIdx === chapter.sections.length - 1 ? COLORS.border : `${chapter.color}40`}`,
+                borderRadius: 8,
+                padding: "10px 16px",
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: sectionIdx === chapter.sections.length - 1 ? "default" : "pointer",
+                color: sectionIdx === chapter.sections.length - 1 ? COLORS.textMuted : chapter.color,
+                transition: "all 0.2s ease",
+                opacity: sectionIdx === chapter.sections.length - 1 ? 0.5 : 1,
+              }}
+            >
+              下一节 →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============ SECTION CONTENT ============ */
+function SectionContent({ section, chapterColor }) {
+  return (
+    <div>
+      {/* HEADER CARD */}
+      <div
+        style={{
+          background: COLORS.cardBg,
+          borderRadius: 12,
+          padding: 28,
+          border: `1px solid ${COLORS.border}`,
+          borderTop: `3px solid ${chapterColor}`,
+          marginBottom: 28,
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <div style={{
+          position: "absolute",
+          top: -20,
+          right: -20,
+          fontSize: 120,
+          opacity: 0.04,
+          fontWeight: 900,
+        }}>
+          #
+        </div>
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            marginBottom: 12,
+          }}>
+            <span style={{
+              fontSize: 10,
+              fontWeight: 700,
+              color: chapterColor,
+              background: `${chapterColor}15`,
+              padding: "4px 10px",
+              borderRadius: 4,
+              letterSpacing: 0.5,
+            }}>
+              {section.type === "methodology" ? "方法论" : section.type === "framework" ? "框架" : section.type === "action" ? "行动指南" : section.type === "tool" ? "实操工具" : section.type === "decision" ? "决策模型" : "深度洞察"}
+            </span>
+          </div>
+          <h2 style={{
+            fontSize: 24,
+            fontWeight: 900,
+            color: COLORS.text,
+            marginBottom: 16,
+          }}>
+            {section.title}
+          </h2>
+          <div style={{
+            padding: "12px 14px",
+            borderRadius: 8,
+            background: `${chapterColor}08`,
+            border: `1px solid ${chapterColor}25`,
+            marginBottom: 16,
+            display: "inline-block",
+          }}>
+            <div style={{
+              fontFamily: "monospace",
+              fontSize: 14,
+              fontWeight: 700,
+              color: chapterColor,
+            }}>
+              {section.formula}
+            </div>
+          </div>
+          <p style={{
+            fontSize: 14,
+            color: COLORS.text,
+            lineHeight: 1.8,
+          }}>
+            {section.insight}
+          </p>
+        </div>
+      </div>
+
+      {/* STEPS */}
+      <div style={{ marginBottom: 28 }}>
+        <h3 style={{
+          fontSize: 13,
+          fontWeight: 700,
+          color: chapterColor,
+          letterSpacing: 0.5,
+          marginBottom: 16,
+          paddingLeft: 4,
+        }}>
+          📋 实操步骤
+        </h3>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {section.steps.map((step, idx) => (
+            <StepCard key={idx} step={step} index={idx} color={chapterColor} />
+          ))}
+        </div>
+      </div>
+
+      {/* CASES */}
+      {section.cases && (
+        <div style={{ marginBottom: 28 }}>
+          <h3 style={{
+            fontSize: 13,
+            fontWeight: 700,
+            color: COLORS.green,
+            letterSpacing: 0.5,
+            marginBottom: 16,
+            paddingLeft: 4,
+          }}>
+            📖 书中实例
+          </h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {section.cases.map((cs, idx) => (
+              <CaseCard key={idx} caseItem={cs} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* EXERCISE */}
+      <div style={{
+        background: `linear-gradient(135deg, ${chapterColor}10, ${chapterColor}05)`,
+        border: `1px solid ${chapterColor}25`,
+        borderRadius: 12,
+        padding: 24,
+      }}>
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          marginBottom: 12,
+        }}>
+          <span style={{ fontSize: 20 }}>🏍</span>
+          <span style={{
+            fontSize: 13,
+            fontWeight: 800,
+            color: chapterColor,
+            letterSpacing: 1,
+          }}>
+            GOGOGO · 立刻行动
+          </span>
+        </div>
+        <p style={{
+          fontSize: 13,
+          color: COLORS.text,
+          lineHeight: 1.8,
+          marginBottom: 12,
+        }}>
+          {section.exercise}
+        </p>
+        <p style={{
+          fontSize: 11,
+          color: COLORS.textMuted,
+          fontStyle: "italic",
+        }}>
+          「想都是问题，做才是答案。15天不做，你永远不会做。」——胖子
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ============ STEP CARD ============ */
+function StepCard({ step, index, color }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      onClick={() => setIsOpen(!isOpen)}
+      style={{
+        background: COLORS.cardBg,
+        border: `1px solid ${COLORS.border}`,
+        borderLeft: `3px solid ${isOpen ? color : COLORS.border}`,
+        borderRadius: 8,
+        padding: "14px 16px",
+        cursor: "pointer",
+        transition: "all 0.2s ease",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = `${color}05`;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = COLORS.cardBg;
+      }}
+    >
+      <div style={{
+        display: "flex",
+        alignItems: "flex-start",
+        gap: 12,
+      }}>
+        <div style={{
+          background: `${color}20`,
+          color: color,
+          width: 28,
+          height: 28,
+          borderRadius: "50%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 11,
+          fontWeight: 800,
+          flexShrink: 0,
+        }}>
+          {String(index + 1).padStart(2, "0")}
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{
+            fontSize: 14,
+            fontWeight: 700,
+            color: COLORS.text,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: isOpen ? 12 : 0,
+          }}>
+            <span>{step.step}</span>
+            <span style={{
+              fontSize: 10,
+              color: COLORS.textMuted,
+              marginLeft: 8,
+            }}>
+              {isOpen ? "▾" : "▸"}
+            </span>
+          </div>
+          {isOpen && (
+            <p style={{
+              fontSize: 13,
+              color: COLORS.textLight,
+              lineHeight: 1.8,
+              animation: "fadeUp 0.25s ease",
+            }}>
+              {step.detail}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============ CASE CARD ============ */
+function CaseCard({ caseItem }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div
+      onClick={() => setIsOpen(!isOpen)}
+      style={{
+        background: COLORS.cardBg,
+        border: `1px solid ${isOpen ? COLORS.green + "40" : COLORS.border}`,
+        borderRadius: 8,
+        padding: "12px 14px",
+        cursor: "pointer",
+        transition: "all 0.2s ease",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = `${COLORS.green}05`;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = COLORS.cardBg;
+      }}
+    >
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        marginBottom: isOpen ? 12 : 0,
+      }}>
+        <span style={{ fontSize: 14 }}>📌</span>
+        <span style={{
+          fontSize: 13,
+          fontWeight: 700,
+          color: COLORS.text,
+          flex: 1,
+        }}>
+          {caseItem.label}
+        </span>
+        <span style={{
+          fontSize: 10,
+          color: COLORS.textMuted,
+        }}>
+          {isOpen ? "▾" : "▸"}
+        </span>
+      </div>
+      {isOpen && (
+        <p style={{
+          fontSize: 12,
+          color: COLORS.textLight,
+          lineHeight: 1.8,
+          paddingLeft: 24,
+          animation: "fadeUp 0.25s ease",
+        }}>
+          {caseItem.desc}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* ============ RENDER ============ */
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

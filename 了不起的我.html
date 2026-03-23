@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拆卷 · 了不起的我</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=ZCOOL+XiaoWei&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#f5f0e8;font-family:'Noto Serif SC','PingFang SC',Georgia,serif;color:#2c2418;overflow-x:hidden}
+  html{scroll-behavior:smooth}
+  ::selection{background:rgba(180,120,60,0.2)}
+  ::-webkit-scrollbar{width:5px}
+  ::-webkit-scrollbar-track{background:#ebe5d8}
+  ::-webkit-scrollbar-thumb{background:rgba(140,110,70,0.3);border-radius:3px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes glowPulse{0%,100%{opacity:0.3}50%{opacity:0.7}}
+  @keyframes slideOpen{from{max-height:0;opacity:0}to{max-height:6000px;opacity:1}}
+  @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  @keyframes pageIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+  @keyframes inkDraw{from{stroke-dashoffset:300}to{stroke-dashoffset:0}}
+  .fade-up{animation:fadeUp 0.4s ease both}
+  .page-in{animation:pageIn 0.35s ease both}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState}=React;
+
+const P={
+  paper:"#f5f0e8",paperDeep:"#efe9dd",paperLight:"#faf7f0",
+  pageShadow:"rgba(120,100,70,0.06)",
+  text:"#2c2418",textSoft:"#6a5d4e",textMuted:"#a89a88",textChapter:"#4a3f30",
+  vermillion:"#c85030",
+  colors:[
+    {name:"赭石",hex:"#a87a28",glow:"rgba(168,122,40,0.12)",char:"行",desc:"行为改变"},
+    {name:"花青",hex:"#3a7090",glow:"rgba(58,112,144,0.12)",char:"思",desc:"思维进化"},
+    {name:"石青",hex:"#3a8a6a",glow:"rgba(58,138,106,0.12)",char:"系",desc:"关系发展"},
+    {name:"胭脂",hex:"#a84a58",glow:"rgba(168,74,88,0.12)",char:"转",desc:"转折重生"},
+    {name:"藤黄",hex:"#b89a28",glow:"rgba(184,154,40,0.12)",char:"图",desc:"人生地图"},
+  ],
+};
+
+function PaperBg(){
+  return(
+    <div style={{position:"fixed",inset:0,zIndex:0,pointerEvents:"none"}}>
+      <svg width="100%" height="100%" style={{position:"absolute",inset:0,opacity:0.035}}>
+        <defs><filter id="pf"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="4" seed="8"/><feColorMatrix type="saturate" values="0"/></filter></defs>
+        <rect width="100%" height="100%" fill="#a09070" filter="url(#pf)"/>
+      </svg>
+      <svg width="100%" height="100%" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice" style={{position:"absolute",inset:0,opacity:0.03}}>
+        <defs><filter id="ms"><feGaussianBlur stdDeviation="18"/></filter></defs>
+        <path d="M-50 580 Q200 460 400 510 Q600 420 800 480 Q1000 400 1200 460 Q1400 430 1450 470 L1450 900 L-50 900Z" fill="#a09080" opacity="0.5" filter="url(#ms)"/>
+      </svg>
+    </div>
+  );
+}
+
+function SealIcon({char="拆",color=P.vermillion,size=48,glow=true}){
+  const[h,setH]=useState(false);
+  return(
+    <div onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
+      style={{width:size,height:size,position:"relative",flexShrink:0,cursor:"default"}}>
+      <div style={{position:"absolute",inset:-4,borderRadius:"50%",background:`radial-gradient(circle,${color}${h?"15":"08"} 0%,transparent 70%)`,transition:"all 0.5s",animation:glow?"glowPulse 3s ease infinite":"none",filter:"blur(3px)"}}/>
+      <div style={{position:"absolute",inset:0,border:`1.5px solid ${h?color:color+"60"}`,borderRadius:5,transform:"rotate(-3deg)",transition:"all 0.4s",boxShadow:h?`0 0 14px ${color}20`:"none"}}/>
+      <div style={{position:"absolute",inset:3,border:`1px solid ${h?color+"50":color+"25"}`,borderRadius:3,transform:"rotate(-3deg)",transition:"all 0.4s"}}/>
+      <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",transform:"rotate(-3deg)"}}>
+        <span style={{fontSize:size*0.42,fontWeight:900,color,fontFamily:"'ZCOOL XiaoWei','Noto Serif SC',serif",textShadow:h?`0 0 12px ${color}30`:`0 0 6px ${color}10`,transition:"all 0.4s"}}>{char}</span>
+      </div>
+    </div>
+  );
+}
+
+function MiniLandscape({color=P.colors[0].hex,size=44,variant=0}){
+  const v=variant%4;
+  return(
+    <svg width={size} height={size} viewBox="0 0 52 52" style={{flexShrink:0,opacity:0.85}}>
+      {v===0&&<g><path d="M4 38 Q14 12 26 28 Q34 10 48 34 L48 48 L4 48Z" fill={color+"15"} stroke={color+"40"} strokeWidth="0.8"/><path d="M0 42 Q12 28 24 38 Q36 24 52 36 L52 52 L0 52Z" fill={color+"20"} stroke={color+"50"} strokeWidth="0.8"/></g>}
+      {v===1&&<g><line x1="20" y1="48" x2="18" y2="6" stroke={color+"50"} strokeWidth="1.5" strokeLinecap="round"/><path d="M18 12 Q10 8 6 14" fill="none" stroke={color+"40"} strokeWidth="1" strokeLinecap="round"/><path d="M18 20 Q12 16 8 22" fill="none" stroke={color+"35"} strokeWidth="1" strokeLinecap="round"/><path d="M18 28 Q24 24 28 30" fill="none" stroke={color+"40"} strokeWidth="1" strokeLinecap="round"/></g>}
+      {v===2&&<g><path d="M4 22 Q14 16 26 22 Q38 28 48 22" fill="none" stroke={color+"45"} strokeWidth="1" strokeLinecap="round"/><path d="M8 30 Q18 24 30 30 Q42 36 48 30" fill="none" stroke={color+"35"} strokeWidth="0.8" strokeLinecap="round"/><path d="M4 38 Q14 32 26 38 Q38 44 48 38" fill="none" stroke={color+"25"} strokeWidth="0.6" strokeLinecap="round"/></g>}
+      {v===3&&<g><ellipse cx="26" cy="30" rx="20" ry="8" fill={color+"08"} stroke={color+"20"} strokeWidth="0.5"/><ellipse cx="18" cy="26" rx="10" ry="5" fill={color+"0c"} stroke={color+"28"} strokeWidth="0.5"/><path d="M10 20 Q16 8 26 14 Q36 6 44 16" fill="none" stroke={color+"30"} strokeWidth="0.7" strokeLinecap="round"/></g>}
+    </svg>
+  );
+}
+
+function ReadBar({progress}){
+  return(
+    <div style={{position:"fixed",top:0,left:0,right:0,height:2,zIndex:100,background:"rgba(160,140,110,0.1)"}}>
+      <div style={{height:"100%",width:`${progress}%`,background:`linear-gradient(90deg,${P.vermillion}60,${P.vermillion})`,transition:"width 0.3s ease",borderRadius:"0 1px 1px 0"}}/>
+    </div>
+  );
+}
+
+function ChTab({label,char,color,active,onClick,isOverview}){
+  return(
+    <button onClick={onClick} style={{
+      padding:"10px 14px",border:"none",display:"flex",alignItems:"center",gap:6,
+      background:active?P.paperLight:"transparent",
+      borderBottom:active?`2px solid ${color}`:"2px solid transparent",
+      borderRight:isOverview?"1px solid rgba(160,140,110,0.15)":"none",
+      color:active?P.textChapter:P.textMuted,fontSize:13,fontWeight:active?700:400,
+      letterSpacing:active?1.5:0.5,cursor:"pointer",transition:"all 0.3s",
+      fontFamily:"'Noto Serif SC',serif",whiteSpace:"nowrap",flexShrink:0,
+    }}>
+      {char&&<span style={{fontSize:10,fontWeight:900,fontFamily:"'ZCOOL XiaoWei',serif",border:`1px solid ${active?color+"60":color+"25"}`,color:active?color:color+"60",width:18,height:18,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)",transition:"all 0.3s",background:active?color+"08":"transparent"}}>{char}</span>}
+      {label}
+    </button>
+  );
+}
+
+function Sidebar({chapters,current,onSelect,open,onClose}){
+  return(
+    <div>
+      {open&&<div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(60,50,30,0.2)",zIndex:98}}/>}
+      <div style={{position:"fixed",top:0,left:open?0:-320,width:300,height:"100vh",background:P.paperDeep,borderRight:`1px solid rgba(160,140,110,0.15)`,boxShadow:open?"4px 0 30px rgba(80,60,30,0.1)":"none",zIndex:99,transition:"left 0.35s cubic-bezier(.4,0,.2,1)",padding:"32px 0",overflowY:"auto"}}>
+        <div style={{padding:"0 24px 24px",borderBottom:`1px solid rgba(160,140,110,0.12)`}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <SealIcon char="目" color={P.vermillion} size={28} glow={false}/>
+            <span style={{fontSize:16,fontWeight:700,color:P.textChapter,letterSpacing:3}}>目录</span>
+          </div>
+        </div>
+        {chapters.map((ch,i)=>(
+          <div key={i} onClick={()=>{onSelect(i);onClose();}} style={{padding:"14px 24px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,background:current===i?ch.color+"08":"transparent",borderLeft:current===i?`3px solid ${ch.color}`:"3px solid transparent",transition:"all 0.25s"}}>
+            <span style={{fontSize:11,fontWeight:900,fontFamily:"'ZCOOL XiaoWei',serif",color:current===i?ch.color:P.textMuted,border:`1px solid ${current===i?ch.color+"50":P.textMuted+"30"}`,width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)"}}>{ch.char}</span>
+            <span style={{fontSize:14,color:current===i?P.textChapter:P.textSoft,fontWeight:current===i?600:400}}>{ch.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PageNav({current,total,name,onPrev,onNext}){
+  return(
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 0",borderTop:`1px solid rgba(160,140,110,0.15)`,marginTop:40}}>
+      <button onClick={current>0?onPrev:undefined} style={{padding:"10px 20px",border:current>0?"1px solid rgba(160,140,110,0.25)":"1px solid transparent",borderRadius:6,background:current>0?P.paperLight:"transparent",color:current>0?P.textSoft:"transparent",fontSize:14,cursor:current>0?"pointer":"default",fontFamily:"'Noto Serif SC',serif"}}>{"← 上一章"}</button>
+      <div style={{textAlign:"center"}}>
+        <div style={{fontSize:12,color:P.textMuted,letterSpacing:2}}>{name}</div>
+        <div style={{fontSize:11,color:P.textMuted,marginTop:2}}>{current+1} / {total}</div>
+      </div>
+      <button onClick={current<total-1?onNext:undefined} style={{padding:"10px 20px",border:current<total-1?"1px solid rgba(160,140,110,0.25)":"1px solid transparent",borderRadius:6,background:current<total-1?P.paperLight:"transparent",color:current<total-1?P.textSoft:"transparent",fontSize:14,cursor:current<total-1?"pointer":"default",fontFamily:"'Noto Serif SC',serif"}}>{"下一章 →"}</button>
+    </div>
+  );
+}
+
+function SecTitle({title,sub,color=P.colors[0].hex,char,ls=0}){
+  return(
+    <div style={{marginBottom:32,paddingTop:8}}>
+      <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:10}}>
+        <SealIcon char={char} color={color} size={44} glow={false}/>
+        <div style={{opacity:0.3,marginLeft:-28,marginTop:14}}><MiniLandscape color={color} size={32} variant={ls}/></div>
+        <h2 style={{fontSize:26,fontWeight:900,letterSpacing:4,color:P.textChapter,fontFamily:"'Noto Serif SC',serif",lineHeight:1.4}}>{title}</h2>
+      </div>
+      {sub&&<p style={{fontSize:15,color:P.textSoft,lineHeight:1.9,borderLeft:`2px solid ${color}30`,paddingLeft:16,marginLeft:2}}>{sub}</p>}
+      <div style={{height:1,background:`linear-gradient(90deg,${color}40,transparent 60%)`,marginTop:16}}/>
+    </div>
+  );
+}
+
+function Card({children,color=P.colors[0].hex,style={}}){
+  const[h,setH]=useState(false);
+  return(
+    <div onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{background:P.paperLight,borderRadius:10,padding:28,borderLeft:`3px solid ${h?color:color+"50"}`,boxShadow:h?`0 4px 24px ${P.pageShadow},0 0 20px ${color}08`:`0 1px 8px ${P.pageShadow}`,transition:"all 0.35s ease",transform:h?"translateY(-2px)":"none",position:"relative",overflow:"hidden",...style}}>
+      {children}
+    </div>
+  );
+}
+
+function Para({children}){
+  return <p style={{fontSize:16,color:P.text,lineHeight:2.0,marginBottom:16,textAlign:"justify"}}>{children}</p>;
+}
+
+function Step({n,text,detail,color=P.colors[1].hex}){
+  return(
+    <div style={{display:"flex",gap:16,marginBottom:20,alignItems:"flex-start"}}>
+      <div style={{width:30,height:30,borderRadius:"50%",background:color+"10",border:`1.5px solid ${color}35`,color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:800,flexShrink:0,fontFamily:"'Inter',sans-serif"}}>{n}</div>
+      <div style={{flex:1}}>
+        <div style={{fontSize:16,fontWeight:700,color:P.textChapter,lineHeight:1.7}}>{text}</div>
+        {detail&&<div style={{fontSize:15,color:P.textSoft,lineHeight:2.0,marginTop:6}}>{detail}</div>}
+      </div>
+    </div>
+  );
+}
+
+function Quote({text,color=P.vermillion}){
+  return(
+    <div style={{borderLeft:`3px solid ${color}40`,background:color+"06",borderRadius:"0 8px 8px 0",padding:"16px 22px",margin:"20px 0"}}>
+      <span style={{fontSize:15,color:P.textSoft,lineHeight:2.0,fontStyle:"italic"}}>{text}</span>
+    </div>
+  );
+}
+
+function Formula({text,color=P.vermillion}){
+  return(
+    <div style={{textAlign:"center",padding:28,margin:"24px 0",background:P.paperLight,borderRadius:10,border:`1px solid ${color}15`,position:"relative",overflow:"hidden",boxShadow:`0 1px 6px ${P.pageShadow}`}}>
+      <div style={{position:"absolute",inset:0,background:`linear-gradient(90deg,transparent,${color}04,transparent)`,backgroundSize:"200% 100%",animation:"shimmer 5s ease infinite"}}/>
+      <span style={{fontSize:22,fontWeight:900,letterSpacing:5,color:P.textChapter,fontFamily:"'Noto Serif SC',serif",position:"relative"}}>{text}</span>
+    </div>
+  );
+}
+
+function Expand({title,children,color=P.colors[0].hex,char}){
+  const[open,setOpen]=useState(false);
+  return(
+    <div style={{background:open?P.paperLight:P.paperDeep,borderRadius:8,border:`1px solid ${open?color+"20":"rgba(160,140,110,0.1)"}`,overflow:"hidden",transition:"all 0.3s",marginBottom:10,boxShadow:open?`0 2px 12px ${P.pageShadow}`:"none"}}>
+      <div onClick={()=>setOpen(!open)} style={{padding:"16px 22px",display:"flex",alignItems:"center",justifyContent:"space-between",cursor:"pointer"}}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          {char&&<span style={{fontSize:13,fontWeight:900,color:open?color:color+"60",fontFamily:"'ZCOOL XiaoWei',serif",border:`1px solid ${open?color+"50":color+"25"}`,width:22,height:22,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)",transition:"all 0.3s"}}>{char}</span>}
+          <span style={{fontSize:16,fontWeight:open?700:500,color:open?P.textChapter:P.textSoft,letterSpacing:1,transition:"all 0.3s"}}>{title}</span>
+        </div>
+        <span style={{fontSize:10,color:open?color:P.textMuted,transition:"transform 0.3s",transform:open?"rotate(90deg)":"none",display:"inline-block"}}>{"▶"}</span>
+      </div>
+      {open&&<div style={{padding:"0 22px 20px",animation:"slideOpen 0.3s ease"}} onClick={(e)=>e.stopPropagation()}>{children}</div>}
+    </div>
+  );
+}
+
+function Divider({color=P.textMuted}){
+  return(
+    <div style={{display:"flex",alignItems:"center",gap:8,margin:"32px 0",opacity:0.3}}>
+      <div style={{height:1,flex:1,background:`linear-gradient(90deg,transparent,${color}30)`}}/>
+      <div style={{width:3,height:3,borderRadius:"50%",background:color+"50"}}/>
+      <div style={{width:40,height:1,background:color+"25"}}/>
+      <div style={{width:3,height:3,borderRadius:"50%",background:color+"50"}}/>
+      <div style={{height:1,flex:1,background:`linear-gradient(270deg,transparent,${color}30)`}}/>
+    </div>
+  );
+}
+
+function ActionBox({children,char="行"}){
+  return(
+    <div style={{background:P.vermillion+"05",borderRadius:10,padding:24,border:`1px solid ${P.vermillion}12`,position:"relative"}}>
+      <div style={{position:"absolute",top:10,right:14,opacity:0.1}}><SealIcon char={char} color={P.vermillion} size={32} glow={false}/></div>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
+        <SealIcon char={char} color={P.vermillion} size={28} glow={false}/>
+        <span style={{fontSize:16,fontWeight:800,color:P.vermillion,letterSpacing:2}}>即刻行动</span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/* ===== NEW: SVG Diagram Components (Water-ink Style) ===== */
+
+function InkFlow({steps,color=P.colors[0].hex,title}){
+  const w=680,h=steps.length>4?140:120,boxW=130,boxH=48,gap=20;
+  const totalW=steps.length*boxW+(steps.length-1)*gap;
+  const startX=(w-totalW)/2;
+  return(
+    <div style={{margin:"24px 0",background:P.paperLight,borderRadius:10,padding:"20px 12px",border:`1px solid ${color}15`,overflow:"hidden"}}>
+      {title&&<div style={{fontSize:15,fontWeight:700,color,letterSpacing:2,textAlign:"center",marginBottom:14}}>{title}</div>}
+      <svg width="100%" viewBox={`0 0 ${w} ${h}`} style={{display:"block",maxWidth:680,margin:"0 auto"}}>
+        <defs>
+          <filter id="inkBlur"><feGaussianBlur stdDeviation="0.5"/></filter>
+          <marker id={`arrow-${color.slice(1)}`} markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d={`M0,0 L8,3 L0,6`} fill={color+"80"}/></marker>
+        </defs>
+        {steps.map((s,i)=>{
+          const x=startX+i*(boxW+gap);
+          const y=(h-boxH)/2;
+          return(
+            <g key={i}>
+              <rect x={x} y={y} width={boxW} height={boxH} rx="8" fill={color+"0a"} stroke={color+"40"} strokeWidth="1.2" filter="url(#inkBlur)"/>
+              <text x={x+boxW/2} y={y+boxH/2+1} textAnchor="middle" dominantBaseline="middle" fill={P.textChapter} fontSize="13" fontFamily="'Noto Serif SC',serif" fontWeight="600">{s}</text>
+              {i<steps.length-1&&<line x1={x+boxW+2} y1={h/2} x2={x+boxW+gap-2} y2={h/2} stroke={color+"60"} strokeWidth="1.5" strokeDasharray="4 3" markerEnd={`url(#arrow-${color.slice(1)})`}/>}
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+function InkCompare({left,right,leftTitle,rightTitle,color=P.colors[0].hex,title}){
+  return(
+    <div style={{margin:"24px 0",background:P.paperLight,borderRadius:10,padding:"20px 20px 16px",border:`1px solid ${color}15`}}>
+      {title&&<div style={{fontSize:15,fontWeight:700,color,letterSpacing:2,textAlign:"center",marginBottom:16}}>{title}</div>}
+      <div style={{display:"flex",gap:16}}>
+        <div style={{flex:1,background:color+"08",borderRadius:8,padding:16,border:`1px solid ${color}20`}}>
+          <div style={{fontSize:14,fontWeight:800,color,letterSpacing:2,marginBottom:10,textAlign:"center"}}>{leftTitle}</div>
+          {left.map((item,i)=><div key={i} style={{fontSize:14,color:P.textSoft,lineHeight:1.9,padding:"4px 0",borderBottom:i<left.length-1?`1px dashed ${color}15`:"none"}}>{item}</div>)}
+        </div>
+        <div style={{width:1,background:`linear-gradient(to bottom,transparent,${color}30,transparent)`,flexShrink:0}}/>
+        <div style={{flex:1,background:P.vermillion+"06",borderRadius:8,padding:16,border:`1px solid ${P.vermillion}15`}}>
+          <div style={{fontSize:14,fontWeight:800,color:P.vermillion,letterSpacing:2,marginBottom:10,textAlign:"center"}}>{rightTitle}</div>
+          {right.map((item,i)=><div key={i} style={{fontSize:14,color:P.textSoft,lineHeight:1.9,padding:"4px 0",borderBottom:i<right.length-1?`1px dashed ${P.vermillion}12`:"none"}}>{item}</div>)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InkStructure({items,color=P.colors[0].hex,title,cols=4}){
+  return(
+    <div style={{margin:"24px 0",background:P.paperLight,borderRadius:10,padding:"20px 16px",border:`1px solid ${color}15`}}>
+      {title&&<div style={{fontSize:15,fontWeight:700,color,letterSpacing:2,textAlign:"center",marginBottom:16}}>{title}</div>}
+      <div style={{display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap:10}}>
+        {items.map((item,i)=>(
+          <div key={i} style={{background:color+"08",borderRadius:8,padding:"14px 10px",textAlign:"center",border:`1px solid ${color}18`,position:"relative"}}>
+            <div style={{fontSize:20,fontWeight:900,color:color+"30",fontFamily:"'Inter',sans-serif",marginBottom:4}}>{i+1}</div>
+            <div style={{fontSize:13,fontWeight:700,color:P.textChapter,marginBottom:4}}>{item.title}</div>
+            <div style={{fontSize:12,color:P.textSoft,lineHeight:1.7}}>{item.desc}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CaseStory({title,children,color=P.colors[0].hex,icon="📖"}){
+  return(
+    <div style={{margin:"20px 0",background:`linear-gradient(135deg,${color}06,${P.paperLight})`,borderRadius:10,padding:"22px 24px",border:`1px solid ${color}18`,position:"relative",overflow:"hidden"}}>
+      <div style={{position:"absolute",top:12,right:16,fontSize:32,opacity:0.08}}>{icon}</div>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+        <div style={{width:4,height:20,borderRadius:2,background:color}}/>
+        <span style={{fontSize:15,fontWeight:800,color:P.textChapter,letterSpacing:1}}>{title}</span>
+      </div>
+      <div style={{fontSize:15,color:P.textSoft,lineHeight:2.0}}>{children}</div>
+    </div>
+  );
+}
+
+function InkTimeline({items,color=P.colors[0].hex,title}){
+  return(
+    <div style={{margin:"24px 0",background:P.paperLight,borderRadius:10,padding:"20px 20px",border:`1px solid ${color}15`}}>
+      {title&&<div style={{fontSize:15,fontWeight:700,color,letterSpacing:2,textAlign:"center",marginBottom:16}}>{title}</div>}
+      <div style={{position:"relative",paddingLeft:28}}>
+        <div style={{position:"absolute",left:8,top:4,bottom:4,width:2,background:`linear-gradient(to bottom,${color}40,${color}15)`}}/>
+        {items.map((item,i)=>(
+          <div key={i} style={{position:"relative",marginBottom:i<items.length-1?20:0,paddingLeft:20}}>
+            <div style={{position:"absolute",left:-24,top:6,width:12,height:12,borderRadius:"50%",background:color+"15",border:`2px solid ${color}60`}}/>
+            <div style={{fontSize:14,fontWeight:700,color,marginBottom:2}}>{item.label}</div>
+            <div style={{fontSize:14,color:P.textSoft,lineHeight:1.8}}>{item.text}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ===== NEW: Book Overview Component ===== */
+function BookMap({onJump}){
+  const chapters=[
+    {char:"行",title:"行为的改变",color:P.colors[0].hex,question:"为什么我们明知该改却改不了？",core:"改变的本质是创造新经验，而非对抗旧习惯",concepts:["大象与骑象人","心理舒适区","心理免疫X光片","小步子原理","环境场"]},
+    {char:"思",title:"思维的进化",color:P.colors[1].hex,question:"什么在暗中操控我们的思维？",core:"识别三大防御思维，用创造型思维替代解决问题思维",concepts:["僵固型思维","应该思维","绝对化思维","创造性思维","WOOP","控制两分法"]},
+    {char:"系",title:"关系的发展",color:P.colors[2].hex,question:"自我是如何在关系中被塑造的？",core:"自我不是孤立的，而是关系的产物",concepts:["关系中的角色","关系的语言","依恋理论","课题分离","非暴力沟通"]},
+    {char:"转",title:"转折期",color:P.colors[3].hex,question:"面对人生重大转变，该如何应对？",core:"转变不是一个事件，而是结束→迷茫→重生的完整过程",concepts:["三种脱离","迷茫的容器","偶然与另起炉灶","创伤后成长"]},
+    {char:"图",title:"人生地图",color:P.colors[4].hex,question:"人生不同阶段的使命分别是什么？",core:"从自我中心到超越自我，每个阶段都是自我的扩展",concepts:["身份认同","亲密感","职业认同","繁殖感","自我整合"]},
+  ];
+  return(
+    <div className="page-in">
+      <SecTitle title="全书导读" sub="在进入具体章节之前，先鸟瞰这本书的整体逻辑——五个部分如何层层递进，构成一张完整的自我发展地图" color={P.vermillion} char="览" ls={0}/>
+
+      {/* 全书核心命题 */}
+      <Formula text="自我发展 = 行为 × 思维 × 关系 × 转变 × 时间" color={P.vermillion}/>
+
+      {/* 全书逻辑架构SVG — 5节点横向等距，viewBox 680×260 */}
+      <div style={{margin:"28px 0",background:P.paperLight,borderRadius:12,padding:"24px 12px 16px",border:`1px solid ${P.vermillion}12`}}>
+        <div style={{fontSize:16,fontWeight:800,color:P.vermillion,letterSpacing:3,textAlign:"center",marginBottom:4}}>全书逻辑架构</div>
+        <div style={{fontSize:12,color:P.textMuted,textAlign:"center",marginBottom:16}}>从微观行为到宏观人生，五个维度层层递进</div>
+        <svg width="100%" viewBox="0 0 680 250" style={{display:"block",maxWidth:680,margin:"0 auto"}}>
+          <defs>
+            <marker id="arrowV" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4" fill={P.vermillion+"80"}/></marker>
+          </defs>
+          {/* 底部递进弧线 */}
+          <path d="M30,220 Q340,190 650,220" fill="none" stroke={P.vermillion+"12"} strokeWidth="36" strokeLinecap="round"/>
+          <text x="340" y="236" textAnchor="middle" fill={P.vermillion+"35"} fontSize="10" fontFamily="'Noto Serif SC',serif">从个体到关系，从局部到全局 →</text>
+
+          {/* 三个层面标注 */}
+          {[
+            {x:73,w:200,label:"个体层面（行为＋思维）",color:P.colors[0].hex},
+            {x:270,w:120,label:"关系层面",color:P.colors[2].hex},
+            {x:410,w:200,label:"时间层面（转变＋全局）",color:P.colors[4].hex},
+          ].map((b,i)=>(
+            <g key={i}>
+              <rect x={b.x} y="170" width={b.w} height="22" rx="11" fill={b.color+"0a"} stroke={b.color+"20"} strokeWidth="0.8"/>
+              <text x={b.x+b.w/2} y="184" textAnchor="middle" fill={b.color} fontSize="10" fontWeight="600" fontFamily="'Noto Serif SC',serif" style={{pointerEvents:"none"}}>{b.label}</text>
+            </g>
+          ))}
+
+          {/* 五个章节节点 — 等距排列 */}
+          {chapters.map((ch,i)=>{
+            const w=104,h=46,gap=24;
+            const totalW=5*w+4*gap;
+            const startX=(680-totalW)/2;
+            const x=startX+i*(w+gap);
+            const y=20;
+            return(
+              <g key={i} style={{cursor:"pointer"}} onClick={()=>onJump&&onJump(i+1)}>
+                {/* 节点框 */}
+                <rect x={x} y={y} width={w} height={h} rx="8" fill={ch.color+"0c"} stroke={ch.color+"40"} strokeWidth="1.5"/>
+                <text x={x+w/2} y={y+18} textAnchor="middle" fill={ch.color} fontSize="13" fontWeight="900" fontFamily="'ZCOOL XiaoWei',serif" style={{pointerEvents:"none"}}>{ch.char}</text>
+                <text x={x+w/2} y={y+36} textAnchor="middle" fill={P.textChapter} fontSize="11" fontWeight="600" fontFamily="'Noto Serif SC',serif" style={{pointerEvents:"none"}}>{ch.title}</text>
+                {/* 向下虚线到关键词 */}
+                <line x1={x+w/2} y1={y+h} x2={x+w/2} y2={y+h+12} stroke={ch.color+"30"} strokeWidth="1" strokeDasharray="3 2"/>
+                {/* 关键词区域 */}
+                <rect x={x+2} y={y+h+14} width={w-4} height={86} rx="5" fill={ch.color+"05"} stroke={ch.color+"12"} strokeWidth="0.7"/>
+                {ch.concepts.slice(0,4).map((c,j)=>(
+                  <text key={j} x={x+w/2} y={y+h+28+j*17} textAnchor="middle" fill={P.textSoft} fontSize="10" fontFamily="'Noto Serif SC',serif" style={{pointerEvents:"none"}}>{c}</text>
+                ))}
+                {ch.concepts.length>4&&<text x={x+w/2} y={y+h+28+4*17} textAnchor="middle" fill={P.textMuted} fontSize="9" fontFamily="'Noto Serif SC',serif" style={{pointerEvents:"none"}}>+{ch.concepts.length-4}个</text>}
+                {/* 右侧连接箭头 */}
+                {i<4&&<line x1={x+w+1} y1={y+h/2} x2={x+w+gap-1} y2={y+h/2} stroke={P.vermillion+"45"} strokeWidth="1.5" strokeDasharray="4 3" markerEnd="url(#arrowV)"/>}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* 五章速览 — 紧凑双列卡片 */}
+      <div style={{fontSize:16,fontWeight:800,color:P.textChapter,letterSpacing:2,marginBottom:14,marginTop:28}}>章节速览</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+        {chapters.map((ch,i)=>(
+          <div key={i} onClick={()=>onJump&&onJump(i+1)} style={{background:P.paperLight,borderRadius:10,padding:"14px 16px",border:`1px solid ${ch.color}15`,cursor:"pointer",transition:"all 0.3s",borderLeft:`3px solid ${ch.color}60`}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+              <span style={{fontSize:11,fontWeight:900,fontFamily:"'ZCOOL XiaoWei',serif",color:ch.color,border:`1px solid ${ch.color}40`,width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)",background:ch.color+"08"}}>{ch.char}</span>
+              <span style={{fontSize:14,fontWeight:700,color:P.textChapter}}>{ch.title}</span>
+            </div>
+            <div style={{fontSize:13,color:ch.color,fontWeight:600,marginBottom:4,lineHeight:1.6}}>{ch.question}</div>
+            <div style={{fontSize:12,color:P.textSoft,lineHeight:1.7}}>{ch.core}</div>
+          </div>
+        ))}
+      </div>
+
+      <Divider color={P.vermillion}/>
+
+      {/* 全书逻辑递进说明 */}
+      <Card color={P.vermillion} style={{marginBottom:24}}>
+        <div style={{fontSize:17,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>阅读建议</div>
+        <Para>这本书的五个部分遵循一条清晰的递进逻辑：先从最具体的层面——行为——入手，理解改变为什么这么难；然后深入一层，看到行为背后的思维模式；再深入一层，看到思维背后的关系塑造；接着面对人生中不可避免的重大转折；最后站在全局视角，看清人生每个阶段的发展使命。</Para>
+        <Para>每一章都在回答一个核心问题，同时也为下一章的深入做铺垫。比如第一章讲"心理舒适区"，到第四章你会发现"不愿结束就是一种心理舒适区"；第二章讲"僵固型思维"，到第三章你会发现"思维也是关系的产物"。概念之间相互呼应，构成一张完整的知识网络。</Para>
+        <Quote text="建议按顺序阅读，每读完一章回头看看这张全书地图，你会越来越清楚自己在哪里、即将去往何方。" color={P.vermillion}/>
+      </Card>
+    </div>
+  );
+}
+
+/* ===== LogicChain: 每章开头的逻辑链 ===== */
+function LogicChain({items,color,question}){
+  return(
+    <div style={{margin:"0 0 28px",background:`linear-gradient(135deg,${color}06,${P.paperLight})`,borderRadius:10,padding:"18px 20px",border:`1px solid ${color}18`}}>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+        <div style={{width:22,height:22,borderRadius:"50%",background:color+"15",border:`1.5px solid ${color}40`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color,fontWeight:800}}>?</div>
+        <span style={{fontSize:14,fontWeight:700,color,letterSpacing:1}}>{question}</span>
+      </div>
+      <div style={{display:"flex",alignItems:"center",flexWrap:"wrap",gap:"6px 2px"}}>
+        {items.map((item,i)=>(
+          <span key={i} style={{display:"inline-flex",alignItems:"center",gap:4}}>
+            <span style={{fontSize:13,fontWeight:600,color:P.textChapter,background:color+"0a",border:`1px solid ${color}18`,borderRadius:6,padding:"4px 9px"}}>{item}</span>
+            {i<items.length-1&&<span style={{fontSize:13,color:color+"50",fontWeight:700,flexShrink:0}}>→</span>}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const CHS=[
+  {id:"overview",label:"全书导读",char:"览",color:P.vermillion,ls:0},
+  {id:"behavior",label:"行为的改变",char:"行",color:P.colors[0].hex,ls:0},
+  {id:"thinking",label:"思维的进化",char:"思",color:P.colors[1].hex,ls:1},
+  {id:"relation",label:"关系的发展",char:"系",color:P.colors[2].hex,ls:2},
+  {id:"turning",label:"转折期",char:"转",color:P.colors[3].hex,ls:3},
+  {id:"lifemap",label:"人生地图",char:"图",color:P.colors[4].hex,ls:0},
+];
+
+/* ===== CHAPTER 0: 行为的改变 ===== */
+function Ch0(){
+  const c=P.colors[0].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="行为的改变" sub="如何启动行为改变？从大象与骑象人的博弈，到心理舒适区的突破，再到小步子的力量" color={c} char="行" ls={0}/>
+      <LogicChain question="为什么我们明知该改却改不了？" color={c} items={["大象与骑象人(认识阻力)","心理舒适区(理解根源)","X光片(看清结构)","小步子(启动改变)","环境场(巩固习惯)","情感触发(自然发生)"]}/>
+      <Formula text="改变的本质 = 创造新经验" color={c}/>
+
+      <InkFlow steps={["旧经验","觉察不适","突破舒适区","创造新经验","巩固新习惯"]} color={c} title="改变的完整路径"/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>大象与骑象人模型</div>
+        <Para>积极心理学家乔纳森·海特提出了一个经典比喻：人的情感面就像一头大象，理智面就像骑在大象背上的骑象人。骑象人手握缰绳看似在指挥，但大象的力量远超骑象人。一旦两者发生冲突——骑象人想往左，大象想往右——骑象人几乎总是拗不过大象。</Para>
+        <Para>这解释了为什么我们明知该怎么做却做不到。理智提供方向，情感提供动力。改变失败不是意志力不够，而是没有理解大象的脾气。</Para>
+
+        <InkCompare
+          title="为什么大象不听话？"
+          leftTitle="经验的好处"
+          rightTitle="期待的好处"
+          left={["亲身体验过的感受","身体记忆，真实可感","被窝的温暖、美食的快乐","大象认这个，立刻就动"]}
+          right={["头脑想象出来的好处","理智分析，抽象遥远","跑步健康、读书有用","大象不认，迟迟不动"]}
+          color={c}
+        />
+
+        <Quote text="改变是一种选择，不改变也是一种选择。你为自己不改变所找的所有借口，统统都是你的选择。" color={c}/>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>心理舒适区：熟悉的痛苦</div>
+        <Para>心理舒适区不等于舒适的环境。它的本质是你熟悉的应对方式。就像电影《肖申克的救赎》中被关了50年的老布，监狱虽然痛苦，但已经是他唯一熟悉的世界。你有时处于一个很痛苦的境地，但也不愿改变，因为痛苦是你熟悉的。</Para>
+
+        <CaseStory title="案例：害怕分离的妻子" color={c}>
+          <p style={{marginBottom:10}}>一位来访者因为焦虑找到陈海贤。她的丈夫之前在国外深造，两人异地了6年。最近丈夫回国到上海工作，她也跟着搬过去。但她一直纠结要不要回原来的城市。</p>
+          <p style={{marginBottom:10}}>表面上看是职业发展问题，但讨论后发现，上海的发展机会明显更好，她也认同这一点。真正的原因是什么？她叹了口气说："我担心先生跟我离婚。"但她刚结婚，两人很恩爱，生活也没有困难。</p>
+          <p style={{marginBottom:10}}>后来聊到成长经历，她从小和父母聚少离多。她印象最深刻的场景是：小时候坐在家门口，孤零零地等在县城做生意的爸妈回家，直到天空一点点黑下来，父母也没有回来。</p>
+          <p style={{marginBottom:10}}>她发展出了一套应对方式：不对关系抱有期望，随时准备离开，过一个人的生活。读大学异地恋时，她心里想的是"反正有一天对方会离开"。但爱情战胜了距离，丈夫学成归来。可当两人真正在一起时，她反而开始不安，想重新开始两地分居。</p>
+          <p style={{marginBottom:10}}>陈海贤把她和丈夫请到咨询室，一起给焦虑取了个名字叫"小闹铃"。当妻子不安想离开时，就告诉丈夫"我的小闹铃又响了"，丈夫就轻轻拧她的耳朵，假装关掉。</p>
+          <p>最终她决定留在上海。离开时她说："不只是感情，以前任何好的东西，工作、荣誉、生活，我都不敢要，哪怕得到了也觉得不安。现在，我慢慢开始不那么想了。"</p>
+        </CaseStory>
+
+        <Quote text="心理舒适区不一定舒适，但一定熟悉。我们会用自己的应对方式去建构生活，而不是根据生活选择合适的应对方式。" color={c}/>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>心理免疫X光片</div>
+        <Para>哈佛大学心理学家罗伯特·凯根发明了"心理免疫X光片"——像X光一样照出阻碍改变的深层心理结构。每个人内心都有一套"免疫系统"，在你试图改变时产生抗体，把你拉回原位。</Para>
+
+        <InkStructure
+          title="心理免疫X光片：四栏表"
+          color={c}
+          cols={4}
+          items={[
+            {title:"行为目标",desc:"你想要改变的具体行为"},
+            {title:"相反行为",desc:"你正在做的与目标相反的事"},
+            {title:"隐藏好处",desc:"相反行为给你带来的隐秘好处"},
+            {title:"核心假设",desc:"你内心深处的错误信念"},
+          ]}
+        />
+
+        <CaseStory title="案例：不敢发言的艾米" color={c} icon="🔍">
+          <p style={{marginBottom:10}}>艾米刚从大学毕业，在一家互联网公司工作。她很有想法，但在会议上总是不好意思说出自己的想法。就算好不容易说出来了，别人一表达不同意见，她就很快沉默。有时候明明心里不同意，别人问她想法，她也会本能地说"对，就是这样"。</p>
+          <p style={{marginBottom:10}}>用X光片分析：<strong>第一栏</strong>——行为目标：更自信地表达自己。<strong>第二栏</strong>——相反行为：经常沉默，等别人先发言然后附和"对对对"；如果不同意也不直说；说话很小声，以至于大家听不清。</p>
+          <p style={{marginBottom:10}}><strong>第三栏</strong>——隐藏好处：不发言就不会说错话、不会被评价、不会暴露自己的无知、不会引起冲突。<strong>第四栏</strong>——核心假设：如果我说出自己的想法而且说错了，同事们会觉得我很笨，领导会觉得我能力不行。</p>
+          <p>找到核心假设后，陈海贤设计了"行为测验"——让艾米在一次小型会议上，试着说出一个自己的想法，然后观察：同事的反应真的像她想象得那么可怕吗？结果发现，同事不但没有批评她，反而认真讨论了她的想法。错误的核心假设开始动摇了。</p>
+        </CaseStory>
+
+        <Quote text="找到了阻碍改变的核心假设，你才找到了真正需要改变的东西。" color={c}/>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Expand title="小步子原理：如何迈开改变的第一步" color={c} char="步">
+        <Para>很多人改变时喜欢制定宏大计划，结果还没开始就被吓退了。陈海贤提出"小步子原理"——不需要完美计划，只需要迈出一小步。</Para>
+
+        <CaseStory title="案例：窝在宿舍的大四学生" color={c}>
+          <p style={{marginBottom:10}}>一个大四学生，需要在最后一学期修完4门课才能毕业，否则就会被退学。可他每天窝在宿舍打网游，几乎不出门。他是村里第一个名牌大学生，村里人教育孩子都以他为榜样。</p>
+          <p style={{marginBottom:10}}>谈到考试时，他说已经想明白了，毕不了业就去干体力活。这当然不是真的无所谓，而是大象畏惧压力，逐渐对改变失去信心。</p>
+          <p style={{marginBottom:10}}>陈海贤用了"奇迹提问"："假如奇迹出现了，你真的顺利毕业了，回顾这个过程，你迈出的第一步是什么？"他想了想说："那我至少要让自己作息正常，按时去食堂吃饭吧。"</p>
+          <p style={{marginBottom:10}}>他真的去做了。最开始小心翼翼地，怕被人看到。第二天打饭时遇到一个同学，那个同学说："我在考GRE，也很孤独，需要人提醒我早起，我们相互提醒，一起约吃早饭怎么样？"</p>
+          <p>后来他们开始一起上自习，他的状态慢慢好了起来。改变就像多米诺骨牌，最重要的是找到能推动改变的那块牌——第一个小小的改变，并把它推倒。</p>
+        </CaseStory>
+
+        <InkFlow steps={["奇迹提问","找到第一步","小步行动","获得反馈","下一小步"]} color={c} title="小步子原理的行动路径"/>
+      </Expand>
+
+      <Expand title="环境场原理：如何让新行为变成新习惯" color={c} char="场">
+        <Para>人的行为不是独立于环境的。你在图书馆就容易学习，在床上就容易刷手机。这种环境对行为的影响力，就是"场"。</Para>
+
+        <CaseStory title="案例：小佳与Netflix的故事" color={c}>
+          <p style={{marginBottom:10}}>小佳在一家创业公司工作，每天下班回家后想学编程提升自己。但一回到家，他总是先打开Netflix"放松一下"，结果一看就停不下来，等反应过来已经深夜了。</p>
+          <p style={{marginBottom:10}}>他很自责，觉得是自己意志力不行。但陈海贤告诉他，问题不在意志力，而在"场"——他的客厅（沙发+大电视）就是一个"娱乐场"，这个环境场里的每一个线索都在指向Netflix。</p>
+          <p>解决方法很简单：他把电视从客厅搬到了储物间，在客厅的桌上放上笔记本电脑，只装编程软件。又在咖啡店办了张会员卡，每周三次下班后去咖啡店学习。环境变了，行为自然就变了。不需要多大的意志力，只需要重新设计你的"场"。</p>
+        </CaseStory>
+
+        <Step n={1} text="增大好行为的便利性" detail="把你想做的事变得更容易启动。健身服放在显眼处，书放在桌上。" color={c}/>
+        <Step n={2} text="增大坏行为的阻力" detail="把你不想做的事变得更麻烦。删掉游戏App，需要重新下载才能玩。" color={c}/>
+        <Step n={3} text="创造支持新行为的社交环境" detail="加入一个学习小组或跑步俱乐部，让社交环境成为你改变的'场'。" color={c}/>
+      </Expand>
+
+      <Expand title="情感触发：让改变自然发生" color={c} char="情">
+        <Para>理性给改变提供方向，但真正推动改变的往往是情感的力量。当你被一个故事打动、看到一个榜样、经历了一次触动灵魂的体验——这种情感触发比任何道理都有效。</Para>
+
+        <CaseStory title="案例：大城市里孤独的暴食者" color={c}>
+          <p style={{marginBottom:10}}>一位来访者在大城市独自工作，每晚下班后大吃特吃。她不是因为贪嘴，而是因为孤独。每天在闹市区寻找美食，是为了感受人群的烟火气——这是她应对孤独的方式，是她的心理舒适区。</p>
+          <p style={{marginBottom:10}}>陈海贤没有建议她节食或列控制饮食的计划——那只是在和大象正面对抗。而是帮她找到了一个羽毛球俱乐部。</p>
+          <p>有了朋友和归属感后，暴食的问题自然消失了。她不需要否定旧方法，只需要找到一个更健康的替代方式——用真正的人际连接替代食物带来的虚假温暖。</p>
+        </CaseStory>
+
+        <Quote text="人生已经很艰难了，你也不需要完全否定旧方法。最重要的是找一个更健康的替代方式。" color={c}/>
+      </Expand>
+
+      <Expand title="第二序列改变：有效与无效的改变" color={c} char="辨">
+        <Para>改变分两种：第一序列改变——在系统内部做调整（换工作、换城市）；第二序列改变——改变系统本身的规则（改变你看待工作的方式）。无效的改变往往是第一序列的：你不停换工作，但每份都做不长久，因为底层思维模式没变。</Para>
+
+        <InkCompare
+          title="两种改变的区别"
+          leftTitle="第一序列改变"
+          rightTitle="第二序列改变"
+          left={["在系统内部调整","换工作、换城市、换伴侣","表面行为改变","治标不治本，容易反复"]}
+          right={["改变系统本身的规则","改变看待问题的方式","深层认知改变","治本，持久有效"]}
+          color={c}
+        />
+
+        <Para>判断标准很简单：你的改变是改善了状况，还是维持甚至加剧了症状？如果形成了恶性循环——比如失眠的人越想改变失眠就越清醒——那就是无效的改变，你需要的是第二序列改变：接纳。</Para>
+      </Expand>
+
+      <Divider color={c}/>
+
+      <ActionBox>
+        <Para>现在请你思考：你最想改变的一件事是什么？用心理免疫X光片做一次自我检查——写下你的改变目标、相反行为、隐藏好处和核心假设。然后找到你能迈出的最小一步，今天就去做。</Para>
+      </ActionBox>
+    </div>
+  );
+}
+
+/* ===== CHAPTER 1: 思维的进化 ===== */
+function Ch1(){
+  const c=P.colors[1].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="思维的进化" sub="从防御型思维到成长型思维，识别三大思维陷阱，掌握心智升级的核心工具" color={c} char="思" ls={1}/>
+      <LogicChain question="什么在暗中操控我们的思维？" color={c} items={["心智模式(底层系统)","僵固思维(自我证明)","应该思维(自我暴政)","绝对化思维(灾难想象)","创造性思维(持续张力)","WOOP(行动桥梁)","控制两分法(焦虑解药)"]}/>
+      <Formula text="心智模式 = 组织和加工世界的方式" color={c}/>
+
+      <InkCompare
+        title="两种心智模式"
+        leftTitle="成长型思维"
+        rightTitle="防御型思维"
+        left={["关注能力成长","把挑战当机会","以努力为荣","批评是改进的反馈","从别人成功中学习"]}
+        right={["关注自我证明","把困难当威胁","觉得努力可耻","批评是负面评价","别人成功=自己失败"]}
+        color={c}
+      />
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>僵固型思维：脆弱的高自尊</div>
+        <Para>僵固型思维的本质是一种防御心态——把注意力从"怎么做事"转移到"怎么维护我很强的自我形象"上。一帆风顺时觉得自己很厉害，遇到挫折就觉得一无是处。</Para>
+
+        <CaseStory title="案例：名牌大学生的崩溃" color={c} icon="🎓">
+          <p style={{marginBottom:10}}>陈海贤在浙大工作时遇到一个学生，人很聪明，来自一个县城中学。校长把他的照片放到荣誉墙上，对他说"你很聪明，到了大学一定能为母校争光"。他当时心里就咯噔一下，觉得自己被架到了很高的位置，上去了，下不来。</p>
+          <p style={{marginBottom:10}}>上大学后他发现自己根本不算聪明，到处都是牛人。大一期末微积分挂科了——其实大学里这门课挂科的人很多，补考就好了。但他学了一段觉得学不会，怎么也不肯学，两次补考都弃考了。</p>
+          <p style={{marginBottom:10}}>他不愿向老师同学求助，不愿让任何人知道他有课程不及格。每天躲在宿舍不想见人。以前高中的学弟学妹加他微信想问大学情况，他一概拉黑。</p>
+          <p style={{marginBottom:10}}>陈海贤问他："不就是一次考试吗？也有很多人没过啊。"他说："老师你不知道，我能考上这个大学完全是因为运气。现在这门课把我打回了原形。我其实就是很水的。"</p>
+          <p>他的"自我"太重了。一帆风顺时觉得自己很厉害，遇到挫折时又觉得一无是处。问题不在能力，而在于他怎么看待能力——这就是"脆弱的高自尊"。</p>
+        </CaseStory>
+
+        <CaseStory title="案例：德韦克的经典实验" color={c} icon="🔬">
+          <p style={{marginBottom:10}}>斯坦福大学德韦克教授找了几百个小学初中的孩子，先给他们做10道容易的智力题。完成后，一部分孩子被夸"你太聪明了！"，另一部分被夸"你一定很努力！"</p>
+          <p style={{marginBottom:10}}>结果出人意料。被夸聪明的孩子在接下来的测验里不愿选更难的题目。当安排了很难的题目，所有孩子表现都不好时，被夸聪明的孩子对解难题再也没兴趣，表现直线下降。甚至最后让他们写下分数和感受时，被夸聪明的孩子有40%虚报了成绩——而且都报高了。</p>
+          <p>相反，被夸努力的孩子越挫越勇，保留着对解难题的兴趣，表现越来越好。夸"聪明"暗示能力是固定的，孩子就会把注意力从任务转移到自我证明上。这就是僵固型思维的来源。</p>
+        </CaseStory>
+
+        <Quote text="如果你相信变化，那么你是一个什么样的人根本不重要，你会怎么发展才重要。" color={c}/>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>应该思维：自我的暴政</div>
+        <Para>应该思维有两种形式。一种是对世界的"应该"：世界应该公平，别人应该对我好。另一种是对自己的"应该"：我应该更优秀，我不应该犯错。它的本质是用别人的标准代替了自发的行动。</Para>
+
+        <CaseStory title="案例：打鸡血的恶性循环" color={c} icon="🔄">
+          <p style={{marginBottom:10}}>一位读者写信给陈海贤。她颓废了一段时间，某天发誓要改变。"当天我就制定了满满的计划，高效率地完成了。第一天很开心。第二天下午觉得有点累，没完成任务，很沮丧。第三天开始拖延，一项任务都没完成。第四天开始思考：这么做有什么意义？我的生活就是不断完成任务的过程吗？"</p>
+          <p style={{marginBottom:10}}>然后她花了很长时间思考"我的梦想是什么""我活着是为了什么"这样的问题。但陈海贤判断，这种对人生意义的寻求不会帮她走出怪圈，而会变成又一轮颓废、拖延、沮丧和振作的开始。</p>
+          <p>问题在哪里？她的目标是"我不想让自己这么颓废"——她的动力不是来自目标，而是来自问题本身带来的焦虑。努力一有成效，焦虑就缓解，张力就消失，动力就减少，直到问题重新让她焦虑。这就是"解决问题思维"的死循环。</p>
+        </CaseStory>
+
+        <CaseStory title="案例：善良的乞丐困境" color={c} icon="💭">
+          <p style={{marginBottom:10}}>一位来访者觉得自己是善良的人，这是她"应该自我"。有一天经过学校门口，看到一个乞丐伸手要钱，她犹豫了一下没给。本来是件小事，但她非常内疚，一直在想"我是不是不够善良了"。</p>
+          <p>内疚背后就是"我应该善良"的应该思维，以及"如果我不给乞丐钱，我就不善良了"的非黑即白。如果遵循感觉，它常常是复杂的——有时我们对路边乞丐有善心，有时熟视无睹。但"应该规则"只有符合不符合，要么善良要么不善良。规则天生就是非黑即白的。</p>
+        </CaseStory>
+
+        <InkFlow steps={["外在标准","我应该如此","模仿自发行动","非黑即白","自我压迫"]} color={c} title="应该思维的形成路径"/>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Expand title="绝对化思维：悲观主义的陷阱" color={c} char="绝">
+        <Para>绝对化思维把事情推向极端。它的典型表现是"灾难化想象"——一件小事在脑中被无限放大。本质上，它是对伤害的抽象化：每次遇到痛苦的事就在心里埋下地雷，然后把危险区域越标越大，自己的活动空间就越来越小。</Para>
+
+        <CaseStory title="案例：塞利格曼的狗实验" color={c} icon="🐕">
+          <p style={{marginBottom:10}}>心理学家塞利格曼把两群狗赶到A和B两个笼子里通电。A笼子有切断电源的杠杆，B笼子没有。A笼子的狗很快学会按杠杆切断电源，B笼子的狗什么也做不了。</p>
+          <p style={{marginBottom:10}}>然后把两群狗分别放到C笼子——很矮，狗只要奋力一跃就能跳出来。给C笼子通电时，原来A笼子的狗很快跳出来了，而原来B笼子的狗却趴在笼子里，呜呜地经受电击，一动不动。</p>
+          <p>不是电击让它们放弃了，而是电击下形成的信念"我再做什么也没有用了"。塞利格曼称之为"习得性无助"。人也一样——工作压力让人觉得再努力也赶不上进度，失恋让人觉得再也找不到好的爱情。</p>
+        </CaseStory>
+
+        <CaseStory title="案例：小罗不断扩大的防御范围" color={c} icon="🛡️">
+          <p style={{marginBottom:10}}>小罗刚毕业进了一家创业公司，每天加班到很晚，老板压力大对他很挑剔，做了半年挨了很多骂还被开除了。</p>
+          <p style={{marginBottom:10}}>如果伤害较小，他会想"我不适合这家公司"——正常反应。防御范围再扩大→"我不适合去创业公司"。再扩大→"我不适合去公司工作，也许该考公务员"。再扩大→"我不适合去工作，职场人际关系和压力我根本没法应付"。</p>
+          <p>从"这家公司可怕"到"创业公司可怕"到"公司可怕"到"工作本身可怕"。被开除这件事的伤害越大，他心中的信条就越抽象，防御范围也越大，最终可能选择在家不工作。对治方法：学会"去灾难化"——事情真的有那么严重吗？最坏的结果是什么？你以前遇到类似情况怎么过来的？</p>
+        </CaseStory>
+
+        <InkStructure
+          title="悲观思维的三种绝对化方向"
+          color={c}
+          cols={3}
+          items={[
+            {title:"永久化",desc:"时间上觉得这件事会一直发生。'这工作没完没了''我完了'"},
+            {title:"普遍化",desc:"空间上觉得所有领域都是这样。'我什么都做不好'"},
+            {title:"人格化",desc:"归因上觉得都是我的错。'一定是因为我不行'"},
+          ]}
+        />
+      </Expand>
+
+      <Expand title="创造性思维：从解决问题到创造目标" color={c} char="创">
+        <Para>如果把思维比作河流，需要三个条件：河流落差产生的张力（目标）、控制走向的河道（方法）、不断补充的源头活水（与现实接触）。只有创造的结构，才能产生持续的张力。</Para>
+
+        <CaseStory title="案例：陈海贤的拖延症不治而愈" color={c} icon="✍️">
+          <p style={{marginBottom:10}}>陈海贤自己一直有拖延的毛病。他甚至专门写了一本小书叫《拖延症再见》。后来准备写第二版，因为发现拖延症还没好。</p>
+          <p style={{marginBottom:10}}>但正当他要动笔时，拖延症忽然不治而愈了。不是找到了治疗秘方，而是因为他开始准备《自我发展心理学》这门课。从构思开始，它就变成了心里很重要的未完成事件。他读书、收集资料，脑子里都在想它，变得紧张又有效率。</p>
+          <p>当这门课还只是一个构思时，他就很爱它。因为课里有他关心的问题，有他想讲的东西。想把它完成的冲动变成了持续的张力——不会三天打鱼两天晒网。只要没完成，张力就持续存在。这就是创造型思维：动力来自你热爱的目标，而不是来自对问题的焦虑。</p>
+        </CaseStory>
+
+        <InkCompare
+          title="两种思维结构的对比"
+          leftTitle="创造型思维"
+          rightTitle="解决问题思维"
+          left={["先想我要什么","再想现实如何","现实是创造的条件","张力持续，动力充沛"]}
+          right={["先看环境提供什么","再想目标是否可行","限制是放弃的理由","问题解决，动力消失"]}
+          color={c}
+        />
+      </Expand>
+
+      <Expand title="WOOP思维：从想象到行动的桥梁" color={c} char="做">
+        <Para>WOOP是心理学家厄廷根提出的思维工具——把积极幻想变成切实行动。它把乐观与现实结合起来，既保留希望的动力，又用障碍把幻想拉回地面。</Para>
+
+        <InkStructure
+          title="WOOP四步法"
+          color={c}
+          cols={4}
+          items={[
+            {title:"W·愿望",desc:"你最想实现的目标是什么？"},
+            {title:"O·结果",desc:"实现后最美好的画面？"},
+            {title:"O·障碍",desc:"最大的内在障碍是什么？"},
+            {title:"P·计划",desc:"如果遇到X，我就做Y"},
+          ]}
+        />
+
+        <CaseStory title="案例：IT工程师转产品经理" color={c} icon="💼">
+          <p style={{marginBottom:10}}>一位朋友在IT公司做技术支持，觉得没有创造性，想转做产品经理。这是一个有很大张力的未实现目标。</p>
+          <p style={{marginBottom:10}}>按照WOOP：<strong>W（愿望）</strong>——成为产品经理。<strong>O（结果）</strong>——能够设计自己的产品，有创造性的成就感。<strong>O（障碍）</strong>——没有产品经验，跨部门转岗困难，可能被拒绝。<strong>P（计划）</strong>——如果没有产品经验→利用周末自学产品思维，做三个产品分析报告；如果跨部门困难→先主动跟产品团队合作一个小项目；如果被拒绝→不放弃，积累更多作品再申请。</p>
+          <p>WOOP不是让你只做积极幻想——那只会降低行动张力。而是让你在想象美好结果的同时，直面可能遇到的障碍，并提前制定"如果……就……"的应对计划。</p>
+        </CaseStory>
+      </Expand>
+
+      <Expand title="控制两分法：焦虑的终极解药" color={c} char="控">
+        <Para>斯多葛哲学家爱比克泰德将世界分为两部分：你能控制的，和你不能控制的。烦恼的根源是我们总想控制不能控制的事情。</Para>
+
+        <CaseStory title="案例：博士生发SCI论文" color={c} icon="📝">
+          <p style={{marginBottom:10}}>一位博士生每天焦虑到失眠，因为导师要求他在毕业前发一篇SCI论文。他不停地刷邮箱看有没有审稿结果，刷到凌晨三四点。</p>
+          <p style={{marginBottom:10}}>陈海贤帮他做了"控制两分法"分析。不可控的：审稿人的意见、期刊的接受率、导师的态度。可控的：实验设计的严谨性、数据分析的质量、论文写作的水平、投稿的期刊选择。</p>
+          <p>当他把注意力从"刷邮箱等结果"转移到"把当前实验做到最好"上时，焦虑大幅减少，反而效率提高了。匿名戒酒者协会的"一次一天"也是这个原理——不要想你要戒酒一辈子，只承诺这24小时不喝酒就好。</p>
+        </CaseStory>
+
+        <Quote text="上帝，请赐予我平静，去接受我无法改变的；给予我勇气，去改变我能改变的；赐我智慧，分辨这两者的区别。" color={c}/>
+      </Expand>
+
+      <Divider color={c}/>
+
+      <ActionBox>
+        <Para>在接下来一周里，每当你感到焦虑或自责时，停下来做三件事：第一，识别这是僵固思维、应该思维还是绝对化思维在作祟？第二，用控制两分法区分可控与不可控。第三，问自己：我真正想创造的东西是什么？</Para>
+      </ActionBox>
+    </div>
+  );
+}
+
+/* ===== CHAPTER 2: 关系的发展 ===== */
+function Ch2(){
+  const c=P.colors[2].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="关系的发展" sub="从个体视角到关系视角，理解关系如何塑造自我，学会建立高质量的关系" color={c} char="系" ls={2}/>
+      <LogicChain question="自我是如何在关系中被塑造的？" color={c} items={["角色(行为期待)","关系语言(话外音)","依恋模式(爱的模板)","课题分离(边界)","非暴力沟通(表达)"]}/>
+      <Formula text="自我 = 关系的产物" color={c}/>
+
+      <InkFlow steps={["个体视角","关系视角","角色觉察","课题分离","高质量关系"]} color={c} title="从个体到关系的认知升级"/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>关系中的角色</div>
+        <Para>角色不只是社会身份（警察、老师），更是一种行为期待——关系中隐性的契约。在不同关系中你扮演不同角色，角色决定了你怎么想、怎么说、怎么做。入戏太深，就把角色当成了唯一的自我。</Para>
+
+        <CaseStory title="案例：大姐和职场新人" color={c} icon="👥">
+          <p style={{marginBottom:10}}>一位来访者觉得自己太没主见了，到公司一年了，开讨论会时经常不知道说什么。前段时间遇到一个热心大姐，大姐每次跟她说了一大通职场规则人生道理后，总会补一句："你啊什么都好，就是太不愿意表现自己了。"</p>
+          <p style={{marginBottom:10}}>她听了就说："是是是，感谢大姐点拨。"过几天大姐又来，又是一通指点，走之前又说同样的话。慢慢地她也觉得不会表现自己是个问题。</p>
+          <p style={{marginBottom:10}}>陈海贤说："我觉得你挺成功的啊。"她奇怪地问哪里成功了。陈海贤说："你成功地扮演了一个需要指导的职场新人的角色。如果你改好了，那大姐上哪里指点江山去呢？"</p>
+          <p style={{marginBottom:10}}>她想了想说："对对，大姐虽然这么说，但还是很喜欢我，每次都来跟我说话。我旁边有个同事，人很能干，很会表现自己，大姐就非常不喜欢她，从来不跟她说话。"</p>
+          <p>在语言上，大姐希望她变得更成熟。但在关系中，大姐却把她固定在了"不会表现、需要指导"的角色上。她也接受了这个角色期待，甚至享受大姐的照顾。正是这个角色，让她很难改变。这就是语言要求和角色期待的矛盾。</p>
+        </CaseStory>
+
+        <CaseStory title="案例：焦虑的妈妈与没有自主性的孩子" color={c} icon="👩‍👦">
+          <p style={{marginBottom:10}}>陈海贤经常碰到焦虑的妈妈，一边说"老师，我的孩子太没有自主性了，我就希望他能主动做事"，另一边又帮孩子把所有事情都做好了。</p>
+          <p>她没有意识到，在角色的期待里，她已经把孩子放到了"没有主动性"的位置，孩子也把她放到了"什么事都有我妈呢"的位置。这样无论她在语言上怎么要求，孩子都很难发展出自主性。要改变关系，不能在语言上要求对方，而要像你期待他的样子那样对待他。</p>
+        </CaseStory>
+
+        <InkStructure
+          title="调整角色的三个方法"
+          color={c}
+          cols={3}
+          items={[
+            {title:"觉察角色",desc:"回应前先想：他把我放到了什么位置？我想接受吗？"},
+            {title:"检查错位",desc:"不舒服时检查：是否我不在自己位置上，替别人负责了？"},
+            {title:"用行动改变",desc:"不要用语言要求别人改变，而是像期待的那样对待他"},
+          ]}
+        />
+      </Card>
+
+      <Divider color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>关系的语言</div>
+        <Para>人与人之间的互动有两个层面：表面的内容层面和深层的关系层面。如果关系好了，什么事都可以谈。如果关系不好，谈什么事，其实都是在谈关系。</Para>
+
+        <CaseStory title="案例：借钱风波背后的关系博弈" color={c} icon="💰">
+          <p style={{marginBottom:10}}>一位朋友的老友老周买房需要20万周转10天。他们交往多年，知道老周可靠，就借了。10天后老周如约还钱。丈夫跟妻子说了这件事，没想到妻子很生气："你怎么老把我们家的钱借给别人？"</p>
+          <p style={{marginBottom:10}}>丈夫说钱已经还了，妻子问"那你为什么不告诉我？"丈夫说"我这不是告诉你了吗？"妻子就不说话了，生闷气。丈夫来跟陈海贤吐槽，觉得老婆太小气了。</p>
+          <p style={{marginBottom:10}}>但表面上妻子在生气他不该把钱借给别人，实际上她在生气丈夫做重大决定前没跟她商量。"借钱之前跟不跟她商量"在关系上的含义是不同的：一个是"我们家的重要决定需要经过你同意"，一个是"不需要经过你同意"——妻子是在争关系中的话语权。</p>
+          <p>如果丈夫能从关系的角度回应，他可以说："老婆不是这样的，我也很想告诉你，就是担心你把我驳回了，我会没面子。"这就是对关系的回应了。</p>
+        </CaseStory>
+
+        <CaseStory title="案例：少年宫门口的奥数之争" color={c} icon="📐">
+          <p style={{marginBottom:10}}>少年宫门口，一对夫妻在争论。妈妈说："别的孩子都在报奥数，我们家孩子当然也应该要报！"爸爸说："孩子这么小，学奥数让孩子这么累干嘛？"孩子耷拉着脑袋站在旁边。</p>
+          <p style={{marginBottom:10}}>从内容上看，他们在讨论孩子要不要报奥数。但从关系上看，他们其实都在跟对方说同一句话："我比你更懂我的孩子，所以在这件事上，我比你更有发言权。"</p>
+          <p>一旦这个关系问题没有解决，不只是奥数，他们对孩子的很多问题都会有类似争论。深挖下去——妈妈觉得丈夫整天加班很少参与孩子生活，他怎么会知道孩子的需要？爸爸觉得妻子跟孩子黏得太紧，自己想插话都插不上。内容背后关于关系的话题，就慢慢浮现了。</p>
+        </CaseStory>
+
+        <InkCompare
+          title="沟通的两个层面"
+          leftTitle="内容层面（表）"
+          rightTitle="关系层面（里）"
+          left={["讨论要不要借钱","讨论孩子报什么班","说'我错了'","沉默不说话"]}
+          right={["争关系中的话语权","争谁更懂孩子","说'我不想跟你说了'","说'你不可理喻'"]}
+          color={c}
+        />
+      </Card>
+
+      <Divider color={c}/>
+
+      <Expand title="依恋理论：爱的模板" color={c} char="恋">
+        <Para>婴儿时期与母亲的关系模式，会成为一生中所有亲密关系的模板。安全依恋的人容易建立稳定信任的关系；焦虑型依恋的人反复确认"你还爱我吗"；回避型依恋的人在关系亲密时就想逃。</Para>
+        <Para>不安全依恋不是宿命。理解自己的依恋模式是改变的第一步。当你在关系中感到极度焦虑或极度疏离时，先停下来问：这是真实的危险，还是我的依恋模式在作祟？</Para>
+        <InkStructure
+          title="三种依恋类型"
+          color={c}
+          cols={3}
+          items={[
+            {title:"安全型",desc:"信任他人、愿意亲近、不怕被抛弃"},
+            {title:"焦虑型",desc:"渴望亲密、反复确认、害怕被抛弃"},
+            {title:"回避型",desc:"害怕亲近、保持距离、关系太近想逃"},
+          ]}
+        />
+      </Expand>
+
+      <Expand title="课题分离：关系痛苦的解药" color={c} char="界">
+        <Para>阿德勒心理学中最重要的概念之一是"课题分离"：分清什么是我的课题，什么是别人的课题。判断标准很简单：这件事的后果最终由谁承担？那就是谁的课题。</Para>
+        <Step n={1} text="判断：这个后果由谁承担？" detail="孩子不学习是孩子的课题，父母的焦虑是父母自己的课题。" color={c}/>
+        <Step n={2} text="不干涉别人的课题" detail="你可以表达关心和建议，但最终的选择权在对方手中。" color={c}/>
+        <Step n={3} text="不让别人干涉你的课题" detail="面对别人的指手画脚，温和而坚定地守住自己的边界。" color={c}/>
+        <Quote text="混淆课题是关系痛苦的主要来源。你可以提供帮助，但不能替别人做他们的功课。" color={c}/>
+      </Expand>
+
+      <Expand title="非暴力沟通：高质量的对话方式" color={c} char="通">
+        <Para>马歇尔·卢森堡提出的非暴力沟通有四个要素——观察、感受、需要、请求。暴力的语言往往不是有意伤害，而是我们不知道如何表达脆弱的需要，只好用愤怒来包装。</Para>
+        <InkStructure
+          title="非暴力沟通四要素"
+          color={c}
+          cols={4}
+          items={[
+            {title:"观察",desc:"说事实而非评判：'你这周三次没回消息'"},
+            {title:"感受",desc:"表达情绪而非指责：'我感到失落和担心'"},
+            {title:"需要",desc:"说出需求而非抱怨：'我需要感受到被重视'"},
+            {title:"请求",desc:"提请求而非命令：'忙的时候能给我回个消息吗？'"},
+          ]}
+        />
+      </Expand>
+
+      <Divider color={c}/>
+
+      <ActionBox>
+        <Para>这周找一个让你感到不舒服的关系，尝试做角色觉察：对方给你分配了什么角色？你接受了吗？如果不接受，你想扮演什么角色？试着用非暴力沟通的方式，跟对方表达你的真实感受和需要。</Para>
+      </ActionBox>
+    </div>
+  );
+}
+
+/* ===== CHAPTER 3: 转折期 ===== */
+function Ch3(){
+  const c=P.colors[3].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="转折期" sub="人生的重大转变不是一个事件，而是一个过程：结束→迷茫→重生" color={c} char="转" ls={3}/>
+      <LogicChain question="面对人生重大转变，该如何应对？" color={c} items={["结束(三种脱离)","迷茫(意义真空)","重生(偶然+另起炉灶)","创伤后成长(重建意义)"]}/>
+      <Formula text="转变 = 结束 + 迷茫 + 重生" color={c}/>
+
+      <InkFlow steps={["结束","三种脱离","迷茫","意义真空","重生"]} color={c} title="转折期的完整历程"/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>结束：三种脱离</div>
+        <Para>每一次重大转变都从结束开始。结束不只是离开一个地方或结束一段关系，它包含三层脱离。你没法结束，因为你怕疼。而有时候，害怕结束，会让事情变得更加不可收拾。</Para>
+
+        <InkStructure
+          title="结束的三层脱离"
+          color={c}
+          cols={3}
+          items={[
+            {title:"环境脱离",desc:"离开熟悉的人、事、物，切断与旧世界的联系"},
+            {title:"身份脱离",desc:"脱离角色和身份，面对'我到底是谁'的困惑"},
+            {title:"目标脱离",desc:"放弃曾经坚持的目标，重新思考什么是重要的"},
+          ]}
+        />
+
+        <CaseStory title="案例：陈海贤离职浙大" color={c} icon="🏫">
+          <p style={{marginBottom:10}}>陈海贤从浙大辞职后，经历了深刻的身份脱离。在浙大工作时，他并没觉得这个title有多光荣。可在离职过渡期，一次应邀去企业讲座做PPT首页时，他犹豫了一下，还是把浙大的title加上了。</p>
+          <p style={{marginBottom:10}}>真正离职后有段时间他变得很心虚。有一天接到电话，一位妈妈说孩子在大学遇到情绪问题想来咨询。他的本能反应居然不是问孩子出了什么问题，而是问她："你知道我从学校里辞职了吗？"</p>
+          <p>那位妈妈笑了下说："知道的，我们信任你。"她信任的不是他在哪里工作，而是他这个人。这让他重新思考了自己——身份是你看待自己的方式，脱离身份虽然痛苦，但也给了你重新定义自我的机会。</p>
+        </CaseStory>
+
+        <Quote text="一些坚持是好的，可是有一些坚持，也就是'我不愿改变'的另一种说法。" color={c}/>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>迷茫：孕育新自我的容器</div>
+        <Para>结束之后，旧的生活过去了，新的生活还没有到来。你被留在一段意义感的真空里。迷茫不是你心理素质差，而是大脑应对转变的正常方式。它像一个特别的容器——在这里，旧的意义被慢慢清理，新的意义正慢慢长出来。</Para>
+
+        <CaseStory title="案例：从美国回来的朋友" color={c} icon="✈️">
+          <p style={{marginBottom:10}}>一位朋友毕业后留在美国一个投行工作，工资不错，租了漂亮的房子。但因为没抽到工作签证，不得不一年后回国。回国后在北京找理想的工作不容易，工资也比原来差了一大截。</p>
+          <p style={{marginBottom:10}}>她在北京西二旗一个30年房龄的老小区租了个房子，没有电梯，墙上石灰看得很清楚，厕所和厨房的水池都是黄黄的。她经常盯着斑驳的墙面想：前几个月我还住着那么好的房子，为什么现在只能住这样的房子？想着想着就很恍惚，觉得人生就像一场梦。</p>
+          <p>这就是迷茫期的第一种典型反应——试图回到过去。不是行动上的，而是心理上不停拿现在和过去做比较。结束通常意味着损失，损失带来巨大的痛苦。迷茫期需要你去消化和适应这种损失。</p>
+        </CaseStory>
+
+        <InkTimeline
+          title="迷茫期的三种典型心理"
+          color={c}
+          items={[
+            {label:"试图回到过去",text:"不停拿现在和过去比较，反复后悔。大脑本能地抗拒变化，想把你拉回旧的意义之网上。"},
+            {label:"急于到达未来",text:"急着找工作、进入新关系来逃避虚无感。但跳过冬天就无法迎来春天，转变有它自己的节奏。"},
+            {label:"精神变得敏感",text:"积极的信号——以前只读'有用'的书的人开始读文学作品，从中找到新的意义。旧的意义被清理，新的意义正慢慢长出来。"},
+          ]}
+        />
+
+        <Quote text="也许在转变的这个阶段，我们就是需要低落和迷茫。你只要耐心等待，看看会不会有什么新变化发生。就像萧索的冬天在积蓄春天的力量。" color={c}/>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Expand title="重生：偶然与另起炉灶" color={c} char="生">
+        <Para>重生有两个关键要素：偶然和另起炉灶。没有什么重生是完全规划好的。但偶然中包含着必然——重生总是和你以前的生命经历有某种特别的联系。</Para>
+
+        <CaseStory title="案例：褚时健75岁种橙子" color={c} icon="🍊">
+          <p style={{marginBottom:10}}>褚时健曾经是中国烟草大王，后来因经济问题入狱。75岁保外就医后，他不知道做什么。有人劝他回烟草行业，他拒绝了。</p>
+          <p style={{marginBottom:10}}>偶然的契机是——堂弟在种橙子时遇到经营问题请教了他，他就去哀牢山看了看。哀牢山是他年轻时起步的地方，他有烟草种植的经验，对农业并不陌生。</p>
+          <p>这个偶然包含必然——重生的方向总是和过去的生命经历有某种联系。褚时健选择"另起炉灶"——不在旧框架内重建，而是从全新的领域开始。最终"褚橙"成为中国最著名的品牌橙子。75岁的重生，证明了人的潜力没有年龄限制。</p>
+        </CaseStory>
+
+        <InkCompare
+          title="重生的两个要素"
+          leftTitle="偶然"
+          rightTitle="另起炉灶"
+          left={["无法完全规划","关键契机往往意外出现","但偶然中包含必然","与过去经历有深层联系"]}
+          right={["不在旧框架内重建","从全新起点开始","拒绝回到舒适区","用新身份面对新世界"]}
+          color={c}
+        />
+      </Expand>
+
+      <Expand title="创伤后成长：废墟中重建意义" color={c} char="愈">
+        <Para>创伤不只带来痛苦，也可能带来成长。经历重大创伤的人中，有相当比例在创伤后获得了正面改变——更珍惜关系、发现新的人生可能、精神力量增强。</Para>
+        <Para>创伤后成长不是说"感谢苦难"，而是说人有一种内在的力量，能够在废墟中重建意义。重建意义的方式之一是"叙事"——把经历编织成有意义的故事。</Para>
+
+        <InkFlow steps={["平凡世界","考验磨难","获得宝物","回到世界","全新的你"]} color={c} title="英雄之旅的叙事模式"/>
+
+        <Quote text="英雄之旅的模式：从平凡世界出发，经历考验和磨难，获得某种宝物——智慧、力量、成长——回到原来的世界，但你已经不是出发时的你了。" color={c}/>
+      </Expand>
+
+      <Divider color={c}/>
+
+      <ActionBox>
+        <Para>回顾你人生中的一次重大转变，用"结束→迷茫→重生"的框架重新理解它。你在结束阶段经历了什么脱离？迷茫期是怎样的？有什么偶然的契机引导了你的重生？把它写成一个属于你的"英雄之旅"故事。</Para>
+      </ActionBox>
+    </div>
+  );
+}
+
+/* ===== CHAPTER 4: 人生地图 ===== */
+function Ch4(){
+  const c=P.colors[4].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="人生地图" sub="人生的不同阶段都有独特的使命，理解这些使命，就拥有了一张自我发展的地图" color={c} char="图" ls={0}/>
+      <LogicChain question="人生不同阶段的使命是什么？" color={c} items={["青春期(身份认同)","成年早期(亲密+职业)","中年期(繁殖感)","晚年期(自我整合)"]}/>
+      <Formula text="人生发展 = 阶段使命 + 自我扩展" color={c}/>
+
+      <InkTimeline
+        title="人生发展的四个阶段"
+        color={c}
+        items={[
+          {label:"青春期",text:"建立身份认同——回答'我是谁'。克服假想的观众和个人神话，接受平凡，踏实建立真正的自我。"},
+          {label:"成年早期（25-35）",text:"建立亲密感和职业认同。克服对承诺的恐惧，让自我从一个人扩展到两个人。"},
+          {label:"中年期（35-60）",text:"发展繁殖感——创造超越个体生命的价值。克服停滞，找到超越自我的使命感。"},
+          {label:"晚年期",text:"自我整合——回顾人生，接受遗憾，在完整的人生故事中找到意义与智慧。"},
+        ]}
+      />
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>成年早期：亲密感与职业认同</div>
+        <Para>成年早期有两大人生课题：建立亲密关系和确立职业认同。建立亲密关系的三大障碍都是自我中心的表现：害怕不被接纳、害怕承诺、害怕被改变。</Para>
+
+        <CaseStory title="案例：觉得没人喜欢自己的女孩" color={c} icon="💔">
+          <p style={{marginBottom:10}}>一位来访者单身很多年，有个根深蒂固的信念："不会有人真的喜欢我。"每次遇到新的异性，她都会想自己是不是做错了什么，对方会不会讨厌她。</p>
+          <p style={{marginBottom:10}}>陈海贤让她回忆和异性交往中轻松的片段。她说大学时有个师兄人很好，有时一起吃饭、去操场散步。陈海贤说那不是很好吗？说明你也能建立轻松的关系。</p>
+          <p>她却说："不是啊。每次散步回来我都会想，这不是我好，是我那个师兄好。他只是为了照顾我才跟我走。如果知道我是什么样的人，他不会真的喜欢我的。"她在用这种方式扭曲经验，维护"我就是没有人喜欢"的核心信念。这个信念保护她远离人群，也成了建立亲密关系的最大障碍。</p>
+        </CaseStory>
+
+        <CaseStory title="案例：害怕承诺的男孩" color={c} icon="💍">
+          <p style={{marginBottom:10}}>一位来访者和女友相处一段时间了，女朋友有结婚的意思，他很焦虑。有天参加朋友聚会，遇到一个漂亮姑娘，觉得豁然开朗——"对啊，我将来就是要找一个更漂亮的女朋友啊，所以现在不能结婚。"</p>
+          <p style={{marginBottom:10}}>"找个漂亮女朋友"的幻想保留了承诺外的可能性，他的心反而安定下来。女朋友让他去见家长他也去了，想着"反正我不结婚"。</p>
+          <p>陈海贤问他："你到底是想找更漂亮的女朋友所以不想结婚，还是单纯害怕承诺呢？"他说都有。"万一结婚了，一点空间都没有了，而且牵扯到两个家庭，七大姑八大姨，想想就害怕。"这揭示了建立亲密感的三重障碍：害怕不被接纳、害怕承诺、害怕被改变。</p>
+        </CaseStory>
+
+        <InkStructure
+          title="建立亲密关系的三个障碍"
+          color={c}
+          cols={3}
+          items={[
+            {title:"害怕不被接纳",desc:"如果对方看到真实的我会离开吗？"},
+            {title:"害怕承诺",desc:"选了这个人就失去了其他可能性"},
+            {title:"害怕被改变",desc:"亲密关系会挤压我的自我空间"},
+          ]}
+        />
+
+        <Quote text="有时候我们没法建立亲密关系，不是因为找不到对的人，而是没法做出承诺。有时候你做了承诺以后，这个人就逐渐变成了那个对的人。" color={c}/>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>职业认同：工作与人生的深度联结</div>
+        <Para>确立职业认同和建立亲密关系很像——真正让你觉得幸福的不是工资福利，而是你是否认同你所做的事情。干一行爱一行还是爱一行干一行不重要，关键是能否发展出对职业的认同。</Para>
+
+        <InkStructure
+          title="职业认同的四个标志"
+          color={c}
+          cols={4}
+          items={[
+            {title:"胜任感",desc:"你能胜任工作，体会到能力成长和成就感"},
+            {title:"承诺",desc:"愿意投入，把职业视为自我重要的一部分"},
+            {title:"报酬",desc:"获得满意的回报。没有报酬的工作只是爱好"},
+            {title:"满足感",desc:"职业与你的人生故事契合，镶嵌在整个人生里"},
+          ]}
+        />
+
+        <CaseStory title="案例：保险经纪人与外公的离世" color={c} icon="🛡️">
+          <p style={{marginBottom:10}}>一位保险经纪人在行业里做得非常出色。陈海贤问她为什么选择这个职业，她讲了一个故事。</p>
+          <p style={{marginBottom:10}}>小时候外公对她非常好，是她最亲近的人。外公去世时她还很小，那种突然失去最重要的人的痛苦深深刻在了她的记忆里。长大后她特别抗拒关系的结束，害怕失去。</p>
+          <p>而保险行业让她能和客户保持长久的关系——保险合同一签就是几十年，她会陪伴客户经历人生的各种阶段。工作和人生故事就这样深刻地联系在了一起。这就是职业认同中"满足感"的含义——职业不只是谋生手段，它镶嵌在你整个人生故事里，和你最深层的体验相连。</p>
+        </CaseStory>
+
+        <CaseStory title="案例：做手艺人的记者朋友" color={c} icon="🔨">
+          <p style={{marginBottom:10}}>陈海贤有一位记者朋友，做了很多年新闻工作后辞职了，开始做手艺活——制作精美的木工产品。很多人不理解，觉得他放弃了体面的工作。</p>
+          <p>但他说："我做记者的时候每天追热点，写完就忘了，总觉得生活是漂浮的。做手艺不一样，每一件东西从选材到打磨到完成，都是我亲手创造的，看得见摸得着。这种踏实的感觉，让我觉得自己的生命是有重量的。"这就是他的人物弧线——从追逐速度到追求深度，从信息的搬运工变成了意义的创造者。</p>
+        </CaseStory>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Expand title="中年期：繁殖感与传承" color={c} char="承">
+        <Para>中年期（大约35-60岁）的核心任务是"繁殖感"——不只是生育后代，更是创造能够超越个体生命的价值。教书育人、建立制度、创造作品、传承经验都是繁殖感的体现。</Para>
+        <Para>中年危机的本质不是年龄焦虑，而是对人生前半段的审视——我活出了我想要的人生吗？那些被搁置的梦想还有可能实现吗？这种审视虽然痛苦，但也是人生调整方向的宝贵机会。</Para>
+      </Expand>
+
+      <Expand title="晚年期：整合人生的智慧" color={c} char="慧">
+        <Para>晚年期的核心任务是"自我整合"——回顾整个人生，接受已经发生的一切（包括遗憾和错误），在完整的人生故事中找到意义和智慧。如果整合成功，你会获得从容——不是没有遗憾，而是接受遗憾也是人生的一部分。</Para>
+      </Expand>
+
+      <Divider color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>自我发展的核心主线</div>
+        <Para>纵观全书，自我发展有一条清晰的主线：从自我中心到超越自我。青春期克服假想的观众，确立"我是谁"；成年早期克服对承诺的恐惧，让自我从一个人扩展到两个人；中年期克服停滞，让自我扩展到下一代和更大的世界；晚年期克服绝望，在完整的人生中找到意义。</Para>
+
+        <InkFlow steps={["自我中心","确立身份","建立亲密","传承创造","整合智慧"]} color={c} title="自我发展的主线：从自我中心到超越自我"/>
+
+        <Para>自我发展不是一蹴而就的，它是一个持续一生的过程。每一个阶段的挑战都在邀请我们成为一个更大的人——不是更完美，而是更完整。</Para>
+        <Quote text="自我发展是一条不断延伸的路。在这条路上，我们要做的不是成为完美的人，而是成为了不起的自己。" color={c}/>
+      </Card>
+
+      <Divider color={c}/>
+
+      <ActionBox>
+        <Para>画一条你的人生时间线：标出你经历过的重要转变、建立的关键关系、做出的重大选择。看看你的"人物弧线"是什么？你正在人生地图的哪个位置？当前阶段的发展任务是什么？你准备怎么迈出下一步？</Para>
+      </ActionBox>
+    </div>
+  );
+}
+
+/* ===== APP ===== */
+function App(){
+  const[ch,setCh]=useState(0);
+  const[toc,setToc]=useState(false);
+  const chContent=[()=>React.createElement(BookMap,{onJump:setCh}),Ch0,Ch1,Ch2,Ch3,Ch4];
+  const CurrentCh=chContent[ch];
+
+  return(
+    <div style={{minHeight:"100vh",position:"relative"}}>
+      <PaperBg/>
+      <ReadBar progress={((ch+1)/CHS.length)*100}/>
+      <Sidebar chapters={CHS} current={ch} onSelect={setCh} open={toc} onClose={()=>setToc(false)}/>
+
+      <div style={{position:"sticky",top:0,zIndex:10,background:"linear-gradient(to bottom,rgba(245,240,232,0.98) 70%,rgba(245,240,232,0))",padding:"14px 24px 24px"}}>
+        <div style={{maxWidth:720,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <span onClick={()=>setToc(true)} style={{cursor:"pointer",opacity:0.5,fontSize:18}}>{"☰"}</span>
+            <span style={{fontSize:13,color:P.textMuted,letterSpacing:3}}>拆卷</span>
+            <span style={{fontSize:11,color:P.textMuted,opacity:0.4}}>·</span>
+            <span style={{fontSize:13,color:P.textMuted}}>了不起的我</span>
+          </div>
+          <span style={{fontSize:11,color:P.textMuted}}>{ch+1}/{CHS.length}</span>
+        </div>
+      </div>
+
+      <div style={{maxWidth:720,margin:"0 auto",padding:"0 24px",position:"relative"}}>
+        <div style={{display:"flex",gap:0,borderBottom:`1px solid rgba(160,140,110,0.12)`,marginBottom:36,overflowX:"auto",scrollbarWidth:"none",msOverflowStyle:"none",WebkitOverflowScrolling:"touch"}}>
+          {CHS.map((t,i)=>(
+            <ChTab key={t.id} label={t.label} char={t.char} color={t.color} active={ch===i} onClick={()=>setCh(i)} isOverview={i===0}/>
+          ))}
+        </div>
+        <div style={{position:"absolute",top:0,right:24,width:40,height:"calc(100% - 36px)",pointerEvents:"none",background:`linear-gradient(to left,${P.paper},transparent)`}}/>
+      </div>
+
+      <div style={{maxWidth:720,margin:"0 auto",padding:"0 24px 40px",position:"relative",zIndex:1}}>
+        <CurrentCh/>
+        <PageNav current={ch} total={CHS.length} name={CHS[ch].label} onPrev={()=>{setCh(ch-1);window.scrollTo(0,0);}} onNext={()=>{setCh(ch+1);window.scrollTo(0,0);}}/>
+      </div>
+
+      <div style={{textAlign:"center",padding:"40px 24px 20px",position:"relative",zIndex:1}}>
+        <div style={{fontSize:12,color:P.textMuted,letterSpacing:4}}>拆卷 · 了不起的我</div>
+        <div style={{fontSize:11,color:P.textMuted,opacity:0.5,marginTop:6}}>陈海贤 · 自我发展心理学</div>
+      </div>
+      <div style={{maxWidth:560,margin:"0 auto",padding:"0 24px 48px",textAlign:"center"}}>
+        <div style={{background:P.paperDeep,borderRadius:8,padding:"14px 18px",border:`1px solid rgba(160,140,110,0.1)`}}>
+          <div style={{fontSize:11,color:P.textMuted,lineHeight:1.9,letterSpacing:0.5}}>
+            {"⚠ 免责声明：本页面内容仅供个人学习与读书笔记整理之用，不用于任何商业目的。书籍版权归原作者及出版社所有。如有侵权，请联系博主，将第一时间删除处理。"}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

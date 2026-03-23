@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>天才的学习方法 · 深度拆解</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; }
+  #root { min-height: 100vh; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useEffect } = React;
+
+// ===== DATA =====
+const TABS = [
+  { id: "brain", label: "大脑机制", icon: "🧬" },
+  { id: "system", label: "学习系统", icon: "⚙️" },
+  { id: "tools", label: "实操手册", icon: "🔧" },
+  { id: "craft", label: "匠人细节", icon: "🎨" },
+  { id: "traps", label: "避坑指南", icon: "🚨" },
+  { id: "energy", label: "续航引擎", icon: "⚡" },
+  { id: "cases", label: "实战案例", icon: "📋" },
+];
+
+const Pill = ({ children, color = "#FF6B35", active, onClick }) => (
+  <button onClick={onClick} style={{
+    padding: "6px 14px", borderRadius: 20,
+    border: `1.5px solid ${active ? color : "#e0e0e0"}`,
+    background: active ? `${color}12` : "#fff",
+    color: active ? color : "#999", fontSize: 12, fontWeight: active ? 700 : 500,
+    cursor: "pointer", transition: "all .25s", whiteSpace: "nowrap",
+  }}>{children}</button>
+);
+
+const Card = ({ children, color = "#f5f5f5", border, pad = 20, radius = 16, style = {} }) => (
+  <div style={{
+    background: color, borderRadius: radius, padding: pad,
+    border: border || "1px solid rgba(0,0,0,0.04)",
+    ...style,
+  }}>{children}</div>
+);
+
+const Tag = ({ children, color }) => (
+  <span style={{
+    fontSize: 10, fontWeight: 700, color, background: `${color}15`,
+    padding: "2px 8px", borderRadius: 6, letterSpacing: 0.5,
+  }}>{children}</span>
+);
+
+const SectionTitle = ({ icon, title, sub }) => (
+  <div style={{ marginBottom: 24 }}>
+    <h3 style={{ fontSize: 20, fontWeight: 900, color: "#1a1a2e", margin: "0 0 6px", fontFamily: "'Noto Serif SC', serif" }}>
+      {icon} {title}
+    </h3>
+    {sub && <p style={{ color: "#999", fontSize: 13, margin: 0, lineHeight: 1.6 }}>{sub}</p>}
+  </div>
+);
+
+const Insight = ({ text, color = "#FF6B35" }) => (
+  <div style={{
+    background: `${color}08`, borderLeft: `3px solid ${color}`,
+    borderRadius: "0 10px 10px 0", padding: "10px 14px", marginTop: 12,
+  }}>
+    <span style={{ fontSize: 12, color, fontWeight: 700 }}>💎 </span>
+    <span style={{ fontSize: 12, color: "#555", lineHeight: 1.7 }}>{text}</span>
+  </div>
+);
+
+const Step = ({ n, text, color = "#4ECDC4" }) => (
+  <div style={{ display: "flex", gap: 10, marginBottom: 10, alignItems: "flex-start" }}>
+    <div style={{
+      width: 22, height: 22, borderRadius: "50%", flexShrink: 0,
+      background: `${color}18`, display: "flex", alignItems: "center", justifyContent: "center",
+      fontSize: 11, fontWeight: 800, color,
+    }}>{n}</div>
+    <div style={{ fontSize: 13, color: "#555", lineHeight: 1.7, paddingTop: 1 }}>{text}</div>
+  </div>
+);
+
+// ===================== BRAIN SECTION =====================
+function BrainSection() {
+  const [phase, setPhase] = useState(0);
+  const phases = [
+    {
+      title: "感觉记忆", subtitle: "0.25~4秒", color: "#FF6B35", icon: "👁️",
+      analogy: "就像一部不停拍照的相机，每张照片只存在一瞬间",
+      mechanism: "感觉系统（眼、耳、鼻、皮肤等）每时每刻都在向大脑狂轰乱炸地发送原始数据。大脑将这些信息倒入'感觉记忆'的临时缓冲区。视觉信息只能停留约1/4秒，听觉信息不超过4秒。之后立刻被新数据覆盖。",
+      keyData: [
+        "视觉信息在感觉记忆中只停留约 0.25 秒",
+        "听觉信息稍长，但也不超过 4 秒",
+        "绝大部分信息在此阶段就被永久丢弃",
+      ],
+      action: "必须在这一瞬间通过「选择性注意」捕获目标信息，否则永远丢失。",
+      practicalTip: "学习时消除一切干扰源（手机静音、关闭无关网页），因为每一次分心都意味着感觉记忆中的学习信息被其他信息覆盖。",
+    },
+    {
+      title: "工作记忆", subtitle: "容量≈7±2", color: "#4ECDC4", icon: "🔄",
+      analogy: "就像一张只有7个格子的工作台，放满了就必须清理才能放新东西",
+      mechanism: "通过注意力筛选的信息进入工作记忆——大脑的'中央处理器'。它有两个关键限制：容量极小（约7±2个信息组块）和时间极短（不复述则20-30秒消失）。信息在此通过'复述循环'不断被重复，才有机会进入下一阶段。",
+      keyData: [
+        "容量只有约 7±2 个信息组块（米勒定律）",
+        "不复述的话，信息在 20~30 秒内消失",
+        "首因效应：序列开头的元素记得最牢",
+        "近因效应：序列末尾的元素也相对容易记住",
+        "所有人的工作记忆容量基本相同——差距在方法，不在天赋",
+      ],
+      action: "利用「组块化」技术把零散信息打包成有意义的单元，用同样的7个格子装下更多内容。",
+      practicalTip: "作者独创「七诫」笔记法：任何列表都不要超过7个元素。如果教材中有10项内容，主动把它们重组为7个以内的组块。",
+    },
+    {
+      title: "长期记忆（临时区）", subtitle: "海马体暂存", color: "#AA96DA", icon: "📦",
+      analogy: "就像硬盘上的'下载'文件夹——文件先放这里，等待整理归档",
+      mechanism: "信息经过复述循环后，被'复制粘贴'到长期记忆的临时存储区（海马体）。但这只是暂时存放，还没有真正成为你的知识。从这一刻起，大脑开始一个漫长的再加工过程——记忆巩固。",
+      keyData: [
+        "海马体是记忆巩固的核心解剖结构",
+        "巩固发生在吃饭、洗澡、放松甚至睡觉时",
+        "完全巩固一项数据需要 10~30 年",
+        "必须隔一段时间回顾一次，否则信息会从临时区衰减",
+      ],
+      action: "每次学习后必须安排间隔回顾，让大脑有机会反复执行巩固操作。",
+      practicalTip: "学完当天就进行第一次回顾（哪怕只是5分钟的出声复述）。第二天再回顾一次。这两次回顾是巩固效率最高的窗口期。",
+    },
+    {
+      title: "长期记忆（永久区）", subtitle: "新皮层永存", color: "#2ECC71", icon: "🏛️",
+      analogy: "就像图书馆的书架——信息被精心分类、编目、与其他知识交叉索引",
+      mechanism: "经过充分巩固的信息最终从海马体迁移到新皮层，成为永久记忆。到这一步，信息才真正'属于你'。关键在于：信息必须与你已有的知识体系建立有机连接，而不是孤立存放。连接越多、越深，提取就越容易。",
+      keyData: [
+        "永久记忆存储在新皮层，理论上可以保持终身",
+        "知识之间的连接越丰富，提取越容易",
+        "被动存储不等于能主动提取——必须练习'检索'",
+        "每次成功的主动提取都会加强该记忆的神经回路",
+      ],
+      action: "学习时刻意将新知识与已有知识建立联系。用类比、对比、归纳等方式编织知识网络。",
+      practicalTip: "学完一个新概念后，问自己三个问题：①它和我已知的什么概念相似？②它和什么概念相反？③它能解释生活中的什么现象？",
+    },
+  ];
+  const p = phases[phase];
+
+  return (
+    <div>
+      <SectionTitle icon="🧬" title="记忆的四级管线" sub="信息从进入大脑到永久记住，必须依次通过四道关卡。任何一环失败，学习就白费。理解这条管线 = 掌握所有学习方法的底层逻辑。" />
+
+      {/* Pipeline */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 2, marginBottom: 28, flexWrap: "wrap" }}>
+        {phases.map((s, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center" }}>
+            <div onClick={() => setPhase(i)} style={{
+              padding: "10px 16px", borderRadius: 14, cursor: "pointer",
+              background: phase === i ? `${s.color}15` : "#f8f8f8",
+              border: `2px solid ${phase === i ? s.color : "#eee"}`,
+              transition: "all .3s", transform: phase === i ? "scale(1.05)" : "none",
+              textAlign: "center", minWidth: 72,
+            }}>
+              <div style={{ fontSize: 22 }}>{s.icon}</div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: phase === i ? s.color : "#aaa", marginTop: 2 }}>{s.title}</div>
+              <div style={{ fontSize: 9, color: "#bbb" }}>{s.subtitle}</div>
+            </div>
+            {i < phases.length - 1 && <div style={{ fontSize: 16, color: "#ddd", margin: "0 2px" }}>→</div>}
+          </div>
+        ))}
+      </div>
+
+      {/* Detail */}
+      <Card color={`${p.color}06`} border={`1px solid ${p.color}20`}>
+        <div style={{ fontSize: 13, color: p.color, fontWeight: 700, marginBottom: 8, fontStyle: "italic" }}>
+          「{p.analogy}」
+        </div>
+        <p style={{ fontSize: 14, color: "#444", lineHeight: 2, margin: "0 0 16px" }}>{p.mechanism}</p>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+          <Card color="rgba(255,255,255,0.7)" pad={14}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: p.color, marginBottom: 8 }}>📊 关键数据</div>
+            {p.keyData.map((d, i) => (
+              <div key={i} style={{ fontSize: 12, color: "#666", lineHeight: 1.7, marginBottom: 4, paddingLeft: 10, borderLeft: `2px solid ${p.color}25` }}>{d}</div>
+            ))}
+          </Card>
+          <Card color="rgba(255,255,255,0.7)" pad={14}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#2ECC71", marginBottom: 8 }}>✅ 你该怎么做</div>
+            <div style={{ fontSize: 12, color: "#666", lineHeight: 1.7, marginBottom: 10 }}>{p.action}</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#E17055", marginBottom: 4 }}>🎯 落地操作</div>
+            <div style={{ fontSize: 12, color: "#666", lineHeight: 1.7 }}>{p.practicalTip}</div>
+          </Card>
+        </div>
+      </Card>
+
+      {/* Forgetting vs Learning curves */}
+      <div style={{ marginTop: 28 }}>
+        <h4 style={{ fontSize: 16, fontWeight: 800, margin: "0 0 14px", color: "#1a1a2e" }}>📉 两条决定命运的曲线</h4>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          <Card color="linear-gradient(135deg, #f38181, #c0392b)" pad={20} border="none" style={{ color: "#fff" }}>
+            <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 6 }}>艾宾浩斯遗忘曲线</div>
+            <svg viewBox="0 0 220 80" style={{ width: "100%", margin: "8px 0" }}>
+              <path d="M10,12 Q25,60 50,68 Q90,74 210,76" fill="none" stroke="rgba(255,255,255,0.8)" strokeWidth="2" />
+              <line x1="10" y1="12" x2="10" y2="78" stroke="rgba(255,255,255,0.3)" strokeWidth="0.5" strokeDasharray="2" />
+              <text x="14" y="22" fill="rgba(255,255,255,0.6)" fontSize="7">20分钟后</text>
+              <text x="14" y="32" fill="rgba(255,255,255,0.6)" fontSize="7">遗忘42%</text>
+              <text x="80" y="68" fill="rgba(255,255,255,0.6)" fontSize="7">1天后遗忘67%</text>
+              <text x="150" y="72" fill="rgba(255,255,255,0.6)" fontSize="7">1月后遗忘79%</text>
+            </svg>
+            <div style={{ fontSize: 11, opacity: 0.9, lineHeight: 1.7 }}>
+              不复习时，学完20分钟就忘掉42%；1天后忘掉67%；1个月后遗忘79%。衰减呈指数型——越早复习，挽救越多。
+            </div>
+          </Card>
+          <Card color="linear-gradient(135deg, #4ECDC4, #1abc9c)" pad={20} border="none" style={{ color: "#fff" }}>
+            <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 6 }}>学习曲线（带平台期）</div>
+            <svg viewBox="0 0 220 80" style={{ width: "100%", margin: "8px 0" }}>
+              <path d="M10,72 Q30,40 50,35 Q65,36 80,38 Q95,37 110,28 Q125,29 140,30 Q155,28 180,15 Q200,12 210,10" fill="none" stroke="rgba(255,255,255,0.8)" strokeWidth="2" />
+              <rect x="55" y="32" width="35" height="10" rx="2" fill="rgba(255,255,255,0.15)" />
+              <text x="58" y="39" fill="rgba(255,255,255,0.7)" fontSize="6">灰心平台</text>
+              <rect x="120" y="26" width="30" height="8" rx="2" fill="rgba(255,255,255,0.15)" />
+              <text x="122" y="32" fill="rgba(255,255,255,0.7)" fontSize="6">第二平台</text>
+            </svg>
+            <div style={{ fontSize: 11, opacity: 0.9, lineHeight: 1.7 }}>
+              学习曲线不是单调递增！"灰心平台"是生理性的——学习速度会突然变平甚至略降。这是大脑在整合信息，坚持住就会迎来第二次跃升。
+            </div>
+          </Card>
+        </div>
+        <Insight text="大量学生在「灰心平台」期放弃，误以为自己不适合学这门课。作者反复强调：平台期是纯粹的生理现象，是大脑正在深度整合的信号。认出它、接受它、继续前进。" color="#E17055" />
+      </div>
+    </div>
+  );
+}
+
+// ===================== SYSTEM SECTION =====================
+function SystemSection() {
+  const [expandedId, setExpandedId] = useState("meta");
+  const blocks = [
+    {
+      id: "meta", icon: "🪞", title: "元认知：学习的指挥官", color: "#AA96DA",
+      core: "在开始任何学习之前，先花时间「想想如何学习」。元认知 = 关于思考的思考 = 审视自己学习方法的能力。",
+      evidence: "心理学实验证明：有意识地规划学习过程、细致监督自身表现的学生，学习成绩显著优于不做元认知的学生。投入在元认知上的时间，回报率极高。",
+      actions: [
+        "学习前：这个科目我现在掌握到什么程度？薄弱点在哪？",
+        "学习中：我现在的方法有效吗？是不是在假装努力？",
+        "学习后：这次学习的投入产出比如何？下次要调整什么？",
+        "每周复盘：这周的学习策略哪些奏效了？哪些是在浪费时间？",
+      ],
+    },
+    {
+      id: "p1", icon: "📖", title: "P1 · 第一轮：纯理解，不记忆", color: "#FF6B35",
+      core: "第一轮学习的唯一目标是理解，绝对不要试图记住任何东西。阅读教材或听课记笔记都算第一轮。",
+      evidence: "神经科学表明，理解是编码的前提——不理解的信息即使强行背诵，也无法形成有效的长期记忆网络连接。",
+      actions: [
+        "阅读教材时只追求搞懂主干逻辑，不要逐字逐句背诵",
+        "课堂上以理解为核心做笔记（见「笔记法」详细操作）",
+        "遇到不懂的地方标记出来，但不要停下来死磕——先过完全貌",
+        "第一轮结束后你应该能用自己的话概述这个主题的整体框架",
+      ],
+    },
+    {
+      id: "p2", icon: "🎨", title: "P2 · 创造性学习环节", color: "#4ECDC4",
+      core: "第一轮结束后，额外加一轮「创造性加工」——亲手制作自己的学习材料。这一步是可选的（P1直接到P3也行），但效果极为显著。",
+      evidence: "生成效应（generation effect）：自己动手创造的内容，编码深度远超被动接收。就像压缩文件——用更少的字承载同样的信息。",
+      actions: [
+        "把教材内容浓缩成自己的笔记——「无损压缩」原则：信息量不减少，字数大量减少",
+        "笔记风格应追求精妙而非轻松——像Twitter那样短小精悍",
+        "删除所有「显而易见的例子」——凡是能通过已有知识推导的内容都删掉",
+        "制作自我测试题和问答卡片（见「工具箱」）",
+        "应用助记法（首字母缩写、口诀等）处理需要死记的列表",
+      ],
+    },
+    {
+      id: "p3", icon: "⚡", title: "P3 · 主动复习：像躲瘟疫一样躲开被动", color: "#E17055",
+      core: "从第二轮起，只允许使用主动/互动的复习方法。简单重读和重听 = 被动方法 = 严格禁止。这是整个方法论中最核心的原则。",
+      evidence: "神经科学铁律：主动提取（recall）的编码强度远超被动复习（review）。你以为自己看懂了≠你能想起来。「再认」和「回忆」是完全不同的大脑操作。",
+      actions: [
+        "出声复述法：合上书，大声把刚学的内容讲一遍（见工具箱详细步骤）",
+        "自我测试法：用自制试题闭卷考自己",
+        "卡片法：正面看问题→心中组织答案→翻面对照",
+        "绝对禁止「看着答案觉得自己会了」这种自我欺骗行为",
+        "特别注意第二轮的「灰心平台」——这是正常生理现象，不要放弃",
+      ],
+    },
+    {
+      id: "p4", icon: "🔀", title: "P4 · 交错效应：打乱一切", color: "#FFE66D",
+      core: "每天要同时复习多门学科，在每门学科内也要打乱章节复习顺序。绝不一口气学完一门再学下一门。",
+      evidence: "交错练习（interleaving）强化大脑的辨别能力——当你在不同主题间切换时，大脑需要不断判断「这个问题该用哪种方法」，这种判断本身就是深度学习。",
+      actions: [
+        "每天的学习时间要分配给2-3门不同学科",
+        "同一门学科内，每轮复习都重新调整章节顺序",
+        "做题时混合不同章节的题目，而非按章节顺序做",
+        "卡片法天然适配交错——随机洗牌即可",
+      ],
+    },
+    {
+      id: "spacing", icon: "📅", title: "P5 · 间隔重复：时间是最强的杠杆", color: "#6C5CE7",
+      core: "在即将遗忘的时刻进行复习，效果最佳。复习间隔应随掌握程度逐渐拉长。",
+      evidence: "间隔效应（spacing effect）是记忆研究中最稳健的发现之一。集中突击的总学习时间可能相同，但分散在多天复习的长期保持率远胜。",
+      actions: [
+        "第一次复习：学习当天（最关键！）",
+        "第二次复习：1-2天后",
+        "第三次复习：约1周后",
+        "第四次复习：约2-3周后",
+        "后续复习间隔逐渐拉长——每次成功回忆后，下次间隔翻倍",
+        "提前开始复习（不要等到考前），最初几轮间隔非常短",
+      ],
+    },
+  ];
+
+  return (
+    <div>
+      <SectionTitle icon="⚙️" title="学习工程系统 · 六大核心模块" sub="作者提出「学习工程师」理念：像工程师一样精密规划学习，以最小努力取得最大成果。以下六个模块构成完整系统，缺一不可。" />
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 20 }}>
+        {blocks.map(b => (
+          <Pill key={b.id} color={b.color} active={expandedId === b.id} onClick={() => setExpandedId(b.id)}>
+            {b.icon} {b.title.split("·")[0].trim()}
+          </Pill>
+        ))}
+      </div>
+      {blocks.filter(b => b.id === expandedId).map(b => (
+        <Card key={b.id} color={`${b.color}06`} border={`1px solid ${b.color}20`}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+            <span style={{ fontSize: 30 }}>{b.icon}</span>
+            <div>
+              <Tag color={b.color}>核心模块</Tag>
+              <h4 style={{ fontSize: 17, fontWeight: 900, color: "#1a1a2e", margin: "4px 0 0" }}>{b.title}</h4>
+            </div>
+          </div>
+          <div style={{ background: "rgba(255,255,255,0.6)", borderRadius: 12, padding: 16, marginBottom: 14 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: b.color, marginBottom: 6 }}>核心原则</div>
+            <div style={{ fontSize: 14, color: "#333", lineHeight: 1.9, fontWeight: 600 }}>{b.core}</div>
+          </div>
+          <div style={{ background: "rgba(255,255,255,0.6)", borderRadius: 12, padding: 16, marginBottom: 14 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#6C5CE7", marginBottom: 6 }}>🔬 神经科学证据</div>
+            <div style={{ fontSize: 13, color: "#555", lineHeight: 1.8 }}>{b.evidence}</div>
+          </div>
+          <div style={{ background: "rgba(255,255,255,0.6)", borderRadius: 12, padding: 16 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#2ECC71", marginBottom: 10 }}>📋 具体行动清单</div>
+            {b.actions.map((a, i) => <Step key={i} n={i + 1} text={a} color={b.color} />)}
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+// ===================== TOOLS SECTION =====================
+function ToolsSection() {
+  const [tool, setTool] = useState(0);
+  const tools = [
+    {
+      name: "出声复述法", icon: "🗣️", color: "#FF6B35", ch: "Ch.7",
+      why: "单单把信息转录到头脑里是不够的，必须锻炼自己提取该信息的能力。出声复述 = 加工型复述，通过声音通道积极加工所学内容，使其成为自己的东西。",
+      steps: [
+        { t: "快速浏览一小节", d: "初期每次只读2-3页；随着掌握程度提高，每次可以覆盖更多页。判断标准：感觉工作记忆快装不下了就停。" },
+        { t: "合上书本，自由回忆", d: "用自己的话大声讲出刚读的全部内容。不是朗读原文，是「翻译」成自己的语言。就像在给一个朋友讲课。" },
+        { t: "重新打开书，精准反馈", d: "对照原文检查遗漏。这一步的目标像外科手术——精准针对丢失的那一小块信息进行修补，而不是重头再来。" },
+        { t: "再次合上书，补充复述", d: "针对刚才遗漏的部分再复述一遍。循环直到能完整复述该小节。" },
+        { t: "进入下一小节，重复循环", d: "每完成几个小节后，做一次「整合复述」——把前面所有小节串联起来讲一遍。" },
+      ],
+      tips: [
+        "可以录音回放来自我检查完整性",
+        "散度定理：越发散（用自己的话、加入类比和联想），记忆越深",
+        "作者原话：散度定理、爱因斯坦的祖母和傻大猫都跟这个方法有关——关键是要让复述「生动」而非「机械」",
+        "在人少的环境进行——你需要大声说话不被打扰",
+      ],
+    },
+    {
+      name: "笔记「无损压缩」法", icon: "📝", color: "#4ECDC4", ch: "Ch.9",
+      why: "笔记不应追求轻松愉快，而应追求精妙。它是信息的浓缩——如同Twitter般短小。用更少的字承载同样的信息，复习时间就比重读原书短得多。",
+      steps: [
+        { t: "原始材料中的每个概念都必须出现", d: "一个概念都不能少——但是，书写时要用更少的字。做到信息量不变、字数大幅减少。" },
+        { t: "删除所有「显而易见的例子」", d: "凡是能借助现有知识推导或重建的内容，都必须从笔记中剔除干净。这些冗余信息是「外在负荷」，占据工作记忆空间却不带来新收益。" },
+        { t: "用自己的语言改写", d: "不是照抄原文。改写的过程本身就是深度加工——你在强迫大脑进行「编码」操作。" },
+        { t: "建立视觉结构", d: "使用层级缩进、颜色标记、框线区分。好的笔记应该「一扫而过就能回忆起全部框架」。" },
+      ],
+      tips: [
+        "作者亲身经验：200多场考试的笔记，每个主题都放在专门的彩色活页夹里，构成了一座「私人图书馆」",
+        "追求的是简洁而非综合——如果不能把原始资料彻底放到一边，那还不如直接重读",
+        "笔记的终极检验：只看笔记能否通过考试？如果不能，说明压缩过度了",
+      ],
+    },
+    {
+      name: "自我测试 + 卡片法", icon: "🃏", color: "#AA96DA", ch: "Ch.9-10",
+      why: "测试效应（testing effect）：主动从记忆中提取信息的行为本身就能增强该记忆。做测试不仅是检验，更是最有效的学习方式。",
+      steps: [
+        { t: "在创造性学习环节编写测试题", d: "题目形式：选择、填空、简答、论述混合使用。覆盖全部知识点，一个都不漏。" },
+        { t: "制作正反面卡片", d: "正面写提示/问题，背面写完整答案。一张卡片只放一个知识点。" },
+        { t: "使用交错练习法做题", d: "把不同章节的卡片混在一起洗牌。这样做题时大脑必须先判断「这是哪个类型的问题」，增加辨别训练。" },
+        { t: "三堆分类法", d: "每次练习后分三堆——✅掌握 / ⚠️一般 / ❌困难。下次复习重点攻克❌堆，然后是⚠️堆。" },
+        { t: "间隔循环", d: "✅堆隔较长时间再复习；❌堆第二天就必须再做一轮。" },
+      ],
+      tips: [
+        "交错练习法做题（interleaved practice）：不要按章节做完再换下一章，要混合不同章节的题目",
+        "做题时不要先看答案——「看着答案觉得自己会了」是最危险的自我欺骗",
+        "做错的题是最宝贵的——它精准告诉你薄弱点在哪里",
+      ],
+    },
+    {
+      name: "轨迹记忆法（记忆宫殿）", icon: "🏰", color: "#E17055", ch: "Ch.18",
+      why: "人类大脑对空间位置的记忆能力远超对抽象信息的记忆。古希腊时期就已发明，许多世纪以来人们靠它记住整部史诗或整本书。",
+      steps: [
+        { t: "选择一个你极其熟悉的地方", d: "你现在的家、以前的家、每天走的某条街道。关键是「闭着眼都能走一遍」的地方。" },
+        { t: "确定一条固定路线上的关键位置", d: "如：玄关→客厅沙发→电视柜→厨房灶台→冰箱→卧室床→书桌→窗台……每个位置就是一个「记忆槽位」。" },
+        { t: "将知识点与位置一一绑定", d: "用夸张、荒诞、感官丰富的画面建立联想。越离谱越好——大脑最擅长记住异常、情绪化的场景。" },
+        { t: "在脑中「走一遍」路线来回忆", d: "从起点开始，依次经过每个位置，回忆绑定在那里的知识点。" },
+        { t: "反复在脑中走路线直到流畅", d: "走几遍后就会发现，你能以接近「自动驾驶」的速度依次回忆出全部知识点。" },
+      ],
+      tips: [
+        "作者提醒：记忆宫殿的适用性需要仔细考察，并非万能",
+        "最适合需要记住固定顺序的列表类知识（如历史事件时间线、法律条文编号、解剖结构顺序等）",
+        "联想画面越离谱、越有感官细节（声音、气味、触感），记忆效果越强",
+        "可以准备多条不同的路线，用于不同科目",
+      ],
+    },
+    {
+      name: "听课「虚拟辩论」法", icon: "🎓", color: "#6C5CE7", ch: "Ch.5",
+      why: "被动听讲处于学习方法层级的最底层。作者把面授课拉上了「被告席」。但如果你必须上课，可以用以下方法把被动变主动。",
+      steps: [
+        { t: "课前预习（预备原则）", d: "实验证明：即使只有极其肤浅的预习，也能显著提升听课效果。课前花10分钟快速翻阅本节主要概念即可。" },
+        { t: "听课时进行「虚拟辩论」", d: "在脑中对老师说的每一句话进行筛选和批判，与你已知的内容比较——关注相似点和差异点。不需要真的反对，只是练习。" },
+        { t: "用关键词做实时笔记", d: "不要逐字记录！只记关键词和框架。重点记「老师解释过但教材没写的内容」和「你的即时疑问」。" },
+        { t: "课后5分钟内做快速复述", d: "下课后立即（5分钟内）找个地方做一次出声复述——这个窗口期的巩固效率最高。" },
+      ],
+      tips: [
+        "签订「日目标协议」：为自己制订每日计划，在完成当日目标之前，绝对不要上床睡觉",
+        "逐字记录课堂内容是一种「弥天大罪」——它让你的大脑变成录音机，完全放弃了主动加工",
+      ],
+    },
+  ];
+  const t = tools[tool];
+
+  return (
+    <div>
+      <SectionTitle icon="🔧" title="实操手册 · 五大核心工具详解" sub="每个工具都附有作者的亲身经验、完整步骤和注意事项。可以直接照做。" />
+      <div style={{ display: "flex", gap: 6, marginBottom: 20, flexWrap: "wrap" }}>
+        {tools.map((tt, i) => (
+          <Pill key={i} color={tt.color} active={tool === i} onClick={() => setTool(i)}>
+            {tt.icon} {tt.name}
+          </Pill>
+        ))}
+      </div>
+      <Card color={`${t.color}05`} border={`1px solid ${t.color}18`}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+          <span style={{ fontSize: 32 }}>{t.icon}</span>
+          <div>
+            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+              <Tag color={t.color}>{t.ch}</Tag>
+              <span style={{ fontSize: 18, fontWeight: 900, color: "#1a1a2e" }}>{t.name}</span>
+            </div>
+          </div>
+        </div>
+        <Insight text={t.why} color={t.color} />
+
+        <div style={{ marginTop: 18, background: "rgba(255,255,255,0.6)", borderRadius: 14, padding: 18 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: t.color, marginBottom: 12 }}>📋 完整操作步骤</div>
+          {t.steps.map((s, i) => (
+            <div key={i} style={{ marginBottom: 14 }}>
+              <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 4 }}>
+                <div style={{
+                  width: 24, height: 24, borderRadius: "50%", flexShrink: 0,
+                  background: `${t.color}20`, display: "flex", alignItems: "center",
+                  justifyContent: "center", fontSize: 12, fontWeight: 800, color: t.color,
+                }}>{i + 1}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "#333" }}>{s.t}</div>
+              </div>
+              <div style={{ fontSize: 12, color: "#777", lineHeight: 1.8, paddingLeft: 32 }}>{s.d}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ marginTop: 14, background: `${t.color}08`, borderRadius: 12, padding: 16 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: t.color, marginBottom: 8 }}>⚠️ 作者亲授经验 & 注意事项</div>
+          {t.tips.map((tip, i) => (
+            <div key={i} style={{ fontSize: 12, color: "#666", lineHeight: 1.7, marginBottom: 6, paddingLeft: 12, borderLeft: `2px solid ${t.color}30` }}>{tip}</div>
+          ))}
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+// ===================== CRAFT SECTION =====================
+function CraftSection() {
+  const [activeCraft, setActiveCraft] = useState(0);
+  const crafts = [
+    {
+      name: "双色荧光笔画重点法", icon: "🖍️", color: "#E17055",
+      source: "Ch.4 · 如何画重点",
+      intro: "作者认为所有学习材料都包含两类语句：「信息类语句」（包含新信息和细节）和「连接类语句」（让文本通顺易读的过渡句、可推导的例子、重复内容）。画重点的核心目标就是把这两类分开。",
+      steps: [
+        { t: "准备两种颜色的荧光笔", d: "一种颜色标记「信息类语句」（包含你需要记住的新知识），另一种标记「连接类语句」（帮助理解但不需要记忆的内容）。" },
+        { t: "第一轮阅读时只画不背", d: "逐段阅读，用两种颜色分别标注。这个过程本身就是主动加工——你在判断'这句话是新信息还是过渡语'。" },
+        { t: "复习时只看信息类颜色", d: "后续复习可以跳过连接类语句，只聚焦在信息类标注上，大幅缩短复习时间。" },
+        { t: "画线量不设限", d: "作者明确反对「画线不能超过全文20%」的教条。只要材料与你的知识水平匹配，大量画线完全合理——每一个新信息都值得标注。" },
+      ],
+      authorQuote: "下划线（或荧光笔）的目的就是把第一类内容与第二类内容分开。这样一来，在此后几轮学习中，你就不再需要阅读「连接类语句」了，你只要看的是画过重点的部分。从此节省下大量的复习时间。",
+    },
+    {
+      name: "笔记「七条戒律」", icon: "📝", color: "#4ECDC4",
+      source: "Ch.9 · 如何创造学习材料",
+      intro: "作者制定了制作学习笔记的严格戒律，每一条都有神经科学依据。笔记的终极目标是「无损压缩」——用最少的字承载同样的信息量。",
+      steps: [
+        { t: "戒律一：无损压缩", d: "原始材料中的每个概念都必须出现在笔记中，一个都不能少。但书写时要大量缩减字数。就像压缩文件——信息不变，体积大幅缩小。笔记风格应追求精妙，如同Twitter般短小。" },
+        { t: "戒律二：删除显而易见的例子", d: "凡是能借助现有知识推导或重建的内容，都必须从笔记中剔除。这些是「外在负荷」（extraneous load），占据工作记忆空间却不带来新收益。" },
+        { t: "戒律三：因果关系替代", d: "如果一个知识点可以用因果逻辑推导出来，那就只记原因，不记结论。作者举例：连解剖学这样看似纯记忆的学科，都能用因果关系大幅压缩。" },
+        { t: "戒律四：不要忘记图片", d: "善用网络搜索引擎找到精美的示意图、图表与手绘稿，用图片替代整列的文字。甚至只是加一张令人难忘的照片，就能为整个页面带来令人难忘的效果。" },
+        { t: "戒律五：把能做成表格的都做成表格", d: "大多数书在写作时追求阅读乐趣，很多本来可以用表格呈现的信息被埋在段落中。你要做的是反向操作——把段落中的对比、分类、特征等信息全部整理成表格。表格中每列3-8项为最佳，匹配工作记忆容量。" },
+        { t: "戒律六：善用符号和emoji", d: "表情符号、箭头、星号、√和×等符号极度简洁且直观。作者说：既然有👍和👎，为什么还要写「赞成」和「反对」？" },
+        { t: "戒律七：用自己的语言改写", d: "不是照抄原文。改写的过程就是深度编码——你在强迫大脑进行加工操作。" },
+      ],
+      authorQuote: "笔记的风格应该与通俗读物相反，不应追求轻松愉快，而应追求精妙。它应当是信息的浓缩，如同Twitter般短小。这样，复习就能比重读原书的时间短得多。简洁，而不是综合！",
+    },
+    {
+      name: "游戏化自测系统", icon: "🎮", color: "#6C5CE7",
+      source: "Ch.9 · 自测题 / Ch.12 · 条件奖励",
+      intro: "作者提倡用游戏化（gamification）的方式做自我测试——找到电子游戏中令人上瘾的那些元素，并将其应用于学习。",
+      steps: [
+        { t: "建立测试分数档案", d: "每次做自测题时，必须在一份文件中记录总分。形成可追踪的分数历史记录。" },
+        { t: "禁止作弊，渴望正确答案", d: "做自测时绝对不能偷看答案。要培养对正确答案的渴望——这种渴望要高于一切。经过几天练习后获得满分的成就感会让你觉得自己天下无敌。" },
+        { t: "设置「完结」和「待办」记分牌", d: "用看板将学习任务分为「已完成」和「待完成」两栏。每完成一项就移到「完结」栏——这种可视化进度感本身就是强大的激励。" },
+        { t: "条件奖励制度", d: "每次完成既定任务后触发小奖励：短时娱乐、美食甜点、购入心仪的文具……外部奖励长期看不可持续，但短期内能帮你克服特别痛苦的章节。" },
+      ],
+      authorQuote: "放弃先学后玩的陈词滥调，体验边玩边学的快感。制作完小测验之后，你就要从主持人的高台上走下，在参赛席就座——新的世界将向你敞开大门。",
+    },
+    {
+      name: "SQ3R 改良阅读法", icon: "📖", color: "#FF6B35",
+      source: "Ch.4 · 主要的阅读技巧",
+      intro: "SQ3R（Survey, Question, Read, Recite, Review）是经典阅读法，但作者做了关键修改：第一轮不追求记忆，只追求理解。将部分步骤推迟到第二轮学习。",
+      steps: [
+        { t: "S - 浏览（Survey）", d: "先花几分钟快速浏览章节标题、小标题、加粗文字、图表。建立对内容的整体预期——这就是「预备原则」，实验证明即使极其肤浅的预览也能显著提升后续阅读效果。" },
+        { t: "Q - 提问（Question）", d: "浏览后对自己提出问题：这一章主要讲什么？我想从中了解什么？带着问题读比漫无目的读效果好得多。" },
+        { t: "R1 - 阅读（Read）", d: "正式阅读。在第一轮中只追求理解，不试图记忆。用双色荧光笔区分信息类和连接类语句。遇到不懂的标记但不死磕。" },
+        { t: "R2 - 复述（Recite）→ 推迟到第二轮", d: "作者的关键修改：正统SQ3R要求第一遍就做复述，但作者认为应该把复述推迟到第二轮，以精简第一轮的流程。第二轮使用出声复述法。" },
+        { t: "R3 - 回顾（Review）→ 也推迟", d: "同样推迟到后续轮次。配合间隔重复安排回顾时间。" },
+      ],
+      authorQuote: "在第一轮学习中，我们不再将SQ3R奉为「圣经」，不再利用这一轮学习来记忆材料，而是用它来理解材料。",
+    },
+    {
+      name: "学习道具 DIY 法", icon: "🧸", color: "#00B894",
+      source: "Ch.12 · 如何通过道具来激励自己",
+      intro: "作者强调「玩具」对学习的激励作用——我们是哺乳动物，天生对可摆弄、操纵、实验的对象充满好奇。尽可能多地使用可以上手的教学工具。",
+      steps: [
+        { t: "使用实体学习工具", d: "解剖学用器官骨骼模型、化学用分子模型、地理用地球仪……实体道具带来「触觉性」关系，比纯文字记忆深刻得多。大多数可以在网上花很少钱买到。" },
+        { t: "DIY 制作学习道具", d: "作者曾将塑料包装DIY成小木偶，甚至在书架上造过一个微型记忆宫殿。华生和克里克发现DNA双螺旋结构时，也是靠纸板模型——如果科学巨匠都不「嫌丢人」，你也不要有顾虑。" },
+        { t: "利用编程和数字工具", d: "作者从小喜欢编程，用Arduino/Raspberry Pi等制作电子学习工具。你也可以用Excel做自测评分系统、用编程做抽卡片程序等。" },
+        { t: "精心挑选文具", d: "好的笔、好的笔记本、好的颜色系统——这些「学生道具」能注入仪式感。作者把200多场考试的笔记存在专门的单色封面活页夹里，构成了一座「私人图书馆」。" },
+      ],
+      authorQuote: "道具能够带来无穷无尽的可能性。如果我们能够与所学领域建立起一种直接的、本能的「触觉性的」关系——在原始好奇心的推动下，我们就能加深自己与相关学科之间的关系。赞美玩具，赞美DIY吧！",
+    },
+    {
+      name: "彩色活页夹笔记体系", icon: "📂", color: "#AA96DA",
+      source: "Ch.9 · 「我的方法」",
+      intro: "作者亲身使用的笔记管理系统——历经200多场考试打磨的个人「知识图书馆」。",
+      steps: [
+        { t: "每个主题一个专用活页夹", d: "用单色封面的打孔活页夹，每个主题/科目一个专属夹子。不用固定装订本——活页便于随时插入、重排、抽取。" },
+        { t: "贴两字母标签", d: "每个活页夹外面贴一个两字母缩写标签，代表该主题。快速识别，不用翻开就知道里面是什么。" },
+        { t: "注重文字和视觉效果", d: "作者自述在电脑上编写笔记时，「一丝不苟地关注文字本身和视觉效果上的愉悦性」。将学习过程与深入、彻底的创造性体验结合。" },
+        { t: "构建「私人图书馆」", d: "所有活页夹放在卧室，像珍藏一样守护。每当翻阅这座「私人图书馆」时都会感到快乐与满足。这是多年学习投入的有形证据——看得见、摸得着的成就感。" },
+      ],
+      authorQuote: "这些年来，我总共参加过两百多次考试，所有这些个人笔记放在一起，几乎构成了一座图书馆。我把它们放在自己的卧室里，小心翼翼地守护着。",
+    },
+  ];
+  const c = crafts[activeCraft];
+
+  return (
+    <div>
+      <SectionTitle icon="🎨" title="匠人级实操细节" sub="这些是书中藏在各章节里的具体操作方法——用什么颜色的笔、怎么做表格、如何建立笔记档案系统……可以直接照做的细粒度指南。" />
+      <div style={{ display: "flex", gap: 6, marginBottom: 20, flexWrap: "wrap" }}>
+        {crafts.map((cc, i) => (
+          <Pill key={i} color={cc.color} active={activeCraft === i} onClick={() => setActiveCraft(i)}>
+            {cc.icon} {cc.name}
+          </Pill>
+        ))}
+      </div>
+
+      <Card color={`${c.color}05`} border={`1px solid ${c.color}18`}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+          <span style={{ fontSize: 32 }}>{c.icon}</span>
+          <div>
+            <Tag color={c.color}>{c.source}</Tag>
+            <h4 style={{ fontSize: 17, fontWeight: 900, color: "#1a1a2e", margin: "4px 0 0" }}>{c.name}</h4>
+          </div>
+        </div>
+        <p style={{ fontSize: 13, color: "#666", lineHeight: 1.8, margin: "10px 0 16px", background: "rgba(255,255,255,0.5)", borderRadius: 10, padding: 14 }}>{c.intro}</p>
+
+        <div style={{ background: "rgba(255,255,255,0.6)", borderRadius: 14, padding: 18, marginBottom: 14 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: c.color, marginBottom: 12 }}>📋 具体操作</div>
+          {c.steps.map((s, i) => (
+            <div key={i} style={{ marginBottom: 14 }}>
+              <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 4 }}>
+                <div style={{
+                  width: 24, height: 24, borderRadius: "50%", flexShrink: 0,
+                  background: `${c.color}20`, display: "flex", alignItems: "center",
+                  justifyContent: "center", fontSize: 12, fontWeight: 800, color: c.color,
+                }}>{i + 1}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "#333" }}>{s.t}</div>
+              </div>
+              <div style={{ fontSize: 12, color: "#777", lineHeight: 1.8, paddingLeft: 32 }}>{s.d}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{
+          background: `linear-gradient(135deg, ${c.color}08, ${c.color}15)`,
+          borderRadius: 12, padding: 16, borderLeft: `3px solid ${c.color}`,
+        }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: c.color, marginBottom: 6 }}>📖 作者原文精华</div>
+          <div style={{ fontSize: 13, color: "#555", lineHeight: 1.9, fontStyle: "italic" }}>「{c.authorQuote}」</div>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+// ===================== TRAPS SECTION =====================
+function TrapsSection() {
+  const traps = [
+    {
+      name: "学生综合征", icon: "📅", color: "#E74C3C",
+      symptom: "拖到考前最后一刻才开始学习。理论上努力应该均匀分布在整个学期，但现实中几乎所有努力都集中在deadline前",
+      rootCause: "低估学习所需时间 + 缺乏日目标系统",
+      cure: "签订「日目标协议」：为自己制订每日学习计划，在完成当日目标之前绝对不上床睡觉。提前开始复习，最初几轮的时间很短。",
+      authorNote: "作者在书中画了一张经典对比图：理论上的努力分布（均匀）vs 现实中的努力分布（考前突击的尖峰）。你是哪种？",
+    },
+    {
+      name: "计时器综合征", icon: "⏱️", color: "#E67E22",
+      symptom: "执迷于「我每天学了多少小时」，把学习时间等同于学习效果。连续10小时、20小时地苦读",
+      rootCause: "误以为学习可以计件衡量，忽略了方法和效率的决定性作用",
+      cure: "问题不是「学了多长时间」，而是「在有限时间内如何最大化产出」。作者同时完成5个学位课程时，最常被问「你每天学多少小时」，他说这个问题本身就是错的。",
+      authorNote: "无论是学生还是学者，都不应该去积累埋头苦读的时间。连续20小时的自我折磨只能让受虐狂感到满足。",
+    },
+    {
+      name: "被动阅读幻觉", icon: "📖", color: "#9B59B6",
+      symptom: "反复读课本/笔记，每次都觉得「嗯我看懂了」，但一合上书就什么都想不起来",
+      rootCause: "混淆了「再认」（recognition）和「回忆」（recall）——看着答案觉得熟悉≠能主动想出答案",
+      cure: "所有复习必须通过主动提取检验：合上书→尝试回忆→打开书对照→补充遗漏。如果不能离开书本独立复述，就是还没学会。",
+      authorNote: "作者用了一个极其生动的比喻：重读就像犯了一种「弥天大罪」，让你产生虚假的掌握感。被动方法处于学习方法层级的最底层。",
+    },
+    {
+      name: "完美计划陷阱", icon: "📐", color: "#1ABC9C",
+      symptom: "花大量时间制定精美的学习计划，但始终不开始执行。或者计划一旦被打断就全盘放弃",
+      rootCause: "分析瘫痪——过度规划反而成为行动的阻碍",
+      cure: "计划要简洁、灵活、容错。核心只需要：①今天必须完成的任务列表 ②每项任务使用哪种学习方法。完成比完美重要一万倍。",
+      authorNote: "作者建议的计划粒度：日计划而非周计划或月计划。每天晚上花5分钟安排明天的任务即可。",
+    },
+    {
+      name: "天赋归因谬误", icon: "🧠", color: "#3498DB",
+      symptom: "遇到困难就想「我不适合学这个」「我没有这方面的天赋」，然后放弃",
+      rootCause: "将正常的学习困难（灰心平台）误解为天赋不足的证据。心理调查显示大多数学生都大幅低估学习所需时间",
+      cure: "学习从来不是一蹴而就的，对任何人来说都是如此。灰心平台是生理性的、正常的、暂时的。不要相信「不费力就能通过考试」的吹嘘。",
+      authorNote: "作者6年拿5个学位，平均分满分。他反复强调：这不是因为天赋，而是因为找到了一套方法。所有人的工作记忆容量基本相同——差距在方法。",
+    },
+  ];
+
+  return (
+    <div>
+      <SectionTitle icon="🚨" title="五大致命陷阱 · 诊断与处方" sub="作者用「临床诊断」的方式描述这些学习病——每种都有症状、病因和处方。对号入座，及时「治疗」。" />
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        {traps.map((tr, i) => (
+          <Card key={i} color={`${tr.color}06`} border={`1px solid ${tr.color}15`}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+              <span style={{ fontSize: 28 }}>{tr.icon}</span>
+              <div>
+                <div style={{ fontSize: 16, fontWeight: 900, color: tr.color }}>{tr.name}</div>
+              </div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+              <div style={{ background: "rgba(255,255,255,0.6)", borderRadius: 10, padding: 12 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#E74C3C", marginBottom: 4 }}>🔴 症状</div>
+                <div style={{ fontSize: 12, color: "#666", lineHeight: 1.7 }}>{tr.symptom}</div>
+              </div>
+              <div style={{ background: "rgba(255,255,255,0.6)", borderRadius: 10, padding: 12 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#E67E22", marginBottom: 4 }}>🟡 病因</div>
+                <div style={{ fontSize: 12, color: "#666", lineHeight: 1.7 }}>{tr.rootCause}</div>
+              </div>
+            </div>
+            <div style={{ background: "rgba(46,204,113,0.08)", borderRadius: 10, padding: 12, marginBottom: 8 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: "#2ECC71", marginBottom: 4 }}>💊 处方</div>
+              <div style={{ fontSize: 12, color: "#555", lineHeight: 1.7 }}>{tr.cure}</div>
+            </div>
+            <div style={{ fontSize: 11, color: "#999", fontStyle: "italic", lineHeight: 1.6, paddingLeft: 10, borderLeft: "2px solid #ddd" }}>
+              📖 {tr.authorNote}
+            </div>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ===================== ENERGY SECTION =====================
+function EnergySection() {
+  const dims = [
+    {
+      title: "睡眠", icon: "😴", color: "#6C5CE7", ch: "Ch.19-20",
+      science: "大脑在睡眠中执行「记忆巩固」的关键操作。深度睡眠（NREM）巩固陈述性记忆（事实、概念）；快速眼动睡眠（REM）巩固程序性记忆（技能、操作）。睡眠不足直接破坏工作记忆容量和注意力——这意味着即使你学了同样长的时间，效率也大幅下降。",
+      actions: [
+        "保证充足且规律的睡眠，这是所有学习策略的前提",
+        "学完新内容后当晚好好睡觉——大脑会在睡眠中自动「整理归档」",
+        "避免通宵复习——你获得的边际记忆量远不如一觉好睡后的巩固量",
+        "如果必须选择：多睡1小时 vs 多学1小时，选择多睡",
+      ],
+    },
+    {
+      title: "运动", icon: "🏃", color: "#00B894", ch: "Ch.21",
+      science: "有氧运动促进大脑分泌BDNF（脑源性神经营养因子），直接增强海马体的神经可塑性——即增强你的「记忆硬件」。运动还能改善注意力、工作记忆和执行功能。",
+      actions: [
+        "保持规律有氧运动（跑步、游泳、骑车等）",
+        "学习间隙进行短暂运动（散步10分钟）比一直坐着更高效",
+        "运动不是与学习争时间——它是在为学习升级硬件",
+        "找到适合自己的运动与学习节奏平衡",
+      ],
+    },
+    {
+      title: "压力管理", icon: "🧘", color: "#FD79A8", ch: "Ch.22",
+      science: "适度的良性压力能提升警觉性和注意力。但过度压力导致皮质醇飙升，严重损害海马体功能——记忆的编码和提取能力同时下降。考试焦虑的本质是对失败的过度恐惧，而非能力不足。",
+      actions: [
+        "建立成长型心态：学习是缓慢的过程，没有速成捷径",
+        "焦虑来自「觉得准备不充分」——解药是提前开始、系统复习",
+        "考前过度紧张时：做几次深呼吸，提醒自己已经做了充分准备",
+        "避免和焦虑的同学「互相传染」——焦虑真的会传染",
+      ],
+    },
+    {
+      title: "动机维护", icon: "🔥", color: "#E17055", ch: "Ch.11-12",
+      science: "多巴胺奖赏系统驱动学习动机。内在动机（好奇心、成就感）的持续性远超外在奖惩。作者提出动机的四个维度：心理态度、人际交流、自我奖励、学习道具。",
+      actions: [
+        "心理态度：接受「学习就是需要大量时间」这个事实，不自我欺骗",
+        "人际交流：找到学习伙伴，互相测试和讨论",
+        "自我奖励：完成今日任务后给自己一个小奖励（但不能是「提前结束学习」）",
+        "学习道具：好的文具、舒适的环境、仪式感——作者特别推荐躺椅，能连续读3-4小时不累",
+        "座右铭：「急求：学习的欲望」——每天提醒自己为什么要学",
+      ],
+    },
+  ];
+
+  return (
+    <div>
+      <SectionTitle icon="⚡" title="续航引擎 · 四维能量管理" sub="方法再科学，没有足够的身心能量也无法执行。这四个维度是高效学习的「基础设施」。" />
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        {dims.map((d, i) => (
+          <Card key={i} color={`${d.color}06`} border={`1px solid ${d.color}18`}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+              <span style={{ fontSize: 28 }}>{d.icon}</span>
+              <div>
+                <div style={{ fontSize: 17, fontWeight: 900, color: "#1a1a2e" }}>{d.title}</div>
+                <Tag color={d.color}>{d.ch}</Tag>
+              </div>
+            </div>
+            <div style={{ background: "rgba(255,255,255,0.6)", borderRadius: 10, padding: 14, marginBottom: 10 }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: "#6C5CE7", marginBottom: 4 }}>🔬 神经科学原理</div>
+              <div style={{ fontSize: 12, color: "#555", lineHeight: 1.8 }}>{d.science}</div>
+            </div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: d.color, marginBottom: 8 }}>📋 行动指南</div>
+            {d.actions.map((a, j) => (
+              <div key={j} style={{ fontSize: 12, color: "#666", lineHeight: 1.7, marginBottom: 5, paddingLeft: 10, borderLeft: `2px solid ${d.color}28` }}>{a}</div>
+            ))}
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ===================== CASES SECTION =====================
+function CasesSection() {
+  const [caseIdx, setCaseIdx] = useState(0);
+  const cases = [
+    {
+      title: "考研政治：120个知识点的记忆攻坚", color: "#FF6B35",
+      scenario: "需要在2个月内掌握马原/毛概/史纲/思修共约120个核心考点，大量需要精确记忆的条目。",
+      plan: [
+        { phase: "第1周", method: "P1 · 理解轮", detail: "通读全部教材/视频课一遍，只追求理解框架。做标注但不背诵。每章读完后用1分钟概述：这章讲了什么？" },
+        { phase: "第2周", method: "P2 · 压缩笔记", detail: "用「无损压缩」法将4本教材浓缩成自己的笔记。每个考点用最短的语言描述核心含义。同时为每个考点编写一道测试题。" },
+        { phase: "第3周", method: "P2 · 卡片制作", detail: "将120个考点做成卡片（正面：问题/关键词，背面：完整答案）。对难以记忆的列表类考点，使用首字母缩写法或记忆宫殿。" },
+        { phase: "第4-5周", method: "P3 · 主动复习", detail: "每天从卡片堆中随机抽取30-40张做自我测试（交错效应）。分三堆：掌握/一般/困难。困难堆第二天必须再做。每2天做一次完整的出声复述。" },
+        { phase: "第6-8周", method: "P3+P5 · 间隔强化", detail: "按间隔重复安排全面复习。掌握堆每周复习一次；困难堆每2天复习。做历年真题来检验——做错的考点回到困难堆。考前一周做3次完整的模拟出声复述。" },
+      ],
+      keyInsight: "不要从第一天就开始背！先理解，再压缩，再主动提取。大量学生从第一天就开始死背，结果既累又记不住。",
+    },
+    {
+      title: "数据分析师转型：学SQL + Python", color: "#4ECDC4",
+      scenario: "在职学习，每天可用2小时。目标3个月内掌握SQL高级查询和Python数据分析（pandas/matplotlib）。",
+      plan: [
+        { phase: "每日结构", method: "交错效应", detail: "每天2小时分配：SQL 50min + Python 50min + 回顾20min。不要一口气学完SQL再学Python。两门交替学习，大脑保持新鲜感。" },
+        { phase: "学习SQL", method: "P1+P3 理解→实操", detail: "看教程（P1理解轮）→立刻打开数据库手写查询（主动提取）。绝对不要只看不写。每学一个新语法，立刻出3道练习题给自己做。" },
+        { phase: "学习Python", method: "P2 创造性学习", detail: "每学完一个模块（如pandas数据清洗），用自己的数据集实操一遍。把常用代码模式写成自己的「代码卡片」——正面是需求描述，背面是代码实现。" },
+        { phase: "每周末", method: "综合复习", detail: "周末做一个小项目来整合本周所学：用SQL提取数据→Python清洗→可视化。项目是最好的主动提取——因为你必须同时调用多个知识点。" },
+        { phase: "全程", method: "出声复述", detail: "每天结束学习前5分钟，大声讲出今天学的核心内容。说不出来的就是明天要重点补的。" },
+      ],
+      keyInsight: "技能学习最忌讳「只看不做」。编程类学习天然适合主动提取——写代码就是最好的自我测试。",
+    },
+    {
+      title: "日常读书：一本专业书的深度吸收", color: "#AA96DA",
+      scenario: "读一本300页的专业书（如经济学/管理学），目标是真正掌握其中的核心框架和知识点，而非泛泛浏览。",
+      plan: [
+        { phase: "第一遍", method: "P1 · 快速通读", detail: "不要逐字精读。花2-3天快速通读全书，只追求理解整体框架和章节逻辑关系。标注不懂的地方但不停下来死磕。读完后用5分钟回答：这本书的核心论点是什么？分几个部分论证？" },
+        { phase: "第二遍", method: "P2 · 压缩笔记", detail: "针对每章制作压缩笔记。300页的书应该被浓缩成15-20页。每个概念用最精练的语言描述。删除所有显而易见的例子和重复论述。" },
+        { phase: "第三遍", method: "P3 · 出声复述", detail: "合上书和笔记，一章一章地大声讲出其核心内容。说不出来→打开笔记对照→补充→再复述。这一步结束后你应该能给别人做一个15分钟的读书分享。" },
+        { phase: "之后", method: "P5 · 间隔回顾", detail: "1周后、1个月后各回顾一次笔记。半年后再回顾一次。三次回顾后，这本书的核心内容就能长期保持在你的知识体系中。" },
+        { phase: "进阶", method: "跨学科连接", detail: "问自己：这本书的观点和我在其他领域学到的什么知识有联系？它能解释我工作中的什么现象？这种跨学科连接是永久记忆的最强粘合剂。" },
+      ],
+      keyInsight: "大多数人读完一本书的「收获」只是模糊的好感，一个月后什么都想不起来。用这套方法，你读一本书的收获等于别人读十本。",
+    },
+  ];
+  const c = cases[caseIdx];
+
+  return (
+    <div>
+      <SectionTitle icon="📋" title="实战案例 · 三种场景的完整落地方案" sub="把前面所有方法论整合到具体场景中，展示「从第一天到最终掌握」的完整操作流程。" />
+      <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
+        {cases.map((cc, i) => (
+          <Pill key={i} color={cc.color} active={caseIdx === i} onClick={() => setCaseIdx(i)}>
+            {cc.title}
+          </Pill>
+        ))}
+      </div>
+
+      <Card color={`${c.color}06`} border={`1px solid ${c.color}18`}>
+        <h4 style={{ fontSize: 17, fontWeight: 900, color: "#1a1a2e", margin: "0 0 6px" }}>{c.title}</h4>
+        <div style={{ fontSize: 13, color: "#777", lineHeight: 1.7, marginBottom: 16, background: "rgba(255,255,255,0.5)", borderRadius: 10, padding: 12 }}>
+          🎯 <strong>场景设定：</strong>{c.scenario}
+        </div>
+
+        <div style={{ position: "relative", paddingLeft: 20 }}>
+          <div style={{ position: "absolute", left: 8, top: 0, bottom: 0, width: 2, background: `${c.color}25` }} />
+          {c.plan.map((step, i) => (
+            <div key={i} style={{ marginBottom: 18, position: "relative" }}>
+              <div style={{
+                position: "absolute", left: -16, top: 2,
+                width: 14, height: 14, borderRadius: "50%",
+                background: c.color, border: "3px solid #fff",
+                boxShadow: `0 0 0 2px ${c.color}40`,
+              }} />
+              <div style={{ paddingLeft: 12 }}>
+                <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 4 }}>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: c.color }}>{step.phase}</span>
+                  <Tag color="#6C5CE7">{step.method}</Tag>
+                </div>
+                <div style={{ fontSize: 13, color: "#555", lineHeight: 1.8 }}>{step.detail}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <Insight text={c.keyInsight} color={c.color} />
+      </Card>
+    </div>
+  );
+}
+
+// ===================== MAIN =====================
+const App = function App() {
+  const [tab, setTab] = useState("brain");
+
+  const renderTab = () => {
+    switch (tab) {
+      case "brain": return <BrainSection />;
+      case "system": return <SystemSection />;
+      case "tools": return <ToolsSection />;
+      case "craft": return <CraftSection />;
+      case "traps": return <TrapsSection />;
+      case "energy": return <EnergySection />;
+      case "cases": return <CasesSection />;
+    }
+  };
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#FAFAF8", fontFamily: "-apple-system, 'Noto Sans SC', 'PingFang SC', sans-serif" }}>
+      {/* Header */}
+      <div style={{
+        background: "linear-gradient(135deg, #0f0c29, #302b63, #24243e)",
+        padding: "24px 20px 18px", position: "relative", overflow: "hidden",
+      }}>
+        <div style={{ position: "absolute", top: -60, right: -60, width: 200, height: 200, borderRadius: "50%", background: "radial-gradient(circle, rgba(255,107,53,0.2) 0%, transparent 70%)" }} />
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 800, margin: "0 auto" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ fontSize: 32 }}>🧠</div>
+            <div>
+              <h1 style={{ fontSize: 22, fontWeight: 900, color: "#fff", margin: 0, fontFamily: "'Noto Serif SC', serif" }}>天才的学习方法</h1>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>
+                [意] 朱利奥·迪安杰里 · 深度拆解 · 实操指南
+              </div>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 16, marginTop: 14 }}>
+            {[
+              { v: "6年5学位", l: "满分成绩" },
+              { v: "25章", l: "理论+实践" },
+              { v: "8大", l: "神经科学证据" },
+              { v: "5套", l: "核心工具" },
+              { v: "7条", l: "笔记戒律" },
+            ].map((s, i) => (
+              <div key={i} style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 16, fontWeight: 900, color: "#FF6B35" }}>{s.v}</div>
+                <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)" }}>{s.l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Tab bar */}
+      <div style={{
+        background: "#fff", boxShadow: "0 1px 8px rgba(0,0,0,0.05)",
+        position: "sticky", top: 0, zIndex: 50, overflowX: "auto",
+      }}>
+        <div style={{ display: "flex", maxWidth: 800, margin: "0 auto", padding: "0 4px" }}>
+          {TABS.map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)} style={{
+              padding: "12px 10px", border: "none", background: "none",
+              cursor: "pointer", fontSize: 12, fontWeight: tab === t.id ? 800 : 500,
+              color: tab === t.id ? "#FF6B35" : "#bbb",
+              borderBottom: `2.5px solid ${tab === t.id ? "#FF6B35" : "transparent"}`,
+              transition: "all .25s", whiteSpace: "nowrap", flex: 1, textAlign: "center",
+            }}>
+              <div style={{ fontSize: 18 }}>{t.icon}</div>
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 16px 60px" }}>
+        {renderTab()}
+      </div>
+
+      {/* Footer */}
+      <div style={{ background: "#f0f0ee", padding: "20px", textAlign: "center", fontSize: 11, color: "#bbb" }}>
+        <p>⚠ 免责声明：本页面内容仅供个人学习与读书笔记整理之用，不用于任何商业目的。</p>
+        <p>书籍版权归原作者及出版社所有。如有侵权，请联系博主，将第一时间删除处理。</p>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+</script>
+</body>
+</html>
