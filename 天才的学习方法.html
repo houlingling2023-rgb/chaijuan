@@ -847,6 +847,24 @@ function CasesSection() {
 }
 
 // ===================== MAIN =====================
+function ScrollTop(){
+  const[show,setShow]=React.useState(false);
+  React.useEffect(()=>{
+    const h=()=>setShow(window.scrollY>600);
+    window.addEventListener("scroll",h);
+    return()=>window.removeEventListener("scroll",h);
+  },[]);
+  if(!show)return null;
+  return React.createElement("button",{onClick:()=>window.scrollTo({top:0,behavior:"smooth"}),style:{
+    position:"fixed",bottom:24,right:20,zIndex:50,
+    width:40,height:40,borderRadius:20,border:"none",
+    background:"rgba(255,107,53,0.12)",backdropFilter:"blur(8px)",
+    color:"#FF6B35",fontSize:18,cursor:"pointer",
+    display:"flex",alignItems:"center",justifyContent:"center",
+    boxShadow:"0 2px 8px rgba(0,0,0,0.08)",transition:"all .3s",
+  }},"↑");
+}
+
 const App = function App() {
   const [tab, setTab] = useState("brain");
 
@@ -923,6 +941,7 @@ const App = function App() {
         {renderTab()}
       </div>
 
+      <ScrollTop/>
       {/* Footer */}
       <div style={{ background: "#f0f0ee", padding: "20px", textAlign: "center", fontSize: 11, color: "#bbb" }}>
         <p>⚠ 免责声明：本页面内容仅供个人学习与读书笔记整理之用，不用于任何商业目的。</p>

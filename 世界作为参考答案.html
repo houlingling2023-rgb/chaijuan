@@ -906,6 +906,27 @@ function Ch5(){
 }
 
 /* ===== APP ===== */
+function ScrollTop(){
+  const[show,setShow]=useState(false);
+  useEffect(()=>{
+    const h=()=>setShow(window.scrollY>600);
+    window.addEventListener("scroll",h);
+    return()=>window.removeEventListener("scroll",h);
+  },[]);
+  if(!show)return null;
+  return(
+    <button onClick={()=>window.scrollTo({top:0,behavior:"smooth"})} style={{
+      position:"fixed",bottom:24,right:20,zIndex:50,
+      width:40,height:40,borderRadius:20,border:"none",
+      background:"rgba(160,140,110,0.15)",backdropFilter:"blur(8px)",
+      color:"#8a7a60",fontSize:18,cursor:"pointer",
+      display:"flex",alignItems:"center",justifyContent:"center",
+      boxShadow:"0 2px 8px rgba(0,0,0,0.08)",
+      transition:"all .3s",
+    }}>↑</button>
+  );
+}
+
 function App(){
   const[ch,setCh]=useState(0);
   const[toc,setToc]=useState(false);
@@ -945,6 +966,7 @@ function App(){
         <PageNav current={ch} total={CHS.length} name={CHS[ch].label} onPrev={()=>{setCh(ch-1);window.scrollTo(0,0);}} onNext={()=>{setCh(ch+1);window.scrollTo(0,0);}}/>
       </div>
 
+      <ScrollTop/>
       <div style={{textAlign:"center",padding:"40px 24px 20px",position:"relative",zIndex:1}}>
         <div style={{fontSize:12,color:P.textMuted,letterSpacing:4}}>拆卷 · 世界作为参考答案</div>
         <div style={{fontSize:11,color:P.textMuted,opacity:0.5,marginTop:6}}>刘擎 严飞 · 上海人民出版社·世纪文景 · 2024年12月 · ISBN 9787208192287</div>

@@ -375,6 +375,27 @@ const GLOBAL_STYLES = `
 `;
 
 /* ============ COMPONENT ============ */
+function ScrollTop(){
+  const[show,setShow]=useState(false);
+  useEffect(()=>{
+    const h=()=>setShow(window.scrollY>600);
+    window.addEventListener("scroll",h);
+    return()=>window.removeEventListener("scroll",h);
+  },[]);
+  if(!show)return null;
+  return(
+    <button onClick={()=>window.scrollTo({top:0,behavior:"smooth"})} style={{
+      position:"fixed",bottom:24,right:20,zIndex:50,
+      width:40,height:40,borderRadius:20,border:"none",
+      background:`rgba(198,163,98,0.15)`,backdropFilter:"blur(8px)",
+      color:"#C6A362",fontSize:18,cursor:"pointer",
+      display:"flex",alignItems:"center",justifyContent:"center",
+      boxShadow:"0 2px 8px rgba(0,0,0,0.08)",
+      transition:"all .3s",
+    }}>↑</button>
+  );
+}
+
 function App() {
   const [currentView, setCurrentView] = useState("home");
   const [currentChapter, setCurrentChapter] = useState(0);
@@ -408,6 +429,7 @@ function App() {
           onNextSection={() => currentSection < DATA.chapters[currentChapter].sections.length - 1 && setCurrentSection(currentSection + 1)}
         />
       )}
+      <ScrollTop/>
     </div>
   );
 }
