@@ -491,9 +491,19 @@ function App() {
     return ()=>window.removeEventListener("scroll",h);
   },[]);
 
-  // Random quote from all books' keyInsights
-  const allInsights = BOOKS.flatMap(b => b.keyInsights.map(k => ({text:k, book:b.title})));
-  const [randomQuote] = useState(()=>allInsights[Math.floor(Math.random()*allInsights.length)]);
+  // Curated quotes for footer
+  const curatedQuotes = [
+    {text:"转型不是「我要变成另一个人」，而是「我的哪些积累可以在新地方释放价值」", book:"不上班咖啡馆"},
+    {text:"改变的本质不是自控力，而是创造新的经验", book:"了不起的我"},
+    {text:"瓦尔登湖是一个动词，不是一个名词", book:"世界作为参考答案"},
+    {text:"痛因越来越少，痛感越来越强——这是现代人的精神困境", book:"世界作为参考答案"},
+    {text:"真正的学习不是记住答案，而是学会提出更好的问题", book:"天才的学习方法"},
+    {text:"一个公司的基因在它成立的那一刻就已经决定了", book:"浪潮之巅"},
+    {text:"人生没有白走的路，每一步都算数——但前提是你在走", book:"不上班咖啡馆"},
+    {text:"我们终其一生，不是为了成为别人，而是为了成为自己", book:"了不起的我"},
+    {text:"读书不是为了记住所有内容，而是在需要时知道去哪里找到答案", book:"拆卷"},
+  ];
+  const [randomQuote] = useState(()=>curatedQuotes[Math.floor(Math.random()*curatedQuotes.length)]);
 
   // Search & filter
   const filtered = BOOKS.filter(b => {
