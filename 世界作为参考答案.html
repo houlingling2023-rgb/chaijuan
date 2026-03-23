@@ -918,25 +918,26 @@ function App(){
       <ReadBar progress={((ch+1)/CHS.length)*100}/>
       <Sidebar chapters={CHS} current={ch} onSelect={setCh} open={toc} onClose={()=>setToc(false)}/>
 
-      <div style={{position:"sticky",top:0,zIndex:10,background:"linear-gradient(to bottom,rgba(245,240,232,0.98) 70%,rgba(245,240,232,0))",padding:"14px 24px 24px"}}>
-        <div style={{maxWidth:720,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-          <div style={{display:"flex",alignItems:"center",gap:10}}>
-            <span onClick={()=>setToc(true)} style={{cursor:"pointer",opacity:0.5,fontSize:18}}>{"☰"}</span>
-            <span style={{fontSize:13,color:P.textMuted,letterSpacing:3}}>拆卷</span>
-            <span style={{fontSize:11,color:P.textMuted,opacity:0.4}}>·</span>
-            <span style={{fontSize:13,color:P.textMuted}}>世界作为参考答案</span>
+      <div style={{position:"sticky",top:0,zIndex:10,background:P.paper,borderBottom:`1px solid rgba(160,140,110,0.12)`}}>
+        <div style={{padding:"12px 24px 0"}}>
+          <div style={{maxWidth:720,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <span onClick={()=>setToc(true)} style={{cursor:"pointer",opacity:0.5,fontSize:18}}>{"☰"}</span>
+              <span style={{fontSize:13,color:P.textMuted,letterSpacing:3}}>拆卷</span>
+              <span style={{fontSize:11,color:P.textMuted,opacity:0.4}}>·</span>
+              <span style={{fontSize:13,color:P.textMuted}}>世界作为参考答案</span>
+            </div>
+            <span style={{fontSize:11,color:P.textMuted}}>{ch+1}/{CHS.length}</span>
           </div>
-          <span style={{fontSize:11,color:P.textMuted}}>{ch+1}/{CHS.length}</span>
         </div>
-      </div>
-
-      <div style={{maxWidth:720,margin:"0 auto",padding:"0 24px",position:"relative"}}>
-        <div style={{display:"flex",gap:0,borderBottom:`1px solid rgba(160,140,110,0.12)`,marginBottom:36,overflowX:"auto",scrollbarWidth:"none",msOverflowStyle:"none",WebkitOverflowScrolling:"touch"}}>
-          {CHS.map((t,i)=>(
-            <ChTab key={t.id} label={t.label} char={t.char} color={t.color} active={ch===i} onClick={()=>setCh(i)} isOverview={i===0}/>
-          ))}
+        <div style={{maxWidth:720,margin:"0 auto",padding:"8px 24px 0",position:"relative"}}>
+          <div style={{display:"flex",gap:0,overflowX:"auto",scrollbarWidth:"none",msOverflowStyle:"none",WebkitOverflowScrolling:"touch"}}>
+            {CHS.map((t,i)=>(
+              <ChTab key={t.id} label={t.label} char={t.char} color={t.color} active={ch===i} onClick={()=>setCh(i)} isOverview={i===0}/>
+            ))}
+          </div>
+          <div style={{position:"absolute",top:0,right:24,width:40,height:"100%",pointerEvents:"none",background:`linear-gradient(to left,${P.paper},transparent)`}}/>
         </div>
-        <div style={{position:"absolute",top:0,right:24,width:40,height:"calc(100% - 36px)",pointerEvents:"none",background:`linear-gradient(to left,${P.paper},transparent)`}}/>
       </div>
 
       <div style={{maxWidth:720,margin:"0 auto",padding:"0 24px 40px",position:"relative",zIndex:1}}>
