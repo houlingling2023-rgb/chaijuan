@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拆卷 · 看得见的与看不见的</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=ZCOOL+XiaoWei&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#f5f0e8;font-family:'Noto Serif SC','PingFang SC',Georgia,serif;color:#2c2418;overflow-x:hidden}
+  html{scroll-behavior:smooth}
+  ::selection{background:rgba(180,100,50,0.18)}
+  ::-webkit-scrollbar{width:5px}
+  ::-webkit-scrollbar-track{background:#ebe5d8}
+  ::-webkit-scrollbar-thumb{background:rgba(140,100,60,0.3);border-radius:3px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes glowPulse{0%,100%{opacity:0.3}50%{opacity:0.7}}
+  @keyframes slideOpen{from{max-height:0;opacity:0}to{max-height:8000px;opacity:1}}
+  @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+  @keyframes pageIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+  .fade-up{animation:fadeUp 0.4s ease both}
+  .page-in{animation:pageIn 0.35s ease both}
+  @media(max-width:480px){
+    .ink-compare-inner{flex-wrap:wrap!important}
+    .ink-compare-inner>*{flex-basis:100%!important;min-width:0!important}
+    .ink-compare-divider{display:none!important}
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect}=React;
+
+const P={
+  paper:"#f5f0e8",paperDeep:"#efe9dd",paperLight:"#faf7f0",
+  pageShadow:"rgba(120,100,70,0.06)",
+  text:"#2c2418",textSoft:"#6a5d4e",textMuted:"#a89a88",textChapter:"#4a3f30",
+  vermillion:"#c85030",
+  colors:[
+    {name:"赭石",hex:"#a87a28",glow:"rgba(168,122,40,0.12)"},
+    {name:"深棕",hex:"#7a5030",glow:"rgba(122,80,48,0.12)"},
+    {name:"砖红",hex:"#b84828",glow:"rgba(184,72,40,0.12)"},
+    {name:"琥珀",hex:"#9e8228",glow:"rgba(158,130,40,0.12)"},
+    {name:"橄榄",hex:"#5e6848",glow:"rgba(94,104,72,0.12)"},
+  ],
+};
+
+function PaperBg(){
+  return(
+    <div style={{position:"fixed",inset:0,zIndex:0,pointerEvents:"none"}}>
+      <svg width="100%" height="100%" style={{position:"absolute",inset:0,opacity:0.035}}>
+        <defs><filter id="pf"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="4" seed="12"/><feColorMatrix type="saturate" values="0"/></filter></defs>
+        <rect width="100%" height="100%" fill="#a09070" filter="url(#pf)"/>
+      </svg>
+      <svg width="100%" height="100%" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice" style={{position:"absolute",inset:0,opacity:0.025}}>
+        <defs><filter id="ms"><feGaussianBlur stdDeviation="22"/></filter></defs>
+        <path d="M-50 600 Q200 480 400 530 Q600 440 800 500 Q1000 420 1200 480 Q1400 450 1450 490 L1450 900 L-50 900Z" fill="#a09070" opacity="0.5" filter="url(#ms)"/>
+        <path d="M0 0 Q150 120 80 280 Q20 400 100 500" fill="none" stroke="#907050" strokeWidth="60" opacity="0.04" filter="url(#ms)"/>
+      </svg>
+    </div>
+  );
+}
+
+function SealIcon({char="拆",color=P.vermillion,size=48,glow=true}){
+  const[h,setH]=useState(false);
+  return(
+    <div onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
+      style={{width:size,height:size,position:"relative",flexShrink:0,cursor:"default"}}>
+      <div style={{position:"absolute",inset:-4,borderRadius:"50%",background:`radial-gradient(circle,${color}${h?"15":"08"} 0%,transparent 70%)`,transition:"all 0.5s",filter:"blur(3px)"}}/>
+      <div style={{position:"absolute",inset:0,border:`1.5px solid ${h?color:color+"60"}`,borderRadius:5,transform:"rotate(-3deg)",transition:"all 0.4s",boxShadow:h?`0 0 14px ${color}20`:"none"}}/>
+      <div style={{position:"absolute",inset:3,border:`1px solid ${h?color+"50":color+"25"}`,borderRadius:3,transform:"rotate(-3deg)",transition:"all 0.4s"}}/>
+      <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",transform:"rotate(-3deg)"}}>
+        <span style={{fontSize:size*0.42,fontWeight:900,color,fontFamily:"'ZCOOL XiaoWei','Noto Serif SC',serif",transition:"all 0.4s"}}>{char}</span>
+      </div>
+    </div>
+  );
+}
+
+function MiniLandscape({color=P.colors[0].hex,size=44,variant=0}){
+  const v=variant%4;
+  return(
+    <svg width={size} height={size} viewBox="0 0 52 52" style={{flexShrink:0,opacity:0.8}}>
+      {v===0&&<g><path d="M4 38 Q14 12 26 28 Q34 10 48 34 L48 48 L4 48Z" fill={color+"15"} stroke={color+"40"} strokeWidth="0.8"/><path d="M0 42 Q12 28 24 38 Q36 24 52 36 L52 52 L0 52Z" fill={color+"20"} stroke={color+"50"} strokeWidth="0.8"/></g>}
+      {v===1&&<g><line x1="20" y1="48" x2="18" y2="6" stroke={color+"50"} strokeWidth="1.5" strokeLinecap="round"/><path d="M18 12 Q10 8 6 14" fill="none" stroke={color+"40"} strokeWidth="1" strokeLinecap="round"/><path d="M18 20 Q12 16 8 22" fill="none" stroke={color+"35"} strokeWidth="1" strokeLinecap="round"/><path d="M18 28 Q24 24 28 30" fill="none" stroke={color+"40"} strokeWidth="1" strokeLinecap="round"/></g>}
+      {v===2&&<g><path d="M4 22 Q14 16 26 22 Q38 28 48 22" fill="none" stroke={color+"45"} strokeWidth="1" strokeLinecap="round"/><path d="M8 30 Q18 24 30 30 Q42 36 48 30" fill="none" stroke={color+"35"} strokeWidth="0.8" strokeLinecap="round"/><path d="M4 38 Q14 32 26 38 Q38 44 48 38" fill="none" stroke={color+"25"} strokeWidth="0.6" strokeLinecap="round"/></g>}
+      {v===3&&<g><ellipse cx="26" cy="30" rx="20" ry="8" fill={color+"08"} stroke={color+"20"} strokeWidth="0.5"/><ellipse cx="18" cy="26" rx="10" ry="5" fill={color+"0c"} stroke={color+"28"} strokeWidth="0.5"/><path d="M10 20 Q16 8 26 14 Q36 6 44 16" fill="none" stroke={color+"30"} strokeWidth="0.7" strokeLinecap="round"/></g>}
+    </svg>
+  );
+}
+
+function ReadBar({progress}){
+  return(
+    <div style={{position:"fixed",top:0,left:0,right:0,height:2,zIndex:100,background:"rgba(160,140,110,0.1)"}}>
+      <div style={{height:"100%",width:`${progress}%`,background:`linear-gradient(90deg,${P.vermillion}60,${P.vermillion})`,transition:"width 0.3s ease",borderRadius:"0 1px 1px 0"}}/>
+    </div>
+  );
+}
+
+function ChTab({label,char,color,active,onClick,isOverview}){
+  return(
+    <button onClick={onClick} style={{
+      padding:"10px 14px",border:"none",display:"flex",alignItems:"center",gap:6,
+      background:active?P.paperLight:"transparent",
+      borderBottom:active?`2px solid ${color}`:"2px solid transparent",
+      borderRight:isOverview?"1px solid rgba(160,140,110,0.15)":"none",
+      color:active?P.textChapter:P.textMuted,fontSize:13,fontWeight:active?700:400,
+      letterSpacing:active?1.5:0.5,cursor:"pointer",transition:"all 0.3s",
+      fontFamily:"'Noto Serif SC',serif",whiteSpace:"nowrap",flexShrink:0,
+    }}>
+      {char&&<span style={{fontSize:10,fontWeight:900,fontFamily:"'ZCOOL XiaoWei',serif",border:`1px solid ${active?color+"60":color+"25"}`,color:active?color:color+"60",width:18,height:18,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)",transition:"all 0.3s",background:active?color+"08":"transparent"}}>{char}</span>}
+      {label}
+    </button>
+  );
+}
+
+function Sidebar({chapters,current,onSelect,open,onClose}){
+  return(
+    <div>
+      {open&&<div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(60,50,30,0.2)",zIndex:98}}/>}
+      <div style={{position:"fixed",top:0,left:open?0:-320,width:300,height:"100vh",background:P.paperDeep,borderRight:`1px solid rgba(160,140,110,0.15)`,boxShadow:open?"4px 0 30px rgba(80,60,30,0.1)":"none",zIndex:99,transition:"left 0.35s cubic-bezier(.4,0,.2,1)",padding:"32px 0",overflowY:"auto"}}>
+        <div style={{padding:"0 24px 24px",borderBottom:`1px solid rgba(160,140,110,0.12)`}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <SealIcon char="目" color={P.vermillion} size={28} glow={false}/>
+            <span style={{fontSize:16,fontWeight:700,color:P.textChapter,letterSpacing:3}}>目录</span>
+          </div>
+          <div style={{marginTop:10,fontSize:12,color:P.textMuted,lineHeight:1.7}}>看得见的与看不见的</div>
+        </div>
+        {chapters.map((ch,i)=>(
+          <div key={i} onClick={()=>{onSelect(i);onClose();}} style={{padding:"14px 24px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,background:current===i?ch.color+"08":"transparent",borderLeft:current===i?`3px solid ${ch.color}`:"3px solid transparent",transition:"all 0.25s"}}>
+            <span style={{fontSize:11,fontWeight:900,fontFamily:"'ZCOOL XiaoWei',serif",color:current===i?ch.color:P.textMuted,border:`1px solid ${current===i?ch.color+"50":P.textMuted+"30"}`,width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)"}}>{ch.char}</span>
+            <span style={{fontSize:14,color:current===i?P.textChapter:P.textSoft,fontWeight:current===i?600:400}}>{ch.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PageNav({current,total,name,onPrev,onNext}){
+  return(
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 0",borderTop:`1px solid rgba(160,140,110,0.15)`,marginTop:40}}>
+      <button onClick={current>0?onPrev:undefined} style={{padding:"10px 20px",border:current>0?"1px solid rgba(160,140,110,0.25)":"1px solid transparent",borderRadius:6,background:current>0?P.paperLight:"transparent",color:current>0?P.textSoft:"transparent",fontSize:14,cursor:current>0?"pointer":"default",fontFamily:"'Noto Serif SC',serif"}}>{"← 上一章"}</button>
+      <div style={{textAlign:"center"}}>
+        <div style={{fontSize:12,color:P.textMuted,letterSpacing:2}}>{name}</div>
+        <div style={{fontSize:11,color:P.textMuted,marginTop:2}}>{current+1} / {total}</div>
+      </div>
+      <button onClick={current<total-1?onNext:undefined} style={{padding:"10px 20px",border:current<total-1?"1px solid rgba(160,140,110,0.25)":"1px solid transparent",borderRadius:6,background:current<total-1?P.paperLight:"transparent",color:current<total-1?P.textSoft:"transparent",fontSize:14,cursor:current<total-1?"pointer":"default",fontFamily:"'Noto Serif SC',serif"}}>{"下一章 →"}</button>
+    </div>
+  );
+}
+
+function SecTitle({title,sub,color=P.colors[0].hex,char,ls=0}){
+  return(
+    <div style={{marginBottom:32,paddingTop:8}}>
+      <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:10}}>
+        <SealIcon char={char} color={color} size={44} glow={false}/>
+        <div style={{opacity:0.3,marginLeft:-28,marginTop:14}}><MiniLandscape color={color} size={32} variant={ls}/></div>
+        <h2 style={{fontSize:26,fontWeight:900,letterSpacing:4,color:P.textChapter,fontFamily:"'Noto Serif SC',serif",lineHeight:1.4}}>{title}</h2>
+      </div>
+      {sub&&<p style={{fontSize:15,color:P.textSoft,lineHeight:1.9,borderLeft:`2px solid ${color}30`,paddingLeft:16,marginLeft:2}}>{sub}</p>}
+      <div style={{height:1,background:`linear-gradient(90deg,${color}40,transparent 60%)`,marginTop:16}}/>
+    </div>
+  );
+}
+
+function Card({children,color=P.colors[0].hex,style={}}){
+  const[h,setH]=useState(false);
+  return(
+    <div onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{background:P.paperLight,borderRadius:10,padding:28,borderLeft:`3px solid ${h?color:color+"50"}`,boxShadow:h?`0 4px 24px ${P.pageShadow},0 0 20px ${color}08`:`0 1px 8px ${P.pageShadow}`,transition:"all 0.35s ease",transform:h?"translateY(-2px)":"none",position:"relative",overflow:"hidden",...style}}>
+      {children}
+    </div>
+  );
+}
+
+function Para({children}){
+  return <p style={{fontSize:16,color:P.text,lineHeight:2.0,marginBottom:16,textAlign:"justify"}}>{children}</p>;
+}
+
+function Step({n,text,detail,color=P.colors[1].hex}){
+  return(
+    <div style={{display:"flex",gap:16,marginBottom:20,alignItems:"flex-start"}}>
+      <div style={{width:30,height:30,borderRadius:"50%",background:color+"10",border:`1.5px solid ${color}35`,color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:800,flexShrink:0,fontFamily:"'Inter',sans-serif"}}>{n}</div>
+      <div style={{flex:1}}>
+        <div style={{fontSize:16,fontWeight:700,color:P.textChapter,lineHeight:1.7}}>{text}</div>
+        {detail&&<div style={{fontSize:15,color:P.textSoft,lineHeight:2.0,marginTop:6}}>{detail}</div>}
+      </div>
+    </div>
+  );
+}
+
+function Quote({text,color=P.vermillion}){
+  return(
+    <div style={{borderLeft:`3px solid ${color}40`,background:color+"06",borderRadius:"0 8px 8px 0",padding:"16px 22px",margin:"20px 0"}}>
+      <span style={{fontSize:15,color:P.textSoft,lineHeight:2.0,fontStyle:"italic"}}>{text}</span>
+    </div>
+  );
+}
+
+function Formula({text,color=P.vermillion}){
+  return(
+    <div style={{textAlign:"center",padding:28,margin:"24px 0",background:P.paperLight,borderRadius:10,border:`1px solid ${color}15`,position:"relative",overflow:"hidden",boxShadow:`0 1px 6px ${P.pageShadow}`}}>
+      <div style={{position:"absolute",inset:0,background:`linear-gradient(90deg,transparent,${color}04,transparent)`,backgroundSize:"200% 100%",animation:"shimmer 5s ease infinite"}}/>
+      <span style={{fontSize:19,fontWeight:900,letterSpacing:3,color:P.textChapter,fontFamily:"'Noto Serif SC',serif",position:"relative",lineHeight:1.8}}>{text}</span>
+    </div>
+  );
+}
+
+function Expand({title,children,color=P.colors[0].hex,char}){
+  const[open,setOpen]=useState(false);
+  return(
+    <div style={{background:open?P.paperLight:P.paperDeep,borderRadius:8,border:`1px solid ${open?color+"20":"rgba(160,140,110,0.1)"}`,overflow:"hidden",transition:"all 0.3s",marginBottom:10,boxShadow:open?`0 2px 12px ${P.pageShadow}`:"none"}}>
+      <div onClick={()=>setOpen(!open)} style={{padding:"16px 22px",display:"flex",alignItems:"center",justifyContent:"space-between",cursor:"pointer"}}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          {char&&<span style={{fontSize:13,fontWeight:900,color:open?color:color+"60",fontFamily:"'ZCOOL XiaoWei',serif",border:`1px solid ${open?color+"50":color+"25"}`,width:22,height:22,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)",transition:"all 0.3s"}}>{char}</span>}
+          <span style={{fontSize:16,fontWeight:open?700:500,color:open?P.textChapter:P.textSoft,letterSpacing:1,transition:"all 0.3s"}}>{title}</span>
+        </div>
+        <span style={{fontSize:10,color:open?color:P.textMuted,transition:"transform 0.3s",transform:open?"rotate(90deg)":"none",display:"inline-block"}}>{"▶"}</span>
+      </div>
+      {open&&<div style={{padding:"0 22px 20px",animation:"slideOpen 0.3s ease"}} onClick={(e)=>e.stopPropagation()}>{children}</div>}
+    </div>
+  );
+}
+
+function Divider({color=P.textMuted}){
+  return(
+    <div style={{display:"flex",alignItems:"center",gap:8,margin:"32px 0",opacity:0.3}}>
+      <div style={{height:1,flex:1,background:`linear-gradient(90deg,transparent,${color}30)`}}/>
+      <div style={{width:3,height:3,borderRadius:"50%",background:color+"50"}}/>
+      <div style={{width:40,height:1,background:color+"25"}}/>
+      <div style={{width:3,height:3,borderRadius:"50%",background:color+"50"}}/>
+      <div style={{height:1,flex:1,background:`linear-gradient(270deg,transparent,${color}30)`}}/>
+    </div>
+  );
+}
+
+function ActionBox({children}){
+  return(
+    <div style={{background:P.vermillion+"05",borderRadius:10,padding:24,border:`1px solid ${P.vermillion}12`,position:"relative"}}>
+      <div style={{position:"absolute",top:10,right:14,opacity:0.08}}><SealIcon char="行" color={P.vermillion} size={32} glow={false}/></div>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
+        <SealIcon char="行" color={P.vermillion} size={28} glow={false}/>
+        <span style={{fontSize:16,fontWeight:800,color:P.vermillion,letterSpacing:2}}>即刻行动</span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Insight({children,color=P.vermillion}){
+  return(
+    <div style={{background:`linear-gradient(135deg,${color}06,${P.paperLight})`,borderRadius:10,padding:"22px 24px",margin:"24px 0",border:`1px solid ${color}18`,position:"relative",overflow:"hidden"}}>
+      <div style={{position:"absolute",top:10,right:16,fontSize:28,opacity:0.12}}>💎</div>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+        <span style={{fontSize:18}}>💎</span>
+        <span style={{fontSize:15,fontWeight:800,color,letterSpacing:1}}>深度洞察</span>
+      </div>
+      <div style={{fontSize:15,color:P.textSoft,lineHeight:2.0}}>{children}</div>
+    </div>
+  );
+}
+
+function TransitionCard({text,color=P.vermillion}){
+  return(
+    <div style={{background:`linear-gradient(135deg,${color}08,${P.paperDeep})`,borderRadius:10,padding:"20px 24px",margin:"32px 0 0",border:`1px dashed ${color}30`,position:"relative",overflow:"hidden"}}>
+      <div style={{display:"flex",alignItems:"flex-start",gap:10}}>
+        <span style={{fontSize:16,opacity:0.6,flexShrink:0,marginTop:2}}>📌</span>
+        <p style={{fontSize:15,color:P.textSoft,lineHeight:2.0,fontStyle:"italic"}}>{text}</p>
+      </div>
+    </div>
+  );
+}
+
+function InkFlow({steps,color=P.colors[0].hex,title}){
+  const maxSteps=steps.length;
+  const w=680,boxW=Math.min(130,Math.floor((680-(maxSteps-1)*20)/maxSteps)),boxH=50,gap=Math.floor((680-maxSteps*boxW)/(maxSteps-1)||20);
+  const totalW=maxSteps*boxW+(maxSteps-1)*gap;
+  const startX=(w-totalW)/2;
+  return(
+    <div style={{margin:"24px 0",background:P.paperLight,borderRadius:10,padding:"20px 8px",border:`1px solid ${color}15`,overflow:"hidden"}}>
+      {title&&<div style={{fontSize:15,fontWeight:700,color,letterSpacing:2,textAlign:"center",marginBottom:14}}>{title}</div>}
+      <svg width="100%" viewBox={`0 0 ${w} 80`} style={{display:"block",maxWidth:680,margin:"0 auto"}}>
+        <defs>
+          <filter id={`inkBlur${color.slice(1)}`}><feGaussianBlur stdDeviation="0.5"/></filter>
+          <marker id={`arrow${color.slice(1)}`} markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill={color+"80"}/></marker>
+        </defs>
+        {steps.map((s,i)=>{
+          const x=startX+i*(boxW+gap);
+          const y=(80-boxH)/2;
+          const words=s.length>6?[s.slice(0,Math.ceil(s.length/2)),s.slice(Math.ceil(s.length/2))]:null;
+          return(
+            <g key={i}>
+              <rect x={x} y={y} width={boxW} height={boxH} rx="8" fill={color+"0a"} stroke={color+"40"} strokeWidth="1.2" filter={`url(#inkBlur${color.slice(1)})`}/>
+              {words?<>
+                <text x={x+boxW/2} y={y+boxH/2-7} textAnchor="middle" dominantBaseline="middle" fill={P.textChapter} fontSize="12" fontFamily="'Noto Serif SC',serif" fontWeight="600">{words[0]}</text>
+                <text x={x+boxW/2} y={y+boxH/2+9} textAnchor="middle" dominantBaseline="middle" fill={P.textChapter} fontSize="12" fontFamily="'Noto Serif SC',serif" fontWeight="600">{words[1]}</text>
+              </>:
+                <text x={x+boxW/2} y={y+boxH/2+1} textAnchor="middle" dominantBaseline="middle" fill={P.textChapter} fontSize="13" fontFamily="'Noto Serif SC',serif" fontWeight="600">{s}</text>
+              }
+              {i<steps.length-1&&<line x1={x+boxW+2} y1={40} x2={x+boxW+gap-2} y2={40} stroke={color+"60"} strokeWidth="1.5" strokeDasharray="4 3" markerEnd={`url(#arrow${color.slice(1)})`}/>}
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+function InkCompare({left,right,leftTitle,rightTitle,color=P.colors[0].hex,title}){
+  return(
+    <div style={{margin:"24px 0",background:P.paperLight,borderRadius:10,padding:"20px 16px 16px",border:`1px solid ${color}15`}}>
+      {title&&<div style={{fontSize:15,fontWeight:700,color,letterSpacing:2,textAlign:"center",marginBottom:16}}>{title}</div>}
+      <div className="ink-compare-inner" style={{display:"flex",gap:16}}>
+        <div style={{flex:1,flexBasis:"45%",background:color+"08",borderRadius:8,padding:16,border:`1px solid ${color}20`}}>
+          <div style={{fontSize:14,fontWeight:800,color,letterSpacing:2,marginBottom:10,textAlign:"center"}}>{leftTitle}</div>
+          {left.map((item,i)=><div key={i} style={{fontSize:14,color:P.textSoft,lineHeight:1.9,padding:"4px 0",borderBottom:i<left.length-1?`1px dashed ${color}15`:"none"}}>{item}</div>)}
+        </div>
+        <div className="ink-compare-divider" style={{width:1,background:`linear-gradient(to bottom,transparent,${color}30,transparent)`,flexShrink:0}}/>
+        <div style={{flex:1,flexBasis:"45%",background:P.vermillion+"06",borderRadius:8,padding:16,border:`1px solid ${P.vermillion}15`}}>
+          <div style={{fontSize:14,fontWeight:800,color:P.vermillion,letterSpacing:2,marginBottom:10,textAlign:"center"}}>{rightTitle}</div>
+          {right.map((item,i)=><div key={i} style={{fontSize:14,color:P.textSoft,lineHeight:1.9,padding:"4px 0",borderBottom:i<right.length-1?`1px dashed ${P.vermillion}12`:"none"}}>{item}</div>)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InkStructure({items,color=P.colors[0].hex,title,cols=4}){
+  return(
+    <div style={{margin:"24px 0",background:P.paperLight,borderRadius:10,padding:"20px 16px",border:`1px solid ${color}15`}}>
+      {title&&<div style={{fontSize:15,fontWeight:700,color,letterSpacing:2,textAlign:"center",marginBottom:16}}>{title}</div>}
+      <div style={{display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap:10}}>
+        {items.map((item,i)=>(
+          <div key={i} style={{background:color+"08",borderRadius:8,padding:"14px 10px",textAlign:"center",border:`1px solid ${color}18`}}>
+            <div style={{fontSize:18,fontWeight:900,color:color+"40",fontFamily:"'Inter',sans-serif",marginBottom:4}}>{i+1}</div>
+            <div style={{fontSize:13,fontWeight:700,color:P.textChapter,marginBottom:4}}>{item.title}</div>
+            <div style={{fontSize:12,color:P.textSoft,lineHeight:1.7}}>{item.desc}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CaseStory({title,children,color=P.colors[0].hex,icon="📖"}){
+  return(
+    <div style={{margin:"20px 0",background:`linear-gradient(135deg,${color}06,${P.paperLight})`,borderRadius:10,padding:"22px 24px",border:`1px solid ${color}18`,position:"relative",overflow:"hidden"}}>
+      <div style={{position:"absolute",top:12,right:16,fontSize:32,opacity:0.08}}>{icon}</div>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+        <div style={{width:4,height:20,borderRadius:2,background:color}}/>
+        <span style={{fontSize:15,fontWeight:800,color:P.textChapter,letterSpacing:1}}>{title}</span>
+      </div>
+      <div style={{fontSize:15,color:P.textSoft,lineHeight:2.0}}>{children}</div>
+    </div>
+  );
+}
+
+function LogicChain({items,color,question}){
+  return(
+    <div style={{margin:"0 0 28px",background:`linear-gradient(135deg,${color}06,${P.paperLight})`,borderRadius:10,padding:"18px 20px",border:`1px solid ${color}18`}}>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+        <div style={{width:22,height:22,borderRadius:"50%",background:color+"15",border:`1.5px solid ${color}40`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color,fontWeight:800}}>?</div>
+        <span style={{fontSize:14,fontWeight:700,color,letterSpacing:1}}>{question}</span>
+      </div>
+      <div style={{display:"flex",alignItems:"center",flexWrap:"wrap",gap:"6px 2px"}}>
+        {items.map((item,i)=>(
+          <span key={i} style={{display:"inline-flex",alignItems:"center",gap:4}}>
+            <span style={{fontSize:13,fontWeight:600,color:P.textChapter,background:color+"0a",border:`1px solid ${color}18`,borderRadius:6,padding:"4px 9px"}}>{item}</span>
+            {i<items.length-1&&<span style={{fontSize:13,color:color+"50",fontWeight:700,flexShrink:0}}>→</span>}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ===== CHS ===== */
+const CHS=[
+  {id:"overview",label:"全书导读",char:"览",color:P.vermillion,ls:0},
+  {id:"ch1",label:"思维之眼",char:"眼",color:P.colors[0].hex,ls:0},
+  {id:"ch2",label:"政府之手",char:"手",color:P.colors[1].hex,ls:1},
+  {id:"ch3",label:"保护之墙",char:"墙",color:P.colors[2].hex,ls:2},
+  {id:"ch4",label:"进步之惧",char:"惧",color:P.colors[3].hex,ls:3},
+  {id:"ch5",label:"权利之基",char:"基",color:P.colors[4].hex,ls:0},
+];
+
+/* ===== OVERVIEW ===== */
+function BookMap({onJump}){
+  const modules=[
+    {char:"眼",label:"思维之眼",color:P.colors[0].hex,question:"如何看见「看不见的」？",core:"破窗理论 + 三问法 + 反事实推理"},
+    {char:"手",label:"政府之手",color:P.colors[1].hex,question:"政府花钱真的能创造财富吗？",core:"税收的本质 = 财富转移，而非创造"},
+    {char:"墙",label:"保护之墙",color:P.colors[2].hex,question:"关税是保护还是掠夺？",core:"保护主义 = 合法化的强制收费"},
+    {char:"惧",label:"进步之惧",color:P.colors[3].hex,question:"机器真的会让人失业吗？",core:"储蓄也是支出，破坏不是繁荣"},
+    {char:"基",label:"权利之基",color:P.colors[4].hex,question:"财产权从哪里来？",core:"财产先于法律，法律保护而非创造权利"},
+  ];
+  return(
+    <div className="page-in">
+      <SecTitle title="全书导读" sub="一本写于1850年的小册子，如何成为经济学思维训练的永恒经典" color={P.vermillion} char="览" ls={0}/>
+
+      <div style={{background:P.paperDeep,borderRadius:10,padding:"20px 24px",marginBottom:24,border:`1px solid rgba(160,140,110,0.15)`}}>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:16}}>
+          {[["作者","弗雷德里克·巴斯夏（法国）"],["出版","台海出版社 · 2018年8月"],["评分","豆瓣 8.5 ⭐"],["ISBN","978-7-5168-1808-4"]].map(([k,v],i)=>(
+            <div key={i} style={{fontSize:13}}>
+              <span style={{color:P.textMuted}}>{k}：</span>
+              <span style={{color:P.textSoft,fontWeight:600}}>{v}</span>
+            </div>
+          ))}
+        </div>
+        <div style={{borderTop:`1px solid rgba(160,140,110,0.1)`,paddingTop:12}}>
+          <span style={{fontSize:13,color:P.textMuted}}>适合谁读：</span>
+          <span style={{fontSize:13,color:P.textSoft}}>对公共政策感兴趣的普通读者；被"刺激经济""创造就业"等口号打动却心存疑虑的人；想建立独立判断力的大学生和职场人</span>
+        </div>
+      </div>
+
+      <Formula text="经济决策的真实效果 = 看得见的直接后果 + 看不见的间接后果" color={P.vermillion}/>
+
+      <Card color={P.vermillion} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:14,letterSpacing:2}}>一句话定位</div>
+        <Para>巴斯夏在这本写于1850年的小册子里，只讲了一个道理：<strong>每一项经济决策都有两面——你能看见的直接效果，和你看不见的间接效果。</strong>糟糕的经济学家只看第一面就下结论，优秀的经济学家会追问"然后呢？"。他用"破窗理论"做总纲——打碎窗户让玻璃工赚了6法郎，但店主因此少买了一双鞋，鞋匠的损失却没有人看见。这个思维模型被他反复运用到军队、税收、补贴、公共工程、贸易管制、机器、节俭等几乎所有经济议题上，论证的核心永远是同一句话：<strong>政府每花一法郎，必有一个纳税人少花一法郎；看得见的就业创造，背后是看不见的就业消灭。</strong></Para>
+        <Para>这本书的力量在于它的简洁与锐利。巴斯夏的论证像手术刀一样干净——他从不堆砌数据，而是用常识、类比和归谬法，让你觉得"这道理明明很简单，为什么以前没想到"。黑兹利特后来以此书为蓝本写成的《一课经济学》风靡全球，足见其影响力。巴斯夏还是一位文学天才，他的"商人们的请愿书"——蜡烛商请求议会禁止太阳光以保护照明产业——堪称经济学讽刺文学的巅峰之作。</Para>
+      </Card>
+
+      <Card color={P.vermillion} style={{marginBottom:24,background:P.vermillion+"04"}}>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
+          <span style={{fontSize:18}}>⚠️</span>
+          <span style={{fontSize:18,fontWeight:800,color:P.vermillion,letterSpacing:2}}>必须直说这本书的局限</span>
+        </div>
+        <Para>巴斯夏的论证框架几乎是完美的"市场万能论"，他系统性地忽略了市场失灵的可能性。他从不讨论外部性（工厂排污谁来管？）、公共品（国防和灯塔谁来建？）、信息不对称（消费者真的知道什么对自己好吗？）、自然垄断（铁路只修一条怎么竞争？）这些现代经济学的核心议题。他把所有政府干预都简化为"转移财富"，但现实中确实存在市场自身无法解决的协调问题。</Para>
+        <Para>此外，他对19世纪法国工人阶级的苦难缺乏真切的同情——他反对一切保护措施，却没有认真思考过转型期的社会保障问题。<strong>这本书是一把锋利的批判性武器，但不是完整的经济学教科书。读它的时候，你需要同时准备好反面视角。</strong></Para>
+      </Card>
+
+      <div style={{margin:"28px 0",background:P.paperLight,borderRadius:12,padding:"24px 12px 16px",border:`1px solid ${P.vermillion}12`}}>
+        <div style={{fontSize:16,fontWeight:800,color:P.vermillion,letterSpacing:3,textAlign:"center",marginBottom:4}}>全书知识架构</div>
+        <div style={{fontSize:12,color:P.textMuted,textAlign:"center",marginBottom:16}}>从思维工具 → 政府支出 → 贸易管制 → 技术进步 → 哲学原则，层层递进</div>
+        <svg width="100%" viewBox="0 0 680 220" style={{display:"block",maxWidth:680,margin:"0 auto"}}>
+          <defs>
+            <marker id="arrowOv" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4" fill={P.vermillion+"80"}/></marker>
+          </defs>
+          <path d="M20,190 Q340,160 660,190" fill="none" stroke={P.vermillion+"12"} strokeWidth="30" strokeLinecap="round"/>
+          <text x="340" y="204" textAnchor="middle" fill={P.vermillion+"35"} fontSize="9" fontFamily="'Noto Serif SC',serif">工具→应用→升华，层层递进</text>
+          {modules.map((m,i)=>{
+            const bw=104,gap=26;
+            const total=5*bw+4*gap;
+            const sx=(680-total)/2;
+            const x=sx+i*(bw+gap);
+            return(
+              <g key={i} style={{cursor:"pointer"}} onClick={()=>onJump&&onJump(i+1)}>
+                <rect x={x} y={16} width={bw} height={46} rx="8" fill={m.color+"0c"} stroke={m.color+"40"} strokeWidth="1.5"/>
+                <text x={x+bw/2} y={34} textAnchor="middle" fill={m.color} fontSize="14" fontWeight="900" fontFamily="'ZCOOL XiaoWei',serif">{m.char}</text>
+                <text x={x+bw/2} y={50} textAnchor="middle" fill={P.textChapter} fontSize="11" fontWeight="600" fontFamily="'Noto Serif SC',serif">{m.label}</text>
+                <line x1={x+bw/2} y1={62} x2={x+bw/2} y2={76} stroke={m.color+"30"} strokeWidth="1" strokeDasharray="3 2"/>
+                <rect x={x+2} y={78} width={bw-4} height={80} rx="5" fill={m.color+"05"} stroke={m.color+"12"} strokeWidth="0.7"/>
+                <text x={x+bw/2} y={96} textAnchor="middle" fill={P.textSoft} fontSize="9.5" fontFamily="'Noto Serif SC',serif">{m.question.slice(0,8)}</text>
+                <text x={x+bw/2} y={110} textAnchor="middle" fill={P.textSoft} fontSize="9.5" fontFamily="'Noto Serif SC',serif">{m.question.slice(8)}</text>
+                <text x={x+bw/2} y={126} textAnchor="middle" fill={P.textMuted} fontSize="9" fontFamily="'Noto Serif SC',serif">{m.core.slice(0,8)}</text>
+                <text x={x+bw/2} y={140} textAnchor="middle" fill={P.textMuted} fontSize="9" fontFamily="'Noto Serif SC',serif">{m.core.slice(8)}</text>
+                {i<4&&<line x1={x+bw+1} y1={39} x2={x+bw+gap-1} y2={39} stroke={P.vermillion+"45"} strokeWidth="1.5" strokeDasharray="4 3" markerEnd="url(#arrowOv)"/>}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+
+      <div style={{fontSize:16,fontWeight:800,color:P.textChapter,letterSpacing:2,marginBottom:14,marginTop:28}}>章节速览</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:28}}>
+        {modules.map((m,i)=>(
+          <div key={i} onClick={()=>onJump&&onJump(i+1)} style={{background:P.paperLight,borderRadius:10,padding:"14px 16px",border:`1px solid ${m.color}15`,cursor:"pointer",transition:"all 0.3s",borderLeft:`3px solid ${m.color}60`}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+              <span style={{fontSize:11,fontWeight:900,fontFamily:"'ZCOOL XiaoWei',serif",color:m.color,border:`1px solid ${m.color}40`,width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)",background:m.color+"08"}}>{m.char}</span>
+              <span style={{fontSize:14,fontWeight:700,color:P.textChapter}}>{m.label}</span>
+            </div>
+            <div style={{fontSize:13,color:m.color,fontWeight:600,marginBottom:4,lineHeight:1.6}}>{m.question}</div>
+            <div style={{fontSize:12,color:P.textSoft,lineHeight:1.7}}>{m.core}</div>
+          </div>
+        ))}
+      </div>
+
+      <Divider color={P.vermillion}/>
+
+      <Card color={P.vermillion} style={{marginBottom:24}}>
+        <div style={{fontSize:17,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>阅读建议</div>
+        <Para><strong>如果只有30分钟：</strong>读原序 + 第一章（破窗理论），掌握核心思维模型即可。</Para>
+        <Para><strong>如果有2小时：</strong>加读第三章（赋税）、第七章（贸易管制）和附录第7篇（商人们的请愿书），体会框架的应用力度和巴斯夏的文学才华。</Para>
+        <Para><strong>如果要精读全书：</strong>建议按本拆解的五模块顺序，而非原书章节顺序。原书第二章（军队复员）和第五章（公共工程）可以合并阅读；第六章（中介）和第七章（贸易管制）互相呼应；第八章（机器）和第十章（节俭）共享同一论证结构。</Para>
+        <Quote text="第四章（政府补贴艺术）与第十一章（就业权利）在哲学层面遥相呼应，都涉及"法律应该做什么"的根本问题；附录第6篇（财产与法律）是全书的理论基底，读完正文再回头读会有豁然开朗之感。" color={P.vermillion}/>
+      </Card>
+    </div>
+  );
+}
+
+/* ===== CHAPTER 1: 思维之眼 ===== */
+function Ch1(){
+  const c=P.colors[0].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="思维之眼——看见「看不见的」" sub="建立"看见看不见的"这一分析框架：破窗理论、第三个人、优秀vs糟糕经济学家" color={c} char="眼" ls={0}/>
+      <LogicChain question="经济决策为什么总被误判？" color={c} items={["经济决策产生多重后果","有些后果立刻可见","有些后果延迟分散","糟糕经济学家只看第一面","优秀经济学家兼顾两面","每个事件中有「第三个人」被忽视","破窗理论是揭示一切的总纲"]}/>
+      <Formula text="经济决策的真实效果 = 看得见的直接后果 + 看不见的间接后果" color={c}/>
+
+      <InkFlow steps={["窗户被打碎","玻璃工得6法郎","店主失去6法郎消费力","鞋匠少了一笔生意","总财富并未增加"]} color={c} title="破窗理论的完整逻辑"/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>深度解读：认知心理学命题</div>
+        <Para>巴斯夏在这里做的，其实不是在讲经济学，而是在讲<strong>认知心理学</strong>。他揭示的是人类思维的一个系统性缺陷：我们天然地被"可见的""即时的""集中的"效果所吸引，而对"不可见的""延迟的""分散的"效果视而不见。这和现代行为经济学中丹尼尔·卡尼曼所说的"可得性偏差"异曲同工——越容易被想到的信息，越容易被高估。一个玻璃工欢天喜地拿到6法郎，所有人都看见了、都记住了；一个鞋匠少了一笔生意，没有人注意、没有人统计。</Para>
+        <Para>更深层地说，巴斯夏提出了一个认识论命题：<strong>我们不仅要观察"发生了什么"，还要推理"本来会发生什么"。</strong>经济学中把这叫做"反事实推理"（counterfactual reasoning）。打碎窗户后，我们看到的现实是玻璃工赚了钱；但我们必须同时思考另一个没有发生的现实——如果窗户没碎，那6法郎会去了哪里。这种思维方式对普通人来说极其反直觉，因为我们的大脑天生不擅长思考"没有发生的事"。</Para>
+        <Para>我的判断是，"第三个人"这个概念是巴斯夏最天才的发明。在破窗故事里，人们只看到两个角色——店主和玻璃工，但真正决定这个事件经济含义的是第三个角色——那个因为店主花了6法郎修窗户而失去6法郎生意的鞋匠。<strong>在所有经济政策讨论中，永远有一个沉默的第三方——他的损失是隐性的、分散的、不被统计的。</strong>这是本书最有力的思维工具。</Para>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>方法：三问法</div>
+        <Step n={1} text="第一问：谁得到了好处？（看得见的受益者）" detail="辨识政策的直接受益方，这是显而易见的一面。" color={c}/>
+        <Step n={2} text="第二问：谁为此买单？（看不见的付费者）" detail="追踪资金来源，找到隐性的承担者——那个沉默的纳税人。" color={c}/>
+        <Step n={3} text="第三问：第三个人在哪里？（被忽视的利益相关方）" detail="如果这笔钱没有被用于当前用途，它本来会流向谁？那个人损失了什么？" color={c}/>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:14,letterSpacing:2}}>三个核心案例</div>
+
+        <CaseStory title="案例一：破窗与玻璃工的6法郎" color={c} icon="🪟">
+          <p style={{marginBottom:10}}><strong>场景：</strong>店主詹姆斯先生的儿子打碎了一块价值6法郎的窗户玻璃。围观者纷纷安慰："这不是坏事，玻璃工能因此赚到6法郎，他再去消费别的，最终刺激了整个经济。"</p>
+          <p style={{marginBottom:10}}><strong>冲突：</strong>这种"破坏有益论"看似合理——金钱确实流动了，玻璃工确实得到了工作。但这只是事物的一面。</p>
+          <p style={{marginBottom:10}}><strong>转折：</strong>巴斯夏追问——如果窗户没碎，詹姆斯先生本可以用这6法郎买一双新鞋或一本书。玻璃工得到的，正是鞋匠或书商失去的。</p>
+          <p><strong>结果：</strong>第一种情况（窗户碎了）：詹姆斯有一面窗户。第二种情况（窗户没碎）：詹姆斯有一面窗户+一双鞋。社会净损失 = 一双鞋的价值。<strong>"破坏并不是有利可图的。"</strong></p>
+        </CaseStory>
+
+        <CaseStory title="案例二：优秀经济学家与糟糕经济学家" color={c} icon="🎓">
+          <p style={{marginBottom:10}}><strong>场景：</strong>巴斯夏在原序中提出一个判断标准——区分优秀经济学家和糟糕经济学家。</p>
+          <p style={{marginBottom:10}}><strong>冲突：</strong>糟糕经济学家只看到经济政策实行后"眼前的好果子"，却对"后面可能产生的巨大弊端不管不顾"；优秀经济学家"宁愿背负眼前的小小困难而追求未来的较大的收益"。</p>
+          <p style={{marginBottom:10}}><strong>转折：</strong>巴斯夏用一个类比说明——就像一个婴儿只能根据眼前后果来调整行动，而成年人应该有"远见"。教训（经验主义）是残酷的老师，远见（理性推理）是温和的老师。</p>
+          <p><strong>结果：</strong>这个区分标准本身就是全书的方法论——你是只看"看得见的"就急于表态的糟糕评论家，还是能耐心追问"看不见的"那一面的真正思考者？</p>
+        </CaseStory>
+
+        <CaseStory title="案例三：火烧巴黎的「独创精神」" color={c} icon="🔥">
+          <p style={{marginBottom:10}}><strong>场景：</strong>巴斯夏提到查曼斯子爵曾经"精确地计算过"——如果烧毁整个巴黎，将有多少房子要重建，会带来多少生意。</p>
+          <p style={{marginBottom:10}}><strong>冲突：</strong>这种论证方式在逻辑上与安慰店主的围观者完全一致——把破坏视为经济刺激。</p>
+          <p style={{marginBottom:10}}><strong>转折：</strong>巴斯夏讽刺道："我很抱歉破坏了人家富于独创精神的计算"——如果破坏真能创造财富，那把整个国家都烧了岂不是最好的经济政策？</p>
+          <p><strong>结果：</strong>将错误逻辑推到极端（归谬法），荒谬性不言自明。这也是巴斯夏最擅长的论证手法。</p>
+        </CaseStory>
+      </Card>
+
+      <Insight color={c}>
+        <p style={{marginBottom:12}}>巴斯夏的破窗理论，本质上是一个<strong>注意力经济学</strong>的命题。政策的受益者总是少数人、集中的、可见的，因此他们有动力游说和造势；而政策的受害者往往是多数人、分散的、不自知的，因此他们沉默。这解释了为什么坏政策总是比好政策更容易通过——因为它的"看得见的"好处足以打动投票者，而"看不见的"代价分散在每个纳税人头上，每人只损失几分钱，没人在乎。现代公共选择理论（布坎南、图洛克）后来将这种现象称为"集中收益、分散成本"（concentrated benefits, diffuse costs），而巴斯夏在170年前就已经把这个逻辑讲透了。</p>
+        <p><strong>但这里有一个盲区：</strong>巴斯夏假设"看不见的"效果和"看得见的"效果在数量上总是等价的——政府多花一法郎，纳税人就少花一法郎，总量不变。但现实中，政府支出有时确实能产生"乘数效应"（凯恩斯后来的论证），尤其是在经济衰退、私人部门不愿消费和投资时。巴斯夏的框架在"常态"经济中是强有力的，但在极端情况下可能需要补充。</p>
+      </Insight>
+
+      <Divider color={c}/>
+
+      <ActionBox>
+        <div style={{marginBottom:14}}>
+          <div style={{fontSize:15,fontWeight:700,color:P.textChapter,marginBottom:6}}>「破窗三问」练习法</div>
+          <div style={{fontSize:14,color:P.textSoft,lineHeight:1.9,marginBottom:4}}><strong style={{color:c}}>5分钟版：</strong>今天看到任何一条经济新闻（比如"政府投资XX亿建设某项目"），立即问三个问题：①谁是直接受益者？②这笔钱是从哪里来的？③如果这笔钱留在纳税人手中，他们原本会做什么？把答案写在手机备忘录里。</div>
+          <div style={{fontSize:14,color:P.textSoft,lineHeight:1.9,marginBottom:4}}><strong style={{color:c}}>10分钟版：</strong>选一个你支持的公共政策，刻意站在反面，用巴斯夏的框架分析它的"看不见的"代价。写下至少3个"第三个人"——谁因此受损但没有人替他说话？</div>
+          <div style={{fontSize:14,color:P.textSoft,lineHeight:1.9}}><strong style={{color:c}}>15分钟版：</strong>"政策双面账"——画一张两栏表格，左栏写"看得见的"效果（直接、即时、集中），右栏写"看不见的"效果（间接、延迟、分散）。对同一政策填满两栏后，再做判断。坚持一周，你会发现自己看新闻的方式彻底改变。</div>
+        </div>
+      </ActionBox>
+
+      <TransitionCard color={c} text="模块一建立了思维工具，但工具的价值在于应用。接下来，我们把这把"思维手术刀"对准最大的靶子——政府的钱袋子。"/>
+    </div>
+  );
+}
+
+/* ===== CHAPTER 2: 政府之手 ===== */
+function Ch2(){
+  const c=P.colors[1].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="政府之手——公共支出的幻觉" sub="将框架应用于公共支出领域：军队复员、赋税、公共工程、阿尔及利亚殖民" color={c} char="手" ls={1}/>
+      <LogicChain question="政府花钱真的等于创造财富吗？" color={c} items={["政府征税","税款来自纳税人","政府花钱（看得见：就业/工程）","纳税人少花钱（看不见：私人创造的就业）","政府支出只是转移就业","如果效率低于私人配置则净损失"]}/>
+      <Formula text="政府花钱 = 纳税人不花钱。公共就业"创造" = 私人就业"消灭"" color={c}/>
+
+      <InkFlow steps={["纳税人赚100苏","税务官征走","政府官员消费（看得见）","纳税人失去消费力（看不见）","总财富不变只是搬家"]} color={c} title="税收的本质：财富转移而非创造"/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>深度解读：政治魔术</div>
+        <Para>巴斯夏在这个模块里的核心论证可以用一句话概括：<strong>税收不是从天上掉下来的。</strong>这听起来像废话，但你看看现实中多少政策讨论是建立在"政府花钱就是经济利好"的隐含假设上的。每当政府宣布一项大型投资，媒体报道的永远是"将创造多少万个就业岗位""将带动多少亿GDP"——这些都是"看得见的"。但没有人会报道：为了筹集这笔钱，税务局从全国纳税人手中拿走了多少？那些纳税人本来打算用这些钱做什么？他们本来能创造多少就业？</Para>
+        <Para>巴斯夏在赋税章节中给出了一个极其精彩的比喻：有人把税收比作"及时雨"浇灌干涸的土地，但巴斯夏追问——这场雨是从哪里来的？它不就是从另一块湿润的土地蒸发上来的吗？<strong>浇灌一块地的同时，另一块地因此干涸了。</strong></Para>
+        <Para>我的判断是，巴斯夏在这个模块里最有杀伤力的一招是他的<strong>归谬法</strong>：如果军队扩编真的有利于经济，那为什么不让全国男人都穿上军装？如果公共工程创造就业的逻辑成立，那为什么不让工人先挖一条沟再填上？拿破仑确实干过这种事——"先挖再填"，还自认为这是了不起的经济贡献。巴斯夏把这种荒谬性暴露无遗。</Para>
+        <Para><strong>但这里有一个重要的盲区。</strong>巴斯夏把所有政府支出都视为"转移"而非"创造"，但他没有认真区分两种情况：一种是政府做了私人不会做、也不应该做的事（比如国防、司法、基础设施），另一种是政府替代了私人本来会做得更好的事（比如国有工厂、产业补贴）。他自己其实也承认了前者的合理性——"如果为了获得安全保障，必须动员10万人，花费1亿法郎，那我就无话可说了"——但他在论证中几乎不展开这个维度。现实中，公共品确实存在市场无法有效供给的问题，政府在这些领域的支出并非简单的"转移"。</Para>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>方法：公共支出四步审计法</div>
+        <Step n={1} text="追钱" detail="这笔钱是从谁的口袋里拿出来的？通过什么机制征收？" color={c}/>
+        <Step n={2} text="比替" detail="如果这笔钱留在原处，纳税人本来会做什么？（反事实推理）" color={c}/>
+        <Step n={3} text="算净" detail="政府用途的效益 - 私人用途的效益 = 净效果。只有当净效果为正时，公共支出才是合理的。" color={c}/>
+        <Step n={4} text="查隐" detail="谁是这项政策中沉默的"第三个人"？他的损失是否被统计了？" color={c}/>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:14,letterSpacing:2}}>四个核心案例</div>
+
+        <CaseStory title="案例一：军队复员——10万人的两面账" color={c} icon="⚔️">
+          <p style={{marginBottom:10}}><strong>场景：</strong>一位议员提议复员10万军人、减轻纳税人1亿法郎的税负。反对者立即跳出来：复员后这些人靠什么生活？到处都在闹失业，多10万人竞争岗位，工资还要被压低！而且军队消费的酒、服装、武器养活了多少供应商？</p>
+          <p style={{marginBottom:10}}><strong>冲突：</strong>反对者的论证全部基于"看得见的"——军队维持创造的就业和消费。但他完全忽略了"看不见的"。</p>
+          <p style={{marginBottom:10}}><strong>转折：</strong>巴斯夏指出，10万士兵复员的同时，1亿法郎也被归还给纳税人。这意味着在增加10万劳动力供给的同时，也增加了1亿法郎的劳动力需求。遣散前，1亿法郎养着10万人什么也不干（从经济意义上）；遣散后，这些人可以从事生产性劳动，创造真实财富。</p>
+          <p><strong>结果：</strong>巴斯夏的归谬一击："如果扩大军队规模有利于国家经济发展，那么，干吗不让本国所有的男人都穿上制服呢？"</p>
+        </CaseStory>
+
+        <CaseStory title="案例二：部长的晚宴与农民的排水沟" color={c} icon="🍽️">
+          <p style={{marginBottom:10}}><strong>场景：</strong>巴斯夏虚构了一个场景——他正准备花100苏雇工人在田里挖排水沟，税务官来了，拿走了他的100苏。经过层层转手，这100苏最终变成了内政部长晚宴上多出的一道菜。</p>
+          <p style={{marginBottom:10}}><strong>冲突：</strong>有人说政府支出促进了经济——包办宴会的人拿到了100苏，这是就业！</p>
+          <p style={{marginBottom:10}}><strong>转折：</strong>"内阁部长的晚餐的确更加丰盛了，但相应地，一位农民的田里的排水从此却不畅通了。"宴会承办者的100苏收入，就是挖沟工人100苏收入的损失。</p>
+          <p><strong>结果：</strong>"官员的餐桌和心满意足的包办宴会者是看得见的，而让雨水泡了的田地和挖沟工人没活可干就是看不见的了。"税收只是把消费和就业从一个地方搬到另一个地方，还附带了效率损失。</p>
+        </CaseStory>
+
+        <CaseStory title="案例三：阿尔及利亚殖民——5000万法郎的海市蜃楼" color={c} icon="🏛️">
+          <p style={{marginBottom:10}}><strong>场景：</strong>国民公会上四位雄辩家声嘶力竭地鼓吹向阿尔及利亚投资5000万法郎：修港口、修公路、运殖民者、建房屋，可以减轻国内就业压力，还能促进马赛的贸易。</p>
+          <p style={{marginBottom:10}}><strong>冲突：</strong>这些好处全部"看得见"——北非的房屋、港口、就业岗位。但5000万法郎不是从天上掉下来的。</p>
+          <p style={{marginBottom:10}}><strong>转折：</strong>巴斯夏追问：詹姆斯·好人先生的100个苏被征走后，"他原本可以雇人给自己的小花园扎一圈篱笆……可以给田地施肥除草……可以为家里添置家具……可以让儿子接受更好的教育，给女儿多置办一些嫁妆——现在他通通做不到了，这些是看不见的。"更关键的是，国防部长承认送一个人到阿尔及利亚要花8000法郎，而在法国4000法郎就能让一个人活得很好。</p>
+          <p><strong>结果：</strong>阿尔及利亚的繁荣是把法国本土的繁荣搬走的结果——不是创造，而是转移。"国家这种把所有的钱都聚集起来投向一个小地方的狂热举动"吸引了所有人的注意力，而法国其他地方"再也创造不出同样数量的工作岗位了"。</p>
+        </CaseStory>
+
+        <CaseStory title="案例四：议员薪酬——2+2=4的困难证明" color={c} icon="📊">
+          <p style={{marginBottom:10}}><strong>场景：</strong>在财政委员会讨论共和国总统和内阁部长的工资时，有人论证说高薪酬能促进巴黎的经济，因为高官们可以举办豪华宴会，带动消费。支持者说降低官员工资"就必然使巴黎的经济成为无源之水"。</p>
+          <p style={{marginBottom:10}}><strong>转折：</strong>巴斯夏反驳——A+B的总和不会因为先加A再加B还是先加B再加A而改变。官员的消费只是纳税人消费的替代品，总量不变。</p>
+          <p><strong>结果：</strong>"我的上帝啊，真没想到在政治经济学中要证明2+2=4竟是这么困难！"</p>
+        </CaseStory>
+      </Card>
+
+      <Insight color={c}>
+        <p style={{marginBottom:12}}>巴斯夏揭示了一个至今仍在运作的政治魔术：<strong>把"转移"包装成"创造"。</strong>政府每一次大型支出都伴随着隆重的剪彩仪式、热烈的媒体报道和壮观的就业数字——这些全是"看得见的"。但被征税的千千万万个詹姆斯先生各自少花了一点点钱，这些分散的、微小的损失从来不会出现在任何新闻报道里。这就是为什么每个政府都有无穷无尽的扩张冲动——政绩是集中可见的，代价是分散隐形的。</p>
+        <p>但巴斯夏的"纯转移论"也有其天花板。他没有考虑到：第一，当经济处于萧条时，私人部门不愿消费和投资，政府支出可能激活沉睡的资源，而非仅仅替代私人支出；第二，某些公共投资（如教育、基础设施）的回报率可能高于私人在同等条件下的分散支出，产生的是正和博弈而非零和转移。<strong>巴斯夏的框架是一个极好的"默认立场"——对任何公共支出先持怀疑态度——但不是"终极答案"。</strong></p>
+      </Insight>
+
+      <Divider color={c}/>
+
+      <ActionBox>
+        <div style={{marginBottom:14}}>
+          <div style={{fontSize:15,fontWeight:700,color:P.textChapter,marginBottom:6}}>「公共账本双面记」五步法</div>
+          <div style={{fontSize:14,color:P.textSoft,lineHeight:1.9,marginBottom:4}}><strong style={{color:c}}>5分钟版：</strong>下次看到政府公布某项大型投资计划时，立即在纸上画一条竖线：左边写"这笔钱将创造什么"（报道里说的），右边写"这笔钱是从哪里拿来的，它本来会创造什么"（报道里不会说的）。</div>
+          <div style={{fontSize:14,color:P.textSoft,lineHeight:1.9,marginBottom:4}}><strong style={{color:c}}>10分钟版：</strong>选一项你所在城市的重大公共工程（新地铁线、会展中心、体育场馆），用"公共支出四步审计法"做一次分析。特别注意第三步"算净"——这个工程的实际效益是否超过了纳税人本来可以做的事？</div>
+          <div style={{fontSize:14,color:P.textSoft,lineHeight:1.9}}><strong style={{color:c}}>15分钟版：</strong>"假如这笔钱没被征税"推演——选一项政府年度预算的大项支出，假设这笔钱平均退还给全国纳税人，每人多出多少？他们最可能用这些钱做什么？那些消费和投资会创造怎样的就业和增长？这个"反事实"思考训练是巴斯夏经济分析的核心技能。</div>
+        </div>
+      </ActionBox>
+
+      <TransitionCard color={c} text="政府之手在国内运转的逻辑已经清楚了：花钱不等于造富。但当这只手伸向国际贸易——试图"保护"国内产业时，逻辑是一样的，只是伪装更精巧。"/>
+    </div>
+  );
+}
+
+/* ===== CHAPTER 3: 保护之墙 ===== */
+function Ch3(){
+  const c=P.colors[2].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="保护之墙——贸易管制与中介的谬误" sub="将框架应用于贸易领域：保护主义是合法化的掠夺，中介在自由贸易中创造真实价值" color={c} char="墙" ls={2}/>
+      <LogicChain question="关税到底在保护谁？" color={c} items={["外国商品比国内便宜","国内生产者要求保护","法律禁止或加税限制进口","消费者被迫高价购买（看不见的损失）","生产者获利=消费者亏损（零和甚至负和）","保护主义实质是合法化掠夺","中介（商人）在自由贸易中创造真实价值"]}/>
+      <Formula text="保护主义 = 让少数生产者获得看得见的好处，让多数消费者承受看不见的损失" color={c}/>
+
+      <InkCompare
+        title="自由贸易 vs 保护主义"
+        leftTitle="自由贸易"
+        rightTitle="保护主义"
+        left={["消费者用10法郎买比利时铁","剩余5法郎买书","最终：铁+书","社会总财富增加"]}
+        right={["消费者用15法郎买国产铁","没钱买书","最终：铁（无书）","净损失：一本书"]}
+        color={c}
+      />
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>深度解读：保护的道德本质</div>
+        <Para>巴斯夏在贸易管制一章中讲了一个精彩的寓言：贸易保护主义先生发现比利时铁比自己的便宜，于是想去边境用武力阻止法国人购买便宜铁。他很快发现自己打不过所有人，于是灵机一动——跑到"巴黎的法律工厂"请求通过一条禁令。<strong>从此，国家的2万名税务官替代了他一个人的暴力，效果相同，但披上了"合法"的外衣。</strong>这个寓言的杀伤力在于：它把保护主义还原为本质——一种由法律背书的强制力，强迫消费者多付钱给特定的生产者。</Para>
+        <Para>巴斯夏对中介（商人、银行家、企业家）的辩护同样精彩。他追问：如果巴黎人需要敖德萨的小麦，你是让3600万人自己跑去买（荒谬），让商人去买（高效），还是让政府派官员去买（低效且腐败）？商人的"自私自利"恰恰是他高效服务消费者的原动力——他要尽量低价买进、高价卖出，而竞争确保了他的利润被压到最低。这个论证和亚当·斯密的"看不见的手"一脉相承。</Para>
+        <Para>附录中的"商人们的请愿书"是全书最具文学价值的段落。蜡烛商们正经八百地请求议会禁止太阳光进入室内，以保护照明产业。这篇讽刺文字的力量在于，它用保护主义者自己的逻辑，把结论推到了荒谬的极端——如果禁止便宜的外国铁是合理的，那禁止免费的太阳光岂不是更加合理？</Para>
+        <Para>我的判断是，巴斯夏对保护主义的批判在逻辑上是无懈可击的。但他的盲区在于：他没有认真讨论"幼稚产业"论证——一个新兴产业在起步阶段可能需要暂时的保护，否则会被成熟的外国竞争者扼杀在摇篮里。日本、韩国和中国的经济崛起，在某种程度上确实受益于选择性的产业保护政策。巴斯夏把所有保护都视为"掠夺"，这在19世纪已经工业化的英法之间或许成立，但在发达国家与发展中国家之间的关系中就需要更审慎的讨论了。</Para>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>方法：保护主义透视法</div>
+        <Step n={1} text="还原暴力" detail="把关税/禁令想象成一个人站在边境，拿枪逼你不许买便宜的外国货——本质上就是这样。" color={c}/>
+        <Step n={2} text="找到第三个人" detail="谁从保护中获利？（国内某个行业的生产者）谁在支付代价？（所有消费者+使用该产品的下游行业）" color={c}/>
+        <Step n={3} text="计算净损失" detail="生产者得到的5法郎 - 消费者多付的5法郎 ≠ 0；还有额外损失——消费者原本可以用省下的5法郎去做别的消费，那部分价值消失了。" color={c}/>
+        <Step n={4} text="推到极端" detail="如果保护这个行业是对的，那保护所有行业呢？如果禁止进口铁是对的，那禁止太阳光呢？" color={c}/>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:14,letterSpacing:2}}>四个核心案例</div>
+
+        <CaseStory title="案例一：贸易保护主义先生的「法律工厂」之旅" color={c} icon="⚖️">
+          <p style={{marginBottom:10}}><strong>场景：</strong>法国的铁矿商（"贸易保护主义先生"）发现比利时铁便宜——每100千克只要10法郎，而他需要15法郎才能保本。法国人纷纷去比利时买铁。</p>
+          <p style={{marginBottom:10}}><strong>冲突：</strong>保护主义先生想亲自用武力去边境拦截，结果发现自己干不过那么多人。</p>
+          <p style={{marginBottom:10}}><strong>转折：</strong>他想到了"法律工厂"——跑到巴黎议会请求通过禁令。"政府会派2万威风凛凛的关税税官替代我的那几个仆人"。他在议员面前描绘了一幅美好图景：铁价提高5法郎→自己更富→雇更多人→工人更多消费→整个经济受益。</p>
+          <p><strong>结果：</strong>但巴斯夏指出——老好人詹姆斯先生本来15法郎可以买铁+书，现在只能买铁。净损失 = 一本书。"看不见的东西所带来的损失抵消了看得见的东西所带来的益处。"</p>
+        </CaseStory>
+
+        <CaseStory title="案例二：敖德萨的小麦——三种解决饥饿的方式" color={c} icon="🌾">
+          <p style={{marginBottom:10}}><strong>场景：</strong>巴黎人饿了，能满足他们的小麦在俄罗斯的敖德萨。三种方式：3600万人自己跑去买（荒谬）、委托商人去买（高效）、由政府征税后派官员去买（低效）。</p>
+          <p style={{marginBottom:10}}><strong>冲突：</strong>有人攻击商人是"寄生虫""中介"，要求取消商人、由国家承担中介职能。</p>
+          <p style={{marginBottom:10}}><strong>转折：</strong>商人受私利驱动而高效运转，竞争压低了他的利润；而如果4万个市政当局的代表同时涌到敖德萨，价格会怎样？运输成本会降低吗？官员跑到敖德萨"难道就一无所求吗？他们的时间就不值钱吗？"</p>
+          <p><strong>结果：</strong>商人2%~3%的利润率，远低于政府官员体系运作的成本。"我们真的无法想象，还有别的什么组织能够比他们更好地满足饥饿的人的需求。"</p>
+        </CaseStory>
+
+        <CaseStory title="案例三：蜡烛商请求禁止太阳光" color={c} icon="🕯️">
+          <p style={{marginBottom:10}}><strong>场景：</strong>蜡烛、灯笼、烛台等所有照明产品的制造商联名上书议会，请求通过法律"关闭一切窗户、屋顶窗、天窗、百叶窗"，禁止阳光进入室内。因为太阳光是他们最可怕的竞争对手——"以令人难以置信的低价格如潮水一般涌入"。</p>
+          <p style={{marginBottom:10}}><strong>冲突：</strong>这封请愿书完全模仿了保护主义者的真实论调——如果阻挡自然光，照明需求就会增加，相关产业就会繁荣，就业就会增加，甚至鲸鱼捕捞业都会受益（因为需要更多鲸油）。</p>
+          <p style={{marginBottom:10}}><strong>转折：</strong>蜡烛商的论证逻辑与铁矿商、纺织商的保护主义论证完全一致——只不过他们要禁止的不是外国商品，而是太阳光。巴斯夏追问：如果禁止半免费的外国铁是合理的，那禁止完全免费的太阳光岂不更合理？</p>
+          <p><strong>结果：</strong>这篇请愿书成为经济学史上最著名的讽刺文献之一，至今仍被各国经济学教科书引用。保护的终点就是禁止一切比国内便宜的东西，包括大自然的免费馈赠。</p>
+        </CaseStory>
+
+        <CaseStory title="案例四：「名为补贴实则抢劫」——车匪路霸与关税的等价性" color={c} icon="🔓">
+          <p style={{marginBottom:10}}><strong>场景：</strong>巴斯夏引用了一本旅游书籍中对某国的描写：政府向每个人征收1比索，自己扣下250比索，剩下的750比索不均等地分给参与者。拿到0.75比索的人欣喜若狂，忘了自己交出了1比索。</p>
+          <p style={{marginBottom:10}}><strong>冲突：</strong>这和法国的关税制度有什么区别？每个人都相信自己在互相掠夺中获利了。</p>
+          <p style={{marginBottom:10}}><strong>转折：</strong>更进一步，巴斯夏指出——如果把掠夺合法化成"关税"，情况更糟：至少车匪路霸抢走的钱还在国内流通，而出口补贴制度等于拿本国纳税人的钱补贴外国消费者。</p>
+          <p><strong>结果：</strong>亚当·斯密60多年前就警告过："做同类生意的人也很少聚集在一起，但当为了谋划怎样对付公众时，他们就不由自主地到一起。"</p>
+        </CaseStory>
+      </Card>
+
+      <Insight color={c}>
+        <p style={{marginBottom:12}}>巴斯夏对保护主义最深刻的洞察不是经济层面的，而是道德层面的：<strong>保护主义的本质是用法律的外衣让掠夺变得"文明"。</strong>一个人在边境用枪逼你多付5法郎买铁，这叫抢劫；但如果他让议会通过一条法律达到同样效果，这就变成了"保护国内产业"。行为一模一样，只是换了执行者和称谓。这个洞察在今天仍然有效——每一项关税、配额、行业准入限制背后，都有一个"贸易保护主义先生"在受益，而买单的是每一个消费者和纳税人。</p>
+        <p><strong>不过我要补充一个巴斯夏没有讨论的维度：战略安全。</strong>如果一个国家的粮食、能源或芯片完全依赖进口，在和平时期当然效率最高，但一旦发生地缘冲突，就会面临"断供"的灾难性风险。某些领域的"保护"可能不是为了经济效率，而是为了国家安全的冗余——这是一个巴斯夏的纯经济分析框架无法覆盖的维度。</p>
+      </Insight>
+
+      <Divider color={c}/>
+
+      <ActionBox>
+        <div style={{marginBottom:14}}>
+          <div style={{fontSize:15,fontWeight:700,color:P.textChapter,marginBottom:6}}>「关税还原法」三步清单</div>
+          <div style={{fontSize:14,color:P.textSoft,lineHeight:1.9,marginBottom:4}}><strong style={{color:c}}>5分钟版：</strong>下次听到"保护国内产业"的说法，立即做一个心理替换——把"关税"替换成"强制你多付钱"。比如"对进口汽车加征25%关税"= "法律规定你买车必须多付25%的钱给国内车企"。这个替换能让你瞬间看到问题的另一面。</div>
+          <div style={{fontSize:14,color:P.textSoft,lineHeight:1.9,marginBottom:4}}><strong style={{color:c}}>10分钟版：</strong>找一个你经常购买的产品（手机、衣服、食品），查查它的进口关税是多少。计算一下如果取消关税，你每年能省多少钱。然后想想——这些省下的钱你会用来做什么？那些消费会创造怎样的就业？</div>
+          <div style={{fontSize:14,color:P.textSoft,lineHeight:1.9}}><strong style={{color:c}}>15分钟版：</strong>"蜡烛商测试"——选一个正在讨论中的产业保护政策，试着写一封模仿"商人们的请愿书"的讽刺文。用保护主义者自己的逻辑，把结论推到荒谬的极端。这个练习能帮你深刻理解保护主义逻辑的内在矛盾。</div>
+        </div>
+      </ActionBox>
+
+      <TransitionCard color={c} text="政府在国际贸易中筑起"保护之墙"，逻辑上和在国内"转移财富"是一回事。接下来我们看另一种"看得见的恐惧"——人们面对技术进步和节俭时的焦虑，同样被"看不见的"真相所解答。"/>
+    </div>
+  );
+}
+
+/* ===== CHAPTER 4: 进步之惧 ===== */
+function Ch4(){
+  const c=P.colors[3].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="进步之惧——机器、节俭与文明的代价" sub="将框架应用于技术进步和储蓄：短期"减少就业"的事物长期增加全社会福利" color={c} char="惧" ls={3}/>
+      <LogicChain question="机器真的会让人永久失业吗？" color={c} items={["机器被发明","同样工作只需一半工人","被替代工人失业（看得见）","机器节省的成本创造新消费（看不见）","新消费创造新就业","长期社会总满足程度提高","节俭同理：储蓄变投资创造新就业"]}/>
+      <Formula text="机器淘汰的就业 = 机器节省的成本所创造的新就业。储蓄也是支出——只是走了更远的路" color={c}/>
+
+      <InkFlow steps={["发明机器","工作只需1人+1法郎","1人失业（看得见）","节省的1法郎新投资（看不见）","1个新工人被雇佣","社会总福利增加"]} color={c} title="机器的完整经济效应"/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>深度解读：最精密的经济分析</div>
+        <Para>巴斯夏在机器一章中的论证堪称全书最精密的经济分析。他的核心洞察是：当一台机器让老好人詹姆斯先生只用1个法郎（而非2个法郎）就能完成一项工作时，人们只看到"一个工人失业了"（看得见的），却看不到"詹姆斯手里多了1法郎，他会用这1法郎雇别人做另一件事"（看不见的）。劳动力的供给增加了，但劳动力的需求也等量地增加了——因为节省下来的钱不会蒸发，它必然流入经济系统的某个角落。</Para>
+        <Para>更深层的论证是：随着竞争的推进，发明者无法永远独占机器带来的成本节约——产品价格会被压低，好处最终转移到消费者手中。"节约下来的那部分钱，会落到所有消费者的腰包里"——这就形成了一笔新的"工资基金"，可以雇佣被机器淘汰的工人从事新的生产。整个过程的净结果是：社会用同样多的劳动，满足了更多的需求。</Para>
+        <Para>节俭与奢侈的论证更为精彩。巴斯夏虚构了一对兄弟——挥霍无度的蒙多和精打细算的阿里斯特，各继承5万法郎年收入。人们盛赞蒙多"让钱转起来了"，讥讽阿里斯特是"吝啬鬼"。但巴斯夏逐项分析阿里斯特的支出——个人生活2万、慈善1万、帮助朋友1万、储蓄投资1万——证明他的每一分钱<strong>都进入了经济循环</strong>，只不过有一部分是通过储蓄→投资→贷款→企业→雇佣的"间接路径"进入的。<strong>"储蓄也是支出"</strong>——这是巴斯夏最反直觉也最有力的命题。</Para>
+        <Para>我的判断是，巴斯夏对"技术性失业"的分析在长期框架下是正确的——两百年后的我们生活在一个机器化程度远超他想象的世界里，人类并没有因此失业灭绝。但他严重低估了<strong>转型期的痛苦</strong>。一个50岁的纺织工人被机器替代，你告诉他"长期来看社会总福利增加了"，对他个人来说毫无意义。现代经济学通过失业保险、再培训、社会安全网来缓解这种"创造性破坏"的短期痛苦，而巴斯夏对此几乎只字不提。这是他最大的人文关怀缺失。</Para>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>方法：「创造性破坏」分析框架</div>
+        <Step n={1} text="辨识「看得见的」损失" detail="谁因为新技术/新模式直接失去了工作或收入？这个损失是真实的、值得同情的。不要轻描淡写。" color={c}/>
+        <Step n={2} text="追踪「看不见的」收益" detail="新技术节省的成本去了哪里？消费者省了多少钱？这些钱又会流向什么领域？" color={c}/>
+        <Step n={3} text="评估净效果和时间维度" detail="长期来看社会总福利是否增加？转型期有多长？被替代的人是否有能力转向新行业？是否需要过渡性的保障措施？" color={c}/>
+      </Card>
+
+      <Divider color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:14,letterSpacing:2}}>三个核心案例</div>
+
+        <CaseStory title="案例一：詹姆斯先生的省力滑轮" color={c} icon="⚙️">
+          <p style={{marginBottom:10}}><strong>场景：</strong>老好人詹姆斯先生有2法郎，本来需要雇2个工人完成一项工作。但他发明了一套滑轮装置，同样的工作只需1个工人+1法郎。</p>
+          <p style={{marginBottom:10}}><strong>冲突：</strong>有人大放厥词——"一帮人费尽心力搞出了个新玩意儿，立刻就有一位工人永远地陷入到可怕的贫困深渊了。""富人越来越富而穷人却越来越穷了。为了正义起见，我们必须改造我们的社会。"</p>
+          <p style={{marginBottom:10}}><strong>转折：</strong>但人们忽略了——詹姆斯手里省下的1法郎不会消失，它会被用来雇佣另一个工人做另一件事。"劳动的供应和需求之间以及工资的供应和需求之间的关系，都没有任何改变。"</p>
+          <p><strong>结果：</strong>以前2个工人做1件事；现在1个工人做原来的事（通过机器），另1个工人做新的事（通过詹姆斯省下的1法郎）。总劳动量不变，但社会多了一件产品——"新发明简直是一顿免费的大餐"。</p>
+        </CaseStory>
+
+        <CaseStory title="案例二：报纸从80法郎降到48法郎" color={c} icon="📰">
+          <p style={{marginBottom:10}}><strong>场景：</strong>巴斯夏以他自己的经验为例——以前报纸要80法郎，现在（因为印刷技术进步）只要48法郎。</p>
+          <p style={{marginBottom:10}}><strong>冲突：</strong>有人担心印刷机替代了手工排版工人的就业。</p>
+          <p style={{marginBottom:10}}><strong>转折：</strong>订户省下的32法郎不会消失——"一个法郎可能用来买更多的报纸，另一个法郎可能买更多的美食，第三个法郎可能买来更好的衣服"。这些新消费创造了新就业。</p>
+          <p><strong>结果：</strong>"一个行业中的节约会有利于所有行业的发展扩张。"技术进步不是把蛋糕缩小，而是把蛋糕做大——只不过蛋糕的切法变了。</p>
+        </CaseStory>
+
+        <CaseStory title="案例三：蒙多与阿里斯特——10年之后" color={c} icon="⚖️">
+          <p style={{marginBottom:10}}><strong>场景：</strong>蒙多和阿里斯特兄弟各继承5万法郎年收入。蒙多挥霍无度——"一年之内几次更换家具，每月都换一辆新马车"，被人赞为"法兰西的拯救天使"。阿里斯特精打细算——个人生活2万，慈善1万，帮朋友1万，储蓄投资1万，被人讥讽为"守财奴"。</p>
+          <p style={{marginBottom:10}}><strong>冲突：</strong>公众只看到蒙多"让钱转起来了"（看得见的），却看不到阿里斯特的钱同样在流动——只是通过更迂回、更有效的路径。</p>
+          <p style={{marginBottom:10}}><strong>转折：</strong>巴斯夏逐项证明——阿里斯特储蓄的1万法郎不会埋在花园里，它会变成银行贷款、企业投资、政府债券，最终全部进入经济循环。"储蓄也是支出"——区别只在于"由阿里斯特本人花，还是别人代替他来花"。</p>
+          <p><strong>结果：</strong>10年后，蒙多破产了，"他不再是店主和商人们的乐趣所在"；阿里斯特不仅继续将全部收入投入周转，而且每年为社会贡献的资金还在增加，雇佣的工人越来越多。<strong>"从道德上讲，节俭是要优越于奢侈的……从经济角度来看，节俭也同样具有优越性。"</strong></p>
+        </CaseStory>
+      </Card>
+
+      <Insight color={c}>
+        <p style={{marginBottom:12}}>巴斯夏的"储蓄也是支出"命题，在170年后的今天依然被大量误解。人们直觉上把经济分为"花钱"（有利于经济）和"存钱"（不利于经济），却不知道<strong>你在银行里的每一分存款，都在通过银行贷款的形式变成了别人的创业资金、房贷、生产投入。</strong>你不花它，不等于它不在流动——它只是换了一条路径在流动。现代金融体系的本质就是把"不花的钱"转化为"投资的钱"。巴斯夏在没有宏观经济学框架的年代，已经把这个逻辑讲透了。</p>
+        <p style={{marginBottom:12}}><strong>但我必须指出一个他完全没有预见到的情况：</strong>当储蓄不是通过投资流入实体经济，而是被用于金融投机（如2008年次贷危机前的衍生品泡沫），"储蓄也是支出"这个等式就会失灵。储蓄→投机→泡沫→崩溃的链条，是巴斯夏时代不存在的现象。</p>
+        <p>此外，凯恩斯后来提出的"节俭悖论"——如果所有人同时增加储蓄、减少消费，可能导致总需求崩溃——也是对巴斯夏论证的有效补充。<strong>巴斯夏的论证在"正常经济"中成立，但在极端情况下需要修正。</strong></p>
+      </Insight>
+
+      <Divider color={c}/>
+
+      <ActionBox>
+        <div style={{marginBottom:14}}>
+          <div style={{fontSize:15,fontWeight:700,color:P.textChapter,marginBottom:6}}>「进步恐惧破解术」三问法</div
