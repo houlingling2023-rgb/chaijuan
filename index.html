@@ -628,7 +628,7 @@ function App() {
       </section>
 
       {/* ===== TAG FILTER ===== */}
-      <section style={{maxWidth:900,margin:"0 auto",padding:"0 clamp(16px,4vw,24px) 32px",position:"relative",zIndex:1}}>
+      <section style={{maxWidth:1000,margin:"0 auto",padding:"0 clamp(16px,4vw,32px) 32px",position:"relative",zIndex:1}}>
         <div style={{textAlign:"center",marginBottom:20}}>
           <span style={{fontSize:12,color:"#a09080",letterSpacing:4}}>—— 按主题浏览 ——</span>
         </div>
@@ -641,8 +641,8 @@ function App() {
       </section>
 
       {/* ===== BOOK GRID ===== */}
-      <section ref={bookGridRef} style={{maxWidth:960,margin:"0 auto",padding:"0 clamp(16px,4vw,24px) 40px",position:"relative",zIndex:1}}>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(min(400px, 100%), 1fr))",gap:isMobile?18:24}}>
+      <section ref={bookGridRef} style={{maxWidth:1200,margin:"0 auto",padding:"0 clamp(16px,4vw,32px) 40px",position:"relative",zIndex:1}}>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(min(360px, 100%), 1fr))",gap:isMobile?18:24}}>
           {filtered.map((book,i)=>(
             <BookCard key={book.id} book={book} index={i} onClick={()=>setActiveBook(book)}/>
           ))}
