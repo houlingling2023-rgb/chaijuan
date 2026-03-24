@@ -30,7 +30,7 @@
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState}=React;
+const useState = React.useState;
 
 const P={
   paper:"#f5f0e8",paperDeep:"#efe9dd",paperLight:"#faf7f0",
@@ -114,10 +114,12 @@ function ChTab({label,char,color,active,onClick,isOverview}){
 }
 
 function Sidebar({chapters,current,onSelect,open,onClose}){
+  const isNarrow=typeof window!=="undefined"&&window.innerWidth<=480;
+  const sidebarWidth=isNarrow?"min(82vw,300px)":300;
   return(
     <div>
-      {open&&<div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(60,50,30,0.2)",zIndex:98}}/>}
-      <div style={{position:"fixed",top:0,left:open?0:-320,width:300,height:"100vh",background:P.paperDeep,borderRight:`1px solid rgba(160,140,110,0.15)`,boxShadow:open?"4px 0 30px rgba(80,60,30,0.1)":"none",zIndex:99,transition:"left 0.35s cubic-bezier(.4,0,.2,1)",padding:"32px 0",overflowY:"auto"}}>
+      {open&&<div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(60,50,30,0.28)",backdropFilter:"blur(2px)",zIndex:98}}/>}
+      <div style={{position:"fixed",top:0,left:open?0:`calc(-1 * ${sidebarWidth})`,width:sidebarWidth,height:"100vh",background:P.paperDeep,borderRight:`1px solid rgba(160,140,110,0.15)`,boxShadow:open?"8px 0 36px rgba(80,60,30,0.14)":"none",zIndex:99,transition:"left 0.35s cubic-bezier(.4,0,.2,1)",padding:"32px 0 max(24px, env(safe-area-inset-bottom))",overflowY:"auto"}}>
         <div style={{padding:"0 24px 24px",borderBottom:`1px solid rgba(160,140,110,0.12)`}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <SealIcon char="目" color={P.vermillion} size={28} glow={false}/>
@@ -1090,7 +1092,7 @@ function Ch4(){
 /* ===== APP ===== */
 function ScrollTop(){
   const[show,setShow]=useState(false);
-  useEffect(()=>{
+  React.useEffect(()=>{
     const h=()=>setShow(window.scrollY>600);
     window.addEventListener("scroll",h);
     return()=>window.removeEventListener("scroll",h);
@@ -1122,8 +1124,8 @@ function App(){
       <Sidebar chapters={CHS} current={ch} onSelect={setCh} open={toc} onClose={()=>setToc(false)}/>
 
       <div style={{position:"sticky",top:0,zIndex:10,background:P.paper,borderBottom:`1px solid rgba(160,140,110,0.12)`}}>
-        <div style={{padding:"12px 24px 0"}}>
-          <div style={{maxWidth:720,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <div style={{padding:"12px clamp(16px,4vw,24px) 0"}}>
+          <div style={{maxWidth:720,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
             <div style={{display:"flex",alignItems:"center",gap:10}}>
               <span onClick={()=>setToc(true)} style={{cursor:"pointer",opacity:0.5,fontSize:18}}>{"☰"}</span>
               <span style={{fontSize:13,color:P.textMuted,letterSpacing:3}}>拆卷</span>
@@ -1133,17 +1135,17 @@ function App(){
             <span style={{fontSize:11,color:P.textMuted}}>{ch+1}/{CHS.length}</span>
           </div>
         </div>
-        <div style={{maxWidth:720,margin:"0 auto",padding:"8px 24px 0",position:"relative"}}>
-          <div style={{display:"flex",gap:0,overflowX:"auto",scrollbarWidth:"none",msOverflowStyle:"none",WebkitOverflowScrolling:"touch"}}>
+        <div style={{maxWidth:720,margin:"0 auto",padding:"8px clamp(16px,4vw,24px) 0",position:"relative"}}>
+          <div style={{display:"flex",gap:0,overflowX:"auto",scrollbarWidth:"none",msOverflowStyle:"none",WebkitOverflowScrolling:"touch",paddingBottom:2}}>
             {CHS.map((t,i)=>(
               <ChTab key={t.id} label={t.label} char={t.char} color={t.color} active={ch===i} onClick={()=>setCh(i)} isOverview={i===0}/>
             ))}
           </div>
-          <div style={{position:"absolute",top:0,right:24,width:40,height:"100%",pointerEvents:"none",background:`linear-gradient(to left,${P.paper},transparent)`}}/>
+          <div style={{position:"absolute",top:0,right:"clamp(16px,4vw,24px)",width:40,height:"100%",pointerEvents:"none",background:`linear-gradient(to left,${P.paper},transparent)`}}/>
         </div>
       </div>
 
-      <div style={{maxWidth:720,margin:"0 auto",padding:"0 24px 40px",position:"relative",zIndex:1}}>
+      <div style={{maxWidth:720,margin:"0 auto",padding:"0 clamp(16px,4vw,24px) 40px",position:"relative",zIndex:1}}>
         <CurrentCh/>
         <PageNav current={ch} total={CHS.length} name={CHS[ch].label} onPrev={()=>{setCh(ch-1);window.scrollTo(0,0);}} onNext={()=>{setCh(ch+1);window.scrollTo(0,0);}}/>
       </div>

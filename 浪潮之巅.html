@@ -7,7 +7,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0e1a;--card:#111827;--card2:#1e293b;--blue:#3b82f6;--cyan:#06b6d4;--purple:#8b5cf6;--emerald:#10b981;--amber:#f59e0b;--rose:#f43f5e;--orange:#f97316;--txt:#f1f5f9;--txt2:#94a3b8;--txt3:#64748b;--border:rgba(255,255,255,0.06)}
+:root{--bg:#0a0e1a;--card:#111827;--card2:#1e293b;--blue:#3b82f6;--cyan:#06b6d4;--purple:#8b5cf6;--emerald:#10b981;--amber:#f59e0b;--rose:#f43f5e;--orange:#f97316;--txt:#f1f5f9;--txt2:#a9b7ca;--txt3:#7f90a6;--border:rgba(255,255,255,0.06)}
 body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.7;overflow-x:hidden}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
 
@@ -217,6 +217,20 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
   .tl-card,.tl-item:nth-child(odd) .tl-card,.tl-item:nth-child(even) .tl-card{width:calc(100% - 4rem);margin-left:3.5rem!important;margin-right:0!important}
   .tl-dot{left:1.5rem}
   .fw-grid,.ins-grid{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .nav{padding:.7rem .75rem;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none;background:rgba(10,14,26,.96)}
+  .nav::-webkit-scrollbar{display:none}
+  .nav a{font-size:.82rem;padding:.5rem .9rem;color:#c7d2e3;border-color:rgba(255,255,255,.12)}
+  .sec{padding:3.2rem 1rem}
+  .sh{margin-bottom:2.2rem}
+  .sh h2{font-size:1.8rem}
+  .sh p,.tl-desc,.law .desc,.modal-text,.surv-card .surv-action,.ins p,.fw .sd,.quote .qa,.foot,.eco-node span{color:#b8c5d6}
+  .hero-c{padding:2rem 1.2rem 4rem}
+  .hero-c .sub{font-size:1rem;color:#c7d2e3}
+  .hero-c .author,.stat .l,.legend span,.wave-bar-label,.wave-bar-year{color:#9fb0c5}
+  .tl-expand,.law .formula,.surv-card details .surv-expand,.fw .step,.modal-stat{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)}
+  .quote .qt{font-size:1.08rem;line-height:1.9}
 }
 </style>
 </head>

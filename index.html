@@ -222,6 +222,7 @@ function CSSCover({ style: s, size = "normal", coverImage }) {
 
 function BookCard({ book, index, onClick }) {
   const [hover, setHover] = useState(false);
+  const isCompact = typeof window !== "undefined" && window.innerWidth <= 480;
   return (
     <div
       onMouseEnter={()=>setHover(true)}
@@ -244,20 +245,20 @@ function BookCard({ book, index, onClick }) {
       }}
     >
       <div style={{height:3,background:`linear-gradient(90deg, ${book.color}, ${book.accent}, transparent)`}}/>
-      <div style={{padding:"28px 28px 24px"}}>
+      <div style={{padding:isCompact?"22px 20px 20px":"28px 28px 24px"}}>
         {/* Header */}
-        <div style={{display:"flex",alignItems:"flex-start",gap:20,marginBottom:20}}>
+        <div style={{display:"flex",alignItems:"flex-start",gap:isCompact?14:20,marginBottom:isCompact?16:20}}>
           <CSSCover style={book.coverStyle} size="small" coverImage={book.coverImage} />
           <div style={{flex:1}}>
-            <h3 style={{fontSize:22,fontWeight:900,color:"#2a2018",letterSpacing:2,marginBottom:4,lineHeight:1.3}}>{book.title}</h3>
-            <p style={{fontSize:13,color:"#8a7a60",fontWeight:400,marginBottom:8}}>{book.subtitle}</p>
-            {book.author && <p style={{fontSize:12,color:"#a09080"}}>—— {book.author} 著</p>}
+            <h3 style={{fontSize:isCompact?20:22,fontWeight:900,color:"#2a2018",letterSpacing:isCompact?1:2,marginBottom:4,lineHeight:1.3}}>{book.title}</h3>
+            <p style={{fontSize:isCompact?14:13,color:"#7c6b58",fontWeight:400,marginBottom:8,lineHeight:1.6}}>{book.subtitle}</p>
+            {book.author && <p style={{fontSize:12,color:"#968673"}}>—— {book.author} 著</p>}
             <div style={{marginTop:6}}><DoubanRating score={book.doubanScore} link={book.doubanLink}/></div>
           </div>
         </div>
 
         {/* Description */}
-        <p style={{fontSize:14,color:"#5a4a3a",lineHeight:1.9,marginBottom:18,
+        <p style={{fontSize:isCompact?15:14,color:"#5a4a3a",lineHeight:isCompact?1.95:1.9,marginBottom:18,
           display:"-webkit-box",WebkitLineClamp:3,WebkitBoxOrient:"vertical",overflow:"hidden",
         }}>{book.description}</p>
 
@@ -542,7 +543,7 @@ function App() {
       {/* ===== NAVBAR ===== */}
       <nav style={{
         position:"fixed",top:0,left:0,right:0,zIndex:100,
-        padding:scrolled?"12px 24px":"18px 24px",
+        padding:scrolled?"12px clamp(16px,4vw,24px)":"18px clamp(16px,4vw,24px)",
         background:scrolled?"rgba(248,245,240,0.92)":"transparent",
         backdropFilter:scrolled?"blur(16px)":"none",
         borderBottom:scrolled?"1px solid rgba(200,184,154,0.3)":"none",
@@ -560,7 +561,7 @@ function App() {
       </nav>
 
       {/* ===== HERO ===== */}
-      <header style={{textAlign:"center",padding:"120px 24px 50px",position:"relative",zIndex:1,animation:"fadeIn 1s ease"}}>
+      <header style={{textAlign:"center",padding:isMobile?"104px 20px 42px":"120px 24px 50px",position:"relative",zIndex:1,animation:"fadeIn 1s ease"}}>
         <div style={{
           width:80,height:80,margin:"0 auto 24px",
           border:"2px solid #c8503020",borderRadius:8,
@@ -572,13 +573,13 @@ function App() {
         </div>
         <h1 style={{fontSize:"clamp(36px,7vw,56px)",fontWeight:900,color:"#2a2018",letterSpacing:8,fontFamily:"'ZCOOL XiaoWei','Noto Serif SC',serif",marginBottom:12}}>拆 卷</h1>
         <div style={{width:80,height:2,background:"linear-gradient(90deg, transparent, #8a7a60, transparent)",margin:"0 auto 16px"}}/>
-        <p style={{fontSize:16,color:"#6a5a4a",letterSpacing:6,fontWeight:300}}>一卷拆尽，满纸生花</p>
-        <p style={{fontSize:13,color:"#a09a88",marginTop:20,maxWidth:480,margin:"20px auto 0",lineHeight:1.8,fontWeight:300}}>
+        <p style={{fontSize:isMobile?15:16,color:"#6a5a4a",letterSpacing:isMobile?4:6,fontWeight:300}}>一卷拆尽，满纸生花</p>
+        <p style={{fontSize:isMobile?14:13,color:"#8f7f6d",marginTop:20,maxWidth:520,margin:"20px auto 0",lineHeight:isMobile?1.9:1.8,fontWeight:300}}>
           每一本好书都值得被认真拆解。在这里，我把读过的书拆成可执行的知识地图，愿与你共享成长路上的智慧。
         </p>
 
         {/* Stats */}
-        <div style={{display:"flex",justifyContent:"center",gap:40,marginTop:36}}>
+        <div style={{display:"flex",justifyContent:"center",gap:isMobile?24:40,marginTop:isMobile?30:36,flexWrap:"wrap"}}>
           {[
             {n:BOOKS.length, l:"本书拆解"},
             {n:BOOKS.reduce((a,b)=>a+b.chapters.length,0), l:"个深度模块"},
@@ -593,7 +594,7 @@ function App() {
       </header>
 
       {/* ===== SEARCH BAR ===== */}
-      <section style={{maxWidth:600,margin:"0 auto",padding:"0 24px 28px",position:"relative",zIndex:1}}>
+      <section style={{maxWidth:600,margin:"0 auto",padding:"0 clamp(16px,4vw,24px) 28px",position:"relative",zIndex:1}}>
         <div style={{
           display:"flex",alignItems:"center",gap:12,
           background:"rgba(255,255,255,0.7)",
@@ -628,7 +629,7 @@ function App() {
       </section>
 
       {/* ===== TAG FILTER ===== */}
-      <section style={{maxWidth:900,margin:"0 auto",padding:"0 24px 32px",position:"relative",zIndex:1}}>
+      <section style={{maxWidth:900,margin:"0 auto",padding:"0 clamp(16px,4vw,24px) 32px",position:"relative",zIndex:1}}>
         <div style={{textAlign:"center",marginBottom:20}}>
           <span style={{fontSize:12,color:"#a09080",letterSpacing:4}}>—— 按主题浏览 ——</span>
         </div>
@@ -641,8 +642,8 @@ function App() {
       </section>
 
       {/* ===== BOOK GRID ===== */}
-      <section ref={bookGridRef} style={{maxWidth:960,margin:"0 auto",padding:"0 24px 40px",position:"relative",zIndex:1}}>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(min(400px, 100%), 1fr))",gap:24}}>
+      <section ref={bookGridRef} style={{maxWidth:960,margin:"0 auto",padding:"0 clamp(16px,4vw,24px) 40px",position:"relative",zIndex:1}}>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(min(400px, 100%), 1fr))",gap:isMobile?18:24}}>
           {filtered.map((book,i)=>(
             <BookCard key={book.id} book={book} index={i} onClick={()=>setActiveBook(book)}/>
           ))}
