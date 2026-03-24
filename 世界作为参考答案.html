@@ -30,7 +30,7 @@
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState}=React;
+const {useState,useEffect}=React;
 
 const P={
   paper:"#f5f0e8",paperDeep:"#efe9dd",paperLight:"#faf7f0",
@@ -199,7 +199,7 @@ function Formula({text,color=P.vermillion}){
   return(
     <div style={{textAlign:"center",padding:28,margin:"24px 0",background:P.paperLight,borderRadius:10,border:`1px solid ${color}15`,position:"relative",overflow:"hidden",boxShadow:`0 1px 6px ${P.pageShadow}`}}>
       <div style={{position:"absolute",inset:0,background:`linear-gradient(90deg,transparent,${color}04,transparent)`,backgroundSize:"200% 100%",animation:"shimmer 5s ease infinite"}}/>
-      <span style={{fontSize:22,fontWeight:900,letterSpacing:5,color:P.textChapter,fontFamily:"'Noto Serif SC',serif",position:"relative"}}>{text}</span>
+      <span style={{fontSize:"clamp(15px, 3.5vw, 22px)",fontWeight:900,letterSpacing:"clamp(1px, 0.8vw, 5px)",color:P.textChapter,fontFamily:"'Noto Serif SC',serif",position:"relative",lineHeight:1.6}}>{text}</span>
     </div>
   );
 }
