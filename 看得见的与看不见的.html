@@ -23,6 +23,22 @@
   @keyframes pageIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
   .fade-up{animation:fadeUp 0.4s ease both}
   .page-in{animation:pageIn 0.35s ease both}
+  /* ===== 手机端优化 ≤480px ===== */
+  @media(max-width:480px){
+    /* 1. 隐藏导航栏书名文字，只保留汉堡菜单 */
+    .nav-book-title{display:none!important}
+    /* 2. 全书逻辑架构图横向滚动 */
+    .book-map-svg-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:8px}
+    .book-map-svg-wrap svg{min-width:560px}
+    /* 3. Tab 滑动提示：渐变遮罩加宽，加箭头 */
+    .tab-scroll-hint{width:72px!important;background:linear-gradient(to left,#f5f0e8 50%,transparent)!important}
+    .tab-scroll-arrow{display:flex!important}
+    /* 4. 公式块字号和内距缩小 */
+    .formula-box{padding:14px 12px!important}
+    .formula-text{font-size:14px!important;letter-spacing:1.5px!important}
+  }
+  /* 桌面端：隐藏箭头指示 */
+  .tab-scroll-arrow{display:none;position:absolute;right:0;top:50%;transform:translateY(-50%);z-index:5;pointer-events:none;font-size:16px;color:#8a7a60;opacity:0.7;padding-right:4px;animation:glowPulse 1.5s ease infinite}
 </style>
 </head>
 <body>
@@ -196,9 +212,9 @@ function Quote({text,color=P.vermillion}){
 
 function Formula({text,color=P.vermillion}){
   return(
-    <div style={{textAlign:"center",padding:28,margin:"24px 0",background:P.paperLight,borderRadius:10,border:`1px solid ${color}15`,position:"relative",overflow:"hidden",boxShadow:`0 1px 6px ${P.pageShadow}`}}>
+    <div className="formula-box" style={{textAlign:"center",padding:28,margin:"24px 0",background:P.paperLight,borderRadius:10,border:`1px solid ${color}15`,position:"relative",overflow:"hidden",boxShadow:`0 1px 6px ${P.pageShadow}`}}>
       <div style={{position:"absolute",inset:0,background:`linear-gradient(90deg,transparent,${color}04,transparent)`,backgroundSize:"200% 100%",animation:"shimmer 5s ease infinite"}}/>
-      <span style={{fontSize:18,fontWeight:900,letterSpacing:3,color:P.textChapter,fontFamily:"'Noto Serif SC',serif",position:"relative"}}>{text}</span>
+      <span className="formula-text" style={{fontSize:18,fontWeight:900,letterSpacing:3,color:P.textChapter,fontFamily:"'Noto Serif SC',serif",position:"relative"}}>{text}</span>
     </div>
   );
 }
@@ -404,6 +420,7 @@ function BookMap({onJump}){
       <div style={{margin:"28px 0",background:P.paperLight,borderRadius:12,padding:"24px 12px 16px",border:`1px solid ${P.vermillion}12`}}>
         <div style={{fontSize:16,fontWeight:800,color:P.vermillion,letterSpacing:3,textAlign:"center",marginBottom:4}}>全书逻辑架构</div>
         <div style={{fontSize:12,color:P.textMuted,textAlign:"center",marginBottom:16}}>从思维工具到哲学原则，五个维度层层递进</div>
+        <div className="book-map-svg-wrap">
         <svg width="100%" viewBox="0 0 680 230" style={{display:"block",maxWidth:680,margin:"0 auto"}}>
           <defs>
             <marker id="arrowMain" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4" fill={P.vermillion+"80"}/></marker>
@@ -431,6 +448,7 @@ function BookMap({onJump}){
             );
           })}
         </svg>
+        </div>
       </div>
 
       <div style={{fontSize:16,fontWeight:800,color:P.textChapter,letterSpacing:2,marginBottom:14,marginTop:28}}>模块速览</div>
@@ -909,9 +927,11 @@ function App(){
           <div style={{maxWidth:720,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
             <div style={{display:"flex",alignItems:"center",gap:10}}>
               <span onClick={()=>setToc(true)} style={{cursor:"pointer",opacity:0.5,fontSize:18}}>{"☰"}</span>
-              <span style={{fontSize:13,color:P.textMuted,letterSpacing:3}}>拆卷</span>
-              <span style={{fontSize:11,color:P.textMuted,opacity:0.4}}>·</span>
-              <span style={{fontSize:13,color:P.textMuted}}>看得见的与看不见的</span>
+              <span className="nav-book-title" style={{display:"flex",alignItems:"center",gap:4}}>
+                <span style={{fontSize:13,color:P.textMuted,letterSpacing:3}}>拆卷</span>
+                <span style={{fontSize:11,color:P.textMuted,opacity:0.4}}>·</span>
+                <span style={{fontSize:13,color:P.textMuted}}>看得见的与看不见的</span>
+              </span>
             </div>
             <span style={{fontSize:11,color:P.textMuted}}>{ch+1}/{CHS.length}</span>
           </div>
@@ -922,7 +942,8 @@ function App(){
               <ChTab key={t.id} label={t.label} char={t.char} color={t.color} active={ch===i} onClick={()=>setCh(i)} isOverview={i===0}/>
             ))}
           </div>
-          <div style={{position:"absolute",top:0,right:"clamp(16px,4vw,24px)",width:40,height:"100%",pointerEvents:"none",background:`linear-gradient(to left,${P.paper},transparent)`}}/>
+          <div className="tab-scroll-hint" style={{position:"absolute",top:0,right:"clamp(16px,4vw,24px)",width:40,height:"100%",pointerEvents:"none",background:`linear-gradient(to left,${P.paper},transparent)`}}/>
+          <span className="tab-scroll-arrow">›</span>
         </div>
       </div>
 
