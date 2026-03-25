@@ -434,8 +434,81 @@ function App() {
   );
 }
 
+/* ===== 速览区 ===== */
+function SpeedRead({onStart}){
+  const[open,setOpen]=useState(true);
+  const c=COLORS.amber;
+  const green=COLORS.green;
+  return(
+    <div style={{maxWidth:860,margin:"0 auto",padding:"24px 16px 0",animation:"fadeUp 0.5s ease both"}}>
+      <div onClick={()=>setOpen(!open)} style={{
+        background:COLORS.white,
+        borderRadius:16,overflow:"hidden",
+        border:`1px solid ${COLORS.border}`,
+        boxShadow:"0 2px 12px rgba(0,0,0,0.06)",
+        cursor:"pointer",transition:"all 0.3s",
+      }}>
+        <div style={{padding:"16px 20px 14px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:open?`1px solid ${COLORS.border}`:"none",background:`linear-gradient(135deg,${c}08,${c}04)`}}>
+          <div style={{display:"flex",alignItems:"center",gap:12}}>
+            <div style={{width:36,height:36,borderRadius:10,background:`linear-gradient(135deg,${c},#C4944F)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>⚡</div>
+            <div>
+              <div style={{fontSize:15,fontWeight:800,color:COLORS.text,letterSpacing:1}}>3分钟速览</div>
+              <div style={{fontSize:11,color:COLORS.textMuted,marginTop:1}}>不想读全文？看这里就够了</div>
+            </div>
+          </div>
+          <span style={{fontSize:12,color:COLORS.textMuted,transition:"transform 0.3s",transform:open?"rotate(180deg)":"rotate(0)",display:"inline-block"}}>▲</span>
+        </div>
+        {open&&(
+          <div style={{padding:"0 20px 20px"}} onClick={e=>e.stopPropagation()}>
+            <div style={{margin:"18px 0 16px",padding:"14px 18px",background:`${c}0d`,borderRadius:12,borderLeft:`3px solid ${c}`}}>
+              <div style={{fontSize:11,color:c,fontWeight:700,letterSpacing:2,marginBottom:6}}>一句话说清这本书</div>
+              <div style={{fontSize:15,fontWeight:700,color:COLORS.text,lineHeight:1.8}}>你不是不想换工作，你是怕一步走错全盘皆输——但真相是，从来没有人靠"想清楚了"才成功转型的。</div>
+            </div>
+            <div style={{marginBottom:16}}>
+              <div style={{fontSize:13,fontWeight:800,color:COLORS.text,letterSpacing:1,marginBottom:10,display:"flex",alignItems:"center",gap:6}}>
+                <span style={{display:"inline-block",width:20,height:20,borderRadius:"50%",background:`${c}20`,color:c,fontSize:11,fontWeight:900,textAlign:"center",lineHeight:"20px"}}>3</span>
+                记住这三点就够了
+              </div>
+              {[
+                {num:"①",text:"转行最大的坑不是选错方向，是一次想跳太远。行业、公司、岗位三个维度，每次只动一个，成功率翻倍。那些看起来华丽转身的人，拆开看全是小碎步。"},
+                {num:"②",text:'你最值钱的能力你自己根本看不见。书里叫"金豆"——你觉得理所当然的事，别人做起来要命。那些你下意识就能搞定、同事却总来找你帮忙的事，就是你最大的职业资本。'},
+                {num:"③",text:"找工作不是求人给机会，是你在做一场营销。简历是广告，面试是提案，人脉是渠道。换了这个视角，你会发现自己一直在用错误的姿态找工作。"},
+              ].map((item,i)=>(
+                <div key={i} style={{display:"flex",gap:10,marginBottom:10,padding:"12px 14px",background:"#f8f8f8",borderRadius:10,border:`1px solid ${COLORS.border}`}}>
+                  <span style={{fontSize:14,fontWeight:900,color:c,flexShrink:0,marginTop:1}}>{item.num}</span>
+                  <span style={{fontSize:13,color:COLORS.text,lineHeight:1.8}}>{item.text}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{marginBottom:14,padding:"14px 18px",background:`${green}0d`,borderRadius:12,border:`1px solid ${green}25`}}>
+              <div style={{fontSize:11,color:green,fontWeight:700,letterSpacing:2,marginBottom:8}}>看完立刻能做的事</div>
+              <div style={{fontSize:13,color:COLORS.text,lineHeight:1.8}}>拿一张纸，写下三件"别人经常夸你但你觉得没什么了不起"的事。这就是你的金豆。你会惊讶地发现，你下一步该往哪走，答案就藏在这张纸上。</div>
+            </div>
+            <div style={{marginBottom:16,padding:"14px 18px",background:`${COLORS.blue}0d`,borderRadius:12,border:`1px solid ${COLORS.blue}25`}}>
+              <div style={{fontSize:11,color:COLORS.blue,fontWeight:700,letterSpacing:2,marginBottom:8}}>这本书适合你吗？</div>
+              <div style={{fontSize:13,color:COLORS.text,lineHeight:1.8}}>每个月总有几天打开招聘网站又关掉、觉得"现在还不是时候"的人。</div>
+            </div>
+            <div style={{textAlign:"center",paddingTop:4}}>
+              <button onClick={()=>onStart&&onStart()} style={{
+                background:`linear-gradient(135deg,${c},#C4944F)`,
+                border:"none",borderRadius:10,
+                padding:"11px 32px",cursor:"pointer",
+                fontSize:13,fontWeight:700,color:"#fff",letterSpacing:1,
+                boxShadow:`0 4px 12px ${c}40`,
+                transition:"all 0.3s",
+              }}>想深入了解 → 开始阅读全文</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ============ HOME VIEW ============ */
 function HomeView({ onSelectChapter }) {
+  const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+  const [showAllFormulas, setShowAllFormulas] = useState(false);
   return (
     <div style={{ animation: "fadeUp 0.6s ease" }}>
       {/* HEADER */}
@@ -483,6 +556,8 @@ function HomeView({ onSelectChapter }) {
         </p>
       </header>
 
+      <SpeedRead onStart={()=>onSelectChapter(0)}/>
+
       {/* CHAPTERS */}
       <div style={{
         maxWidth: 860,
@@ -516,12 +591,8 @@ function HomeView({ onSelectChapter }) {
           }}>
             核心公式速览
           </h2>
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            gap: 16,
-          }}>
-            {[
+          {(() => {
+            const formulas = [
               { formula: "定位 = 行业 × 企业 × 职位", desc: "像解密码锁，先锁定一项调动另一项", color: COLORS.amber },
               { formula: "带着优势切趋势", desc: "没趋势收益不高，没优势收益不长", color: COLORS.green },
               { formula: "淘金术：闪光点→金豆→抛光", desc: "找到优势，聚合放大，不断宣传", color: COLORS.amber },
@@ -534,45 +605,71 @@ function HomeView({ onSelectChapter }) {
               { formula: "专家五阶：求助→探索→建筑→助人→专家", desc: "从探索家就可以开始营业(养成式专家)", color: COLORS.cyan },
               { formula: "管理闭环 = 计划→组织→协调→控制", desc: "最好的管理是No Surprise", color: COLORS.blue },
               { formula: "拔出第二支箭 → 找到初心", desc: "不怕苦难怕苦得没意义，不怕难怕难得没价值", color: "#ef4444" },
-            ].map((item, idx) => (
-              <div
-                key={idx}
-                style={{
-                  background: COLORS.cardBg,
-                  borderRadius: 12,
-                  padding: "16px",
-                  border: `1px solid ${COLORS.border}`,
-                  borderLeft: `4px solid ${item.color}`,
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.08)";
-                  e.currentTarget.style.transform = "translateY(-4px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = "none";
-                  e.currentTarget.style.transform = "none";
-                }}
-              >
-                <div style={{
-                  fontSize: 14,
-                  fontWeight: 700,
-                  color: COLORS.text,
-                  marginBottom: 8,
-                  lineHeight: 1.4,
-                }}>
-                  {item.formula}
-                </div>
-                <div style={{
-                  fontSize: 12,
-                  color: COLORS.textLight,
-                  lineHeight: 1.5,
-                }}>
-                  {item.desc}
-                </div>
+            ];
+            const visibleFormulas = isMobile && !showAllFormulas ? formulas.slice(0, 6) : formulas;
+            return <>
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                gap: 16,
+              }}>
+                {visibleFormulas.map((item, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      background: COLORS.cardBg,
+                      borderRadius: 12,
+                      padding: "16px",
+                      border: `1px solid ${COLORS.border}`,
+                      borderLeft: `4px solid ${item.color}`,
+                      transition: "all 0.3s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.08)";
+                      e.currentTarget.style.transform = "translateY(-4px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow = "none";
+                      e.currentTarget.style.transform = "none";
+                    }}
+                  >
+                    <div style={{
+                      fontSize: 14,
+                      fontWeight: 700,
+                      color: COLORS.text,
+                      marginBottom: 8,
+                      lineHeight: 1.4,
+                    }}>
+                      {item.formula}
+                    </div>
+                    <div style={{
+                      fontSize: 12,
+                      color: COLORS.textLight,
+                      lineHeight: 1.5,
+                    }}>
+                      {item.desc}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+              {isMobile && formulas.length > 6 && (
+                <div style={{textAlign:"center",marginTop:16}}>
+                  <button onClick={() => setShowAllFormulas(!showAllFormulas)} style={{
+                    border:`1px solid ${COLORS.border}`,
+                    background:COLORS.cardBg,
+                    color:COLORS.amber,
+                    borderRadius:20,
+                    padding:"10px 18px",
+                    fontSize:13,
+                    fontWeight:600,
+                    cursor:"pointer"
+                  }}>
+                    {showAllFormulas ? "收起公式" : `展开全部公式（还有${formulas.length - 6}条）`}
+                  </button>
+                </div>
+              )}
+            </>;
+          })()}
         </section>
 
         {/* MANTRAS */}

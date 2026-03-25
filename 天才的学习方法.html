@@ -865,6 +865,77 @@ function ScrollTop(){
   }},"↑");
 }
 
+/* ===== 速览区 ===== */
+function SpeedRead({onStart}){
+  const[open,setOpen]=useState(true);
+  const accent="#FF6B35";
+  const blue="#6C63FF";
+  return(
+    <div style={{marginBottom:24,animation:"fadeUp 0.5s ease both"}}>
+      <div onClick={()=>setOpen(!open)} style={{
+        background:"#fff",
+        borderRadius:16,overflow:"hidden",
+        border:`1.5px solid ${accent}25`,
+        boxShadow:`0 4px 20px ${accent}12`,
+        cursor:"pointer",transition:"all 0.3s",
+      }}>
+        <div style={{padding:"16px 20px 14px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:open?"1px solid rgba(0,0,0,0.05)":"none",background:`linear-gradient(135deg,#0f0c29,#302b63)`}}>
+          <div style={{display:"flex",alignItems:"center",gap:12}}>
+            <div style={{width:36,height:36,borderRadius:10,background:`linear-gradient(135deg,${accent},#ff9a3c)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>🧠</div>
+            <div>
+              <div style={{fontSize:15,fontWeight:800,color:"#fff",letterSpacing:1}}>3分钟速览</div>
+              <div style={{fontSize:11,color:"rgba(255,255,255,0.5)",marginTop:1}}>不想读全文？看这里就够了</div>
+            </div>
+          </div>
+          <span style={{fontSize:12,color:"rgba(255,255,255,0.5)",transition:"transform 0.3s",transform:open?"rotate(180deg)":"rotate(0)",display:"inline-block"}}>▲</span>
+        </div>
+        {open&&(
+          <div style={{padding:"0 20px 20px",background:"#FAFAF8"}} onClick={e=>e.stopPropagation()}>
+            <div style={{margin:"18px 0 16px",padding:"14px 18px",background:`${accent}0d`,borderRadius:12,borderLeft:`3px solid ${accent}`}}>
+              <div style={{fontSize:11,color:accent,fontWeight:700,letterSpacing:2,marginBottom:6}}>一句话说清这本书</div>
+              <div style={{fontSize:15,fontWeight:700,color:"#1a1a2e",lineHeight:1.8}}>你以为自己不够聪明，其实你只是一直在用"感觉很努力但大脑根本没参与"的方式学习。</div>
+            </div>
+            <div style={{marginBottom:16}}>
+              <div style={{fontSize:13,fontWeight:800,color:"#1a1a2e",letterSpacing:1,marginBottom:10,display:"flex",alignItems:"center",gap:6}}>
+                <span style={{display:"inline-block",width:20,height:20,borderRadius:"50%",background:`${accent}20`,color:accent,fontSize:11,fontWeight:900,textAlign:"center",lineHeight:"20px"}}>3</span>
+                记住这三点就够了
+              </div>
+              {[
+                {num:"①",text:"反复阅读是最流行的学习方法，也是最没用的。你以为读了三遍就记住了，但那只是"熟悉感"在骗你——合上书你什么都说不出来。真正有效的是主动提取：逼自己回忆，越痛苦越有效。"},
+                {num:"②",text:"学习到了瓶颈期别死磕，那是大脑在后台重装系统。平台期不是退步，是大脑在把碎片知识重新组织成更高效的结构。这时候最该做的不是加倍努力，而是换个科目让它安静干活。"},
+                {num:"③",text:"你的工作记忆只能同时处理7样东西，多一个就崩。这就是为什么上课听不懂——老师在第8个知识点了，你的内存早满了。高手的秘密不是脑子大，是会"打包"，把五个碎片压缩成一个概念。"},
+              ].map((item,i)=>(
+                <div key={i} style={{display:"flex",gap:10,marginBottom:10,padding:"12px 14px",background:"rgba(255,255,255,0.8)",borderRadius:10,border:"1px solid rgba(0,0,0,0.05)"}}>
+                  <span style={{fontSize:14,fontWeight:900,color:accent,flexShrink:0,marginTop:1}}>{item.num}</span>
+                  <span style={{fontSize:13,color:"#333",lineHeight:1.8}}>{item.text}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{marginBottom:14,padding:"14px 18px",background:`${blue}0d`,borderRadius:12,border:`1px solid ${blue}25`}}>
+              <div style={{fontSize:11,color:blue,fontWeight:700,letterSpacing:2,marginBottom:8}}>看完立刻能做的事</div>
+              <div style={{fontSize:13,color:"#333",lineHeight:1.8}}>下次学完一个章节，关掉书，拿出一张白纸，把刚学的内容默写出来——写不出来的地方就是你没真正学会的地方。第一次会很痛苦，但一周后你会发现记住的东西是以前的两三倍。</div>
+            </div>
+            <div style={{marginBottom:16,padding:"14px 18px",background:"rgba(255,255,255,0.8)",borderRadius:12,border:"1px solid rgba(0,0,0,0.06)"}}>
+              <div style={{fontSize:11,color:"#888",fontWeight:700,letterSpacing:2,marginBottom:8}}>这本书适合你吗？</div>
+              <div style={{fontSize:13,color:"#333",lineHeight:1.8}}>花了很多时间学习但总觉得"学了好像又没学"、笔记记了一堆但考试/用的时候全想不起来的人。</div>
+            </div>
+            <div style={{textAlign:"center",paddingTop:4}}>
+              <button onClick={()=>onStart&&onStart()} style={{
+                background:`linear-gradient(135deg,${accent},#ff9a3c)`,
+                border:"none",borderRadius:10,
+                padding:"11px 32px",cursor:"pointer",
+                fontSize:13,fontWeight:700,color:"#fff",letterSpacing:1,
+                boxShadow:`0 4px 14px ${accent}40`,
+                transition:"all 0.3s",
+              }}>想深入了解 → 开始阅读全文</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 const App = function App() {
   const [tab, setTab] = useState("brain");
 
@@ -938,6 +1009,7 @@ const App = function App() {
 
       {/* Content */}
       <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px 16px 60px" }}>
+        {tab==="brain"&&<SpeedRead onStart={()=>setTab("system")}/>}
         {renderTab()}
       </div>
 

@@ -927,6 +927,75 @@ function ScrollTop(){
   );
 }
 
+/* ===== 速览区 ===== */
+function SpeedRead({onStart}){
+  const[open,setOpen]=useState(true);
+  const c=P.vermillion;
+  return(
+    <div style={{margin:"24px 0 8px",animation:"fadeUp 0.5s ease both"}}>
+      <div onClick={()=>setOpen(!open)} style={{
+        background:`linear-gradient(135deg,${P.paperLight},${P.paperDeep})`,
+        borderRadius:14,overflow:"hidden",
+        border:`1px solid ${c}18`,
+        boxShadow:`0 2px 16px ${c}08`,
+        cursor:"pointer",transition:"all 0.3s",
+      }}>
+        <div style={{padding:"16px 20px 12px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:open?`1px solid ${c}10`:"none"}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <SealIcon char="览" color={c} size={32} glow={false}/>
+            <div>
+              <div style={{fontSize:16,fontWeight:800,color:P.textChapter,letterSpacing:2}}>3分钟速览</div>
+              <div style={{fontSize:11,color:P.textMuted,marginTop:2}}>不想读全文？看这里就够了</div>
+            </div>
+          </div>
+          <span style={{fontSize:13,color:P.textMuted,transition:"transform 0.3s",transform:open?"rotate(180deg)":"rotate(0)"}}>{"\u25B2"}</span>
+        </div>
+        {open&&(
+          <div style={{padding:"0 20px 20px",animation:"fadeUp 0.3s ease both"}} onClick={e=>e.stopPropagation()}>
+            <div style={{margin:"16px 0 18px",padding:"14px 18px",background:c+"08",borderRadius:10,borderLeft:`3px solid ${c}60`}}>
+              <div style={{fontSize:11,color:c,fontWeight:700,letterSpacing:2,marginBottom:6}}>一句话说清这本书</div>
+              <div style={{fontSize:15,fontWeight:700,color:P.textChapter,lineHeight:1.8}}>我们花了二十年学习怎么找到正确答案，却没有人教过我们：没有正确答案的时候怎么活下去。</div>
+            </div>
+            <div style={{marginBottom:18}}>
+              <div style={{fontSize:13,fontWeight:800,color:P.textChapter,letterSpacing:1,marginBottom:10,display:"flex",alignItems:"center",gap:6}}>
+                <span style={{display:"inline-block",width:18,height:18,borderRadius:"50%",background:c+"12",color:c,fontSize:10,fontWeight:900,textAlign:"center",lineHeight:"18px"}}>3</span>
+                记住这三点就够了
+              </div>
+              {[
+                {num:"①",text:"\u201c找到自己\u201d是个谎言，你不是被藏起来的宝藏，你是一个正在发生的动词。梭罗去瓦尔登湖不是为了逃避，是为了\u201c活得深刻\u201d——这三个字是动词，不是名词。"},
+                {num:"②",text:"人文教育最值钱的不是知识，是让你能在\u201c我不知道\u201d里待着不崩溃。这个能力在AI时代反而更稀缺了——机器什么都能答，但\u201c这个问题值不值得问\u201d只有人能判断。"},
+                {num:"③",text:"nowhere 和 now here 只差一个空格。你觉得自己困在原地的那个时刻，可能恰好是你开始真正在场的起点。不是处境变了，是你看它的方式变了。"},
+              ].map((item,i)=>(
+                <div key={i} style={{display:"flex",gap:10,marginBottom:10,padding:"10px 14px",background:P.paperLight,borderRadius:8,border:`1px solid rgba(160,140,110,0.08)`}}>
+                  <span style={{fontSize:14,fontWeight:900,color:c,flexShrink:0,marginTop:1}}>{item.num}</span>
+                  <span style={{fontSize:13,color:P.text,lineHeight:1.8}}>{item.text}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{marginBottom:18,padding:"14px 18px",background:"rgba(58,112,144,0.06)",borderRadius:10,border:"1px solid rgba(58,112,144,0.12)"}}>
+              <div style={{fontSize:11,color:"#3a7090",fontWeight:700,letterSpacing:2,marginBottom:8}}>看完立刻能做的事</div>
+              <div style={{fontSize:13,color:P.text,lineHeight:1.8}}>今天通勤路上放下手机，观察三个你以前从没注意过的细节——一个人、一个声音、一个画面。你会发现你的世界比你以为的大得多。这本书就是在训练这种能力。</div>
+            </div>
+            <div style={{marginBottom:16,padding:"14px 18px",background:P.colors[1].hex+"08",borderRadius:10,border:`1px solid ${P.colors[1].hex}12`}}>
+              <div style={{fontSize:11,color:P.colors[1].hex,fontWeight:700,letterSpacing:2,marginBottom:8}}>这本书适合你吗？</div>
+              <div style={{fontSize:13,color:P.text,lineHeight:1.8}}>道理都懂、日子也过得去，但总觉得缺了点什么——又说不上来缺什么的人。</div>
+            </div>
+            <div style={{textAlign:"center",paddingTop:4}}>
+              <button onClick={()=>onStart&&onStart()} style={{
+                background:`linear-gradient(135deg,${c}15,${c}08)`,
+                border:`1px solid ${c}30`,borderRadius:8,
+                padding:"10px 28px",cursor:"pointer",
+                fontSize:13,fontWeight:700,color:c,letterSpacing:2,
+                transition:"all 0.3s",
+              }}>想深入了解 → 开始阅读全文</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function App(){
   const[ch,setCh]=useState(0);
   const[toc,setToc]=useState(false);
@@ -962,6 +1031,7 @@ function App(){
       </div>
 
       <div style={{maxWidth:720,margin:"0 auto",padding:"0 24px 40px",position:"relative",zIndex:1}}>
+        {ch===0&&<SpeedRead onStart={()=>{setCh(1);window.scrollTo(0,0);}}/>}
         <CurrentCh/>
         <PageNav current={ch} total={CHS.length} name={CHS[ch].label} onPrev={()=>{setCh(ch-1);window.scrollTo(0,0);}} onNext={()=>{setCh(ch+1);window.scrollTo(0,0);}}/>
       </div>

@@ -272,6 +272,88 @@ body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:
 </nav>
 
 <!-- ============================================================ -->
+<!-- SPEED READ SECTION                                           -->
+<!-- ============================================================ -->
+<section class="sec" id="speed-read" style="padding:2rem 1.5rem 1rem">
+  <div style="max-width:800px;margin:0 auto">
+    <div id="speedReadCard" style="background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,0.3);transition:all 0.3s">
+      <!-- 头部 -->
+      <div onclick="toggleSpeedRead()" style="padding:16px 20px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(139,92,246,0.1));border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">⚡</div>
+          <div>
+            <div style="font-size:15px;font-weight:800;color:var(--txt);letter-spacing:1px">3分钟速览</div>
+            <div style="font-size:11px;color:var(--txt3);margin-top:2px">不想读全文？看这里就够了</div>
+          </div>
+        </div>
+        <span id="speedReadArrow" style="font-size:12px;color:var(--txt3);transition:transform 0.3s;display:inline-block;transform:rotate(180deg)">▲</span>
+      </div>
+      <!-- 内容 -->
+      <div id="speedReadBody" style="padding:0 20px 20px">
+        <!-- 一句话说清 -->
+        <div style="margin:18px 0 16px;padding:14px 18px;background:rgba(59,130,246,0.08);border-radius:12px;border-left:3px solid var(--blue)">
+          <div style="font-size:11px;color:var(--blue);font-weight:700;letter-spacing:2px;margin-bottom:6px">一句话说清这本书</div>
+          <div style="font-size:15px;font-weight:700;color:var(--txt);line-height:1.8">AT&amp;T，128年的电信帝国，不是被对手打败的——是自己签字把自己拆成了三块，然后再也没拼回来。</div>
+        </div>
+        <!-- 记住这3点 -->
+        <div style="margin-bottom:16px">
+          <div style="font-size:13px;font-weight:800;color:var(--txt);letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+            <span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:rgba(59,130,246,0.15);color:var(--blue);font-size:11px;font-weight:900;text-align:center;line-height:20px">3</span>
+            记住这三点就够了
+          </div>
+          <div class="speed-read-items">
+            <div class="speed-read-item">
+              <span class="speed-read-num">①</span>
+              <span class="speed-read-text">比尔·盖茨创业时手里没有产品、没有技术，他只做了一件事：签了一份让IBM后悔一辈子的合同。IBM觉得硬件才是命脉，软件不值钱——这个判断直接送走了一个帝国，成就了另一个。赢家不是技术最强的，是最早看懂哪一层最值钱的。</span>
+            </div>
+            <div class="speed-read-item">
+              <span class="speed-read-num">②</span>
+              <span class="speed-read-text">乔布斯大学唯一认真上的课是书法课，这成了苹果甩开所有对手的武器。看起来最没用的东西变成了最大的壁垒。核心竞争力从来不是规划出来的，是从意想不到的经历里长出来的。</span>
+            </div>
+            <div class="speed-read-item">
+              <span class="speed-read-num">③</span>
+              <span class="speed-read-text">Google最伟大的发明不是搜索技术，是"竞价排名"这个商业模式。技术领先只能赢一时，想明白怎么把技术变成钱才能赢一世。每一代浪潮里，最终活下来的都不是技术最牛的公司，而是最先找到商业模式的公司。</span>
+            </div>
+          </div>
+        </div>
+        <!-- 看完能做的事 -->
+        <div style="margin-bottom:14px;padding:14px 18px;background:rgba(6,182,212,0.08);border-radius:12px;border:1px solid rgba(6,182,212,0.2)">
+          <div style="font-size:11px;color:var(--cyan);font-weight:700;letter-spacing:2px;margin-bottom:8px">看完立刻能做的事</div>
+          <div style="font-size:13px;color:var(--txt2);line-height:1.8">看看你现在所在的行业，问自己一个问题："这个行业里，什么东西现在被认为不重要，但五年后可能变成最关键的一层？"AT&amp;T觉得软件不重要，唱片公司觉得互联网不重要，出租车公司觉得App不重要——找到那个被低估的层，就是你的机会。</div>
+        </div>
+        <!-- 适合谁 -->
+        <div style="margin-bottom:16px;padding:14px 18px;background:rgba(139,92,246,0.08);border-radius:12px;border:1px solid rgba(139,92,246,0.2)">
+          <div style="font-size:11px;color:var(--purple);font-weight:700;letter-spacing:2px;margin-bottom:8px">这本书适合你吗？</div>
+          <div style="font-size:13px;color:var(--txt2);line-height:1.8">在职场或创业中隐约感觉"风要变了"但不知道风往哪吹的人。</div>
+        </div>
+        <!-- CTA -->
+        <div style="text-align:center;padding-top:4px">
+          <a href="#waves" style="display:inline-block;background:linear-gradient(135deg,var(--blue),var(--purple));border:none;border-radius:10px;padding:11px 32px;font-size:13px;font-weight:700;color:#fff;letter-spacing:1px;text-decoration:none;box-shadow:0 4px 14px rgba(59,130,246,0.35);transition:all 0.3s">想深入了解 → 开始阅读全文</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+.speed-read-item{display:flex;gap:10px;margin-bottom:10px;padding:12px 14px;background:var(--card2);border-radius:10px;border:1px solid var(--border)}
+.speed-read-num{font-size:14px;font-weight:900;color:var(--blue);flex-shrink:0;margin-top:1px}
+.speed-read-text{font-size:13px;color:var(--txt2);line-height:1.8}
+</style>
+<script>
+function toggleSpeedRead(){
+  var body=document.getElementById('speedReadBody');
+  var arrow=document.getElementById('speedReadArrow');
+  if(body.style.display==='none'){
+    body.style.display='block';
+    arrow.style.transform='rotate(180deg)';
+  }else{
+    body.style.display='none';
+    arrow.style.transform='rotate(0deg)';
+  }
+}
+</script>
+
+<!-- ============================================================ -->
 <!-- SECTION 1 · TECHNOLOGY WAVES TIMELINE                        -->
 <!-- ============================================================ -->
 <section class="sec" id="waves">
