@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>财务自由之路 · 深度拆解 | 拆卷</title>
+<meta name="description" content="博多·舍费尔《财务自由之路》深度拆解——金钱心理学、信仰改造、收入倍增、复利投资的完整路径">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f0f2f7; font-family: 'Noto Serif SC', 'PingFang SC', 'Hiragino Sans GB', Georgia, serif; color: #1a1a1a; }
+  html { scroll-behavior: smooth; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+/* ===== DESIGN TOKENS ===== */
+const C = {
+  bg: "#f0f2f7",
+  white: "#ffffff",
+  text: "#1a1a1a",
+  light: "#555555",
+  muted: "#999999",
+  border: "#e4e7ed",
+  /* Gold: ONLY for borders/lines/small tags/icons — NEVER large backgrounds */
+  gold: "#D4A847",
+  /* Module accent colors */
+  m1: "#5B8DD9",
+  m2: "#7C6FBF",
+  m3: "#D4605A",
+  m4: "#4A9D7B",
+  m5: "#E07E3A",
+  m6: "#3A8BBF",
+  m7: "#8B6DD9",
+};
+
+/* ===== TAB CONFIG ===== */
+const CHS = ["导读", "心智重塑", "信仰改造", "穷人习惯", "收入倍增", "储蓄纪律", "复利投资", "自由阶梯", "全书回望"];
+const CH_ICONS = ["📖", "🧠", "💭", "🔍", "💰", "🐦", "📈", "🏔️", "🌅"];
+const CH_COLORS = [C.gold, C.m1, C.m2, C.m3, C.m4, C.m5, C.m6, C.m7, C.gold];
+
+/* ===== MODULE DATA ===== */
+const MODULES = [
+  /* ---- Module 1: 心智重塑 ---- */
+  {
+    title: "财富心智重塑",
+    subtitle: "你的操作系统决定你能装什么软件",
+    icon: "🧠",
+    color: C.m1,
+    formula: "财富 = 梦想 × 目标 × 价值观 × 策略",
+    formulaNote: "四者必须对齐。任何一根支柱方向偏离，另三根再强也会把你拉回原地。",
+    insight: "舍费尔发现自己「日进斗金」却负债累累时，答案让他吃了一惊：他内心深处从不认为金钱是善物。他的父亲工作过度而死，母亲相信「富人进天堂比骆驼穿过针孔还难」。于是他一边想变富，一边又害怕变富——两股力量撕扯，让他原地踏步。\n\n真正的改变必须在五个层次同时发生：行动 → 技巧 → 个人发展 → 世界观 → 自我认知。大多数人只在前两层折腾。他们拼命加班、学习新技能，但从不触碰深层的世界观和自我认知。这就是为什么很多人「努力了一辈子」却没有实质性改变。",
+    cases: [
+      {
+        title: "博多的价值观撕裂",
+        preview: "他一方面想变富，一方面内心认为贫穷是福——两套价值观在互相抵消。",
+        scene: "博多26岁，收入不低却负债累累。表面上他拼命赚钱，却总是花光或亏掉。",
+        conflict: "一方面想变富（憎恶贫穷）；另一方面内心认为金钱会害死人（父亲过劳而死）、贫穷是福（母亲的宗教影响）。两套价值观将他引向两个方向。",
+        turning: "认识教练后，他第一次意识到——不是赚钱能力不够，而是两套价值观在互相抵消。他所谓的「尝试」变富，本身就意味着为失败留好了退路。",
+        result: "当他终于让梦想、目标、价值观和策略四者对齐，仅用4年就实现了仅靠利息生活。",
+      },
+      {
+        title: "双胞胎兄弟的分岔路",
+        preview: "同样的基因、父母、教育、环境，一个杀人入狱，一个成为有名望的律师。",
+        scene: "一对双胞胎在酗酒暴力的家庭中长大，父亲偷盗度日，7岁起两个孩子也学着偷。",
+        conflict: "弟弟杀人入狱，记者问他「何以至此」，他说：「在这种环境下成长，我还能成为什么？」记者找到哥哥——竟是一位有名望的律师，家庭幸福。",
+        turning: "哥哥讲述了完全相同的童年，结尾却说：「在常年经历这些的情况下，我除了变成现在这样，还能变成什么呢？」——同样的环境，不同的「反应选择」。",
+        result: "同样的基因、父母、教育、环境，不同的世界观，截然不同的人生。外部环境决定不了你——你对环境的解读方式才决定你。",
+      },
+      {
+        title: "史蒂芬·柯维火车上的范式转换",
+        preview: "三个吵闹的孩子、一个漠然的父亲——直到一句话让柯维的整个世界观在一秒内被改写。",
+        scene: "柯维在火车上准备演讲稿，一名男子带着三个越来越过分的孩子进入车厢。父亲无动于衷，孩子扯乘客衣服、揪头发。",
+        conflict: "柯维忍无可忍，果断站起来要求这位父亲管教孩子。父亲缓缓回过神……",
+        turning: "「是的，对不起。我妻子——孩子们的母亲，几个小时前去世了。我还不知道以后该怎么生活。」柯维的整个判断框架在一秒内被改写。",
+        result: "这就是「换一副眼镜看世界」——同一个现实，不同的镜片，完全不同的判断。舍费尔用这个故事说明变化的第四层次：世界观的改变。",
+      },
+    ],
+    action: {
+      five: "拿出一张纸，画四个格子，分别写下你的梦想、目标、价值观、策略。看看它们是否指向同一个方向。如果价值观和目标冲突（比如你想赚钱但认为「有钱人不幸福」），把冲突标记出来。",
+      ten: "在上述基础上，为每个冲突写下：这个信念是谁教给我的？他自己富有吗？如果我继续持有这个信念，5年后我的生活会是什么样？",
+      fifteen: "开始你的第一篇成功日记。写下今天发生的5件好事（再小也行）。大脑记住失败的时间是成功的11倍，你必须主动对抗这种偏差。从明天开始，每天坚持。",
+    },
+    insight2: "大多数人以为自己的问题是「不够努力」，其实问题是「四根支柱没对齐」。你的价值观在悄悄抵消你的目标——这才是你原地踏步的真正原因。你不需要更多的鸡血，你需要的是一次深刻的自我审计。",
+    commentary: "舍费尔说「变化必须在5个层次同时发生」，但他没有充分讨论：当你的生存环境本身就是最大阻碍时怎么办？他16岁去美国、后来遇到亿万富翁教练，这些机遇本身具有极大的偶然性。我的建议是：不必一步到位地改变环境，但必须在现有环境中建立「信息隔离带」——控制你每天接收的信息输入，这是你现在就能做到的第一步。",
+    transition: "当你的四根支柱终于对齐，你会发现一个惊人的事实：不是你变得更能干了，而是你不再自我对抗了。但光有心智框架不够，你还需要面对那个更深的对手——你关于金钱的真实信仰。",
+  },
+
+  /* ---- Module 2: 信仰改造 ---- */
+  {
+    title: "金钱信仰改造",
+    subtitle: "你的潜意识在暗中下单",
+    icon: "💭",
+    color: C.m2,
+    formula: "财务现状 = 金钱信仰的外在投射",
+    formulaNote: "你今天拥有的一切，都是你的潜意识为你「订购」的结果。",
+    insight: "舍费尔提出了一个极其精妙的比喻：生活就像一家邮购商店，寄来的都是你订购的东西。你不会写信给商店说「请给我寄点好东西」——你需要明确的订单。\n\n问题是：你嘴上说的和你潜意识订购的，往往是两回事。你说「我想要更多的钱」，但你的潜意识可能在订购「安全感」「道德优越感」「不被嫉妒」。这些订单的优先级，比「更多钱」高得多。\n\n信仰的「桌子模型」：桌面是你的信仰，桌腿是支撑它的经验和证据。一个想法要变成信仰，至少需要3-4根桌腿。人类有一个致命倾向：总去寻找能证实自己想法的事实——不是在寻找真相，而是在为已有的结论寻找证据。",
+    cases: [
+      {
+        title: "500欧元实验",
+        preview: "大多数人随身不到150欧元，他们给潜意识传递的信号是：我和大量金钱在一起会不舒服。",
+        scene: "舍费尔在讲座上问学员「你随身带多少现金」，大多数人不到150欧元。",
+        conflict: "问他们为什么不带500欧元，回答是：怕丢、怕花光、怕被偷、浑身不自在。而这仅仅是500欧元。如果金额更大呢？",
+        turning: "这些恐惧就是你给潜意识传递的信号——你在告诉潜意识「我和大量金钱在一起会不舒服」。就像哑铃锻炼肌肉，随身携带500欧元（且不能花掉）是在锻炼你的财富潜意识。",
+        result: "「你绝不会遇到一个随身携带储备金低于500欧元的有钱人。」对金钱的自在感，是财富信仰的入门训练。",
+      },
+      {
+        title: "博多与跑步的信仰转变",
+        preview: "一个存在了十几年的信仰，在一次正确的经历中被彻底颠覆——旧桌子倒了，新桌子立起来了。",
+        scene: "博多96公斤，体育老师曾嘲笑他「大象的步伐都比你轻盈」，全班大笑。从此「跑步很愚蠢」成为牢固信仰，有无数桌腿支撑。",
+        conflict: "这个信仰根深蒂固——体育课的羞辱、体重带来的不适、多年来的反复验证。要动摇它几乎不可能。",
+        turning: "在夏威夷遇到马拉松世界纪录保持者斯图·米德尔曼。斯图说「从你走路的姿势看，你其实可以跑得很好」，然后亲自教他正确的跑步方式。",
+        result: "博多跑了两个半小时，不再觉得累。之后每天跑步，保持78公斤。旧桌子在一次正确的经历中倒了，新桌子建立起来了。信仰可以改变——需要的是真实的新经验作为新桌腿。",
+      },
+      {
+        title: "舍费尔的金钱观冲突",
+        preview: "他确实赚到了钱，但潜意识会「帮」他把钱花掉、亏掉，让他回到「安全」的贫穷状态。",
+        scene: "博多一方面想变富（憎恶贫穷），另一方面内心认为「金钱会害死人」（父亲过劳而死）和「贫穷是福」（母亲的宗教影响）。",
+        conflict: "两个信仰将他引向两个方向。结果是：他确实赚到了钱，但潜意识会「帮」他把钱花掉、亏掉，让他回到「安全」的贫穷状态。",
+        turning: "认识教练后，他第一次将这些信仰摊开审视，发现它们都是别人「种」进他脑子里的——他的潜意识在执行别人的程序，而不是他自己想要的程序。",
+        result: "通过「30分钟信仰改变法」，他用新信仰（「我可以用金钱做许多好事」）替代旧信仰，并开始寻找新的桌腿来支撑。4年后，他仅靠利息生活。",
+      },
+    ],
+    action: {
+      five: "写下你关于金钱最强烈的3个信仰。在每个旁边标注「+」或「-」——它帮助还是阻碍你变富？诚实面对，不要自欺。",
+      ten: "选择一个标注「-」的信仰，回答五步法中的5个问题（写下来，不要只在脑子里想）：① 为什么这个信仰可能是错的？② 给我灌输这个想法的人富裕吗？③ 继续持有这个信仰，我财务上要付出什么代价？④ 我的家人会付出什么代价？⑤ 如果现在改变，生活会怎样改善？",
+      fifteen: "构建新信仰的第一根桌腿——找一个你认识的、有钱且品德好的人，写下他/她的名字和事迹。这就是你的第一根新桌腿。然后主动去接触他/她，创造能加固新桌腿的真实经验。",
+    },
+    insight2: "你的银行账户是你金钱信仰的成绩单。不是你「配不配」有钱的问题，而是你的潜意识在忠实地执行你自己下达的订单。要改变结果，先改变订单。改变订单的方法不是「自我催眠」，而是真实地去寻找、创造、经历那些能支撑新信仰的证据。",
+    commentary: "舍费尔把信仰改造说得太轻松了——「30分钟改变一个信仰」。表面的认知转变确实可以很快，但深层的情感记忆不会因为一个练习就消失。那个在体育课上被嘲笑的男孩，即使理智上知道「跑步没问题」，身体里的羞耻感不会在30分钟内蒸发。更诚实的说法：30分钟可以启动信仰改变，但真正内化需要反复的正面经验来加固新桌腿。不要对自己失去耐心。",
+    transition: "信仰改造是内功。但光有内功不够，你还需要看清那些阻碍你变富的具体行为模式。接下来，我们来解剖穷人的8条致命习惯——你可能中了不止一条。",
+  },
+
+  /* ---- Module 3: 穷人习惯 ---- */
+  {
+    title: "穷人为什么穷",
+    subtitle: "8条致命习惯的解剖",
+    icon: "🔍",
+    color: C.m3,
+    formula: "贫穷 = 简单的错误 × 长期重复",
+    formulaNote: "致富的基本原则很简单，但「保持贫穷」同样简单——每天不写成功日记不难，每月不存10%也很容易。",
+    insight: "「学习本书中描述的致富基本原则很简单。那为什么没有更多的人变得富有？因为保持贫穷状态同样简单。」\n\n每天写成功日记不难，但每天不写也很容易。每个月存10%不难，但全花光同样容易。不同的选择，差异来自你的信念。舍费尔总结了8条致命习惯，它们不是你的「缺点」，而是你信仰系统的外在表现：\n\n① 对财富没有明确数字定义　② 目标摇摆不定　③ 不把财富当「绝对必需品」　④ 做不到坚持到底　⑤ 不承担责任　⑥ 不付出110%的努力　⑦ 缺少教练　⑧ 只关注劣势",
+    cases: [
+      {
+        title: "特德·特纳的大目标法则",
+        preview: "大目标反而比小目标更容易实现——因为目标足够大，问题就相对变小，无法完全挡住你的视线。",
+        scene: "你设立了一个小目标。当你和目标之间出现障碍，你的视线就被完全挡住了——你看不见目标，只看见问题。",
+        conflict: "恐惧和怀疑随之而来。你换一个新目标——又被新问题挡住——再换——周而复始。小目标反而让你陷入问题漩涡。",
+        turning: "CNN创办者特德·特纳年轻时从父亲那里学到：为自己设定有生之年无法实现的目标。他决定建立全世界最大的广播电视网。路上障碍无数，但特纳说：「出现这些问题无所谓，同我的目标相比，它们都不算大。」",
+        result: "大目标反而比小目标更容易实现。目标与问题成比例——目标足够大，问题就相对变小，无法完全挡住你的视线。问题不消失，但它们再也无法阻止你前进。",
+      },
+      {
+        title: "峡谷里的钱包 vs 小女孩",
+        preview: "关键不是自律，而是将目标变成「不实现就无法活下去」的东西。",
+        scene: "你穿过森林来到峡谷边。5米深处有一个钱包，露出几张10欧元的钞票。你开始往下爬，突然失足，险些丧命，于是放弃了。",
+        conflict: "如果峡谷里躺着的不是钱包，而是一个受伤的小女孩呢？",
+        turning: "你不会问「我该不该下去」——你会直接问「我怎么才能救她」。因为这变成了「绝对必需品」。金钱是可放弃的，小女孩不可放弃。",
+        result: "积累了大量财富的人，并非遵守纪律的典范——他们只是做了他们认为必须做的事。关键不是自律，而是将目标变成「不实现就无法活下去」的东西。如何让你的财务目标变成那个「小女孩」？",
+      },
+      {
+        title: "丘吉尔的最短演讲",
+        preview: "他重复了四遍「绝不」——因为他太了解人性了。如果我们为自己设立极限，那么我们就会去达到这个极限。",
+        scene: "丘吉尔踏入耄耋之年，被邀请到一所大学做演讲。上千人挤满礼堂，期待他一生智慧的总结。",
+        conflict: "丘吉尔走向麦克风，只说了一句话：「绝不、绝不、绝不、绝不放弃。」然后坐下。演讲结束。",
+        turning: "他重复了四遍「绝不」——因为他太了解人性。如果我们为自己设立极限，我们就会达到这个极限，但不会超越。连一个极限都不要设。",
+        result: "德军轰炸伦敦时，所有顾问都劝丘吉尔投降。据说他每个夜晚都对着轰炸机挥舞拳头大喊：「你们赢不了我。我绝不放弃！」最难抵抗的压力，往往来自最亲近的人。",
+      },
+      {
+        title: "灰胡子先生的67年经验",
+        preview: "跟他学习6个月，你学到了67年的经验——这就是教练的价值：缩短学习曲线，避免走弯路。",
+        scene: "你刚拿到林学专业学位，移民加拿大要管理5000公顷山林，两眼一抹黑。",
+        conflict: "你可以慢慢摸索，花几十年踩坑学习。但你发现这里有一位在此生活了67年的老林区管理员——灰胡子先生，他熟悉每一条小路、每一种动物、每一个蛇巢。",
+        turning: "跟他学习6个月，你学到了他67年积累的经验。用最短时间获得最多知识，避免走弯路。",
+        result: "教练的价值：缩短你的学习曲线，在最短时间内将你的才能激发出来。没有教练，你只能靠试错——而错误的代价，往往是你负担不起的。",
+      },
+      {
+        title: "史蒂芬·格拉芙的正手击球",
+        preview: "为你的劣势找解决方案，为你的优势找教练——而不是把全部精力投入消极防御。",
+        scene: "史蒂芬·格拉芙特别擅长正手击球。对手总是攻击她的反手。她的训练调整为锻炼较弱的反手。",
+        conflict: "结果格拉芙失去了对网球的兴趣。她把更多精力投入消极防御，而不是主动进攻。比赛是消极防御还是主动进攻，天壤之别。",
+        turning: "格拉芙的正确做法是：锻炼自己跑到球的另一边，用正手击球。把劣势转化为「找解决方案」的问题，把优势转化为「找教练放大」的机会。",
+        result: "「为你的劣势找解决方案，为你的优势找教练。」这句话是8条习惯中最具操作性的一条。你花了多少时间在弥补劣势？又花了多少时间放大你真正的优势？",
+      },
+    ],
+    action: {
+      five: "对着8条习惯逐一打分（1-10分），找出你最严重的3条。不要自我辩护，如实评分。",
+      ten: "为最严重的那一条，写下一个具体的改变承诺。比如「对财富没有明确定义」→今天写下一个具体数字（在___年内，我将获得___元）。",
+      fifteen: "开始构建你的「绝对必需品」——制作梦想图册第一页。找一张代表你梦想生活的图片（旅行目的地、理想的家、你想要的生活状态），打印或保存在你每天能看到的地方。",
+    },
+    insight2: "致富的规则很简单，保持贫穷的规则也很简单。区别不在于你「知不知道」，而在于你的信念让你「做了哪一种简单的事」。每天不存钱很简单，每天存10%也很简单。你选择哪一种「简单」，决定了你7年后的人生。",
+    commentary: "这8条习惯的诊断非常准确，但舍费尔隐含了一个有问题的前提——穷人之所以穷完全是因为自身选择。这忽略了系统性的不平等。一个出生在贫民窟的人和一个出生在中产家庭的人，「承担责任」的起跑线完全不同。我不反对「承担责任」的理念，但必须补充：承认系统性障碍的存在，不等于放弃个人责任。两者可以并存。",
+    transition: "知道了「为什么穷」还不够，你还需要知道「怎么富」。光改变心智和信仰，不改变收入，那是空中楼阁。接下来进入实战——如何让你的收入倍增。",
+  },
+
+  /* ---- Module 4: 收入倍增 ---- */
+  {
+    title: "收入倍增系统",
+    subtitle: "乘法而非加法",
+    icon: "💰",
+    color: C.m4,
+    formula: "收入 = 能力 × 精力 × 影响力 × 自我评价 × 创意",
+    formulaNote: "注意：是乘法关系！任何一项为零，总分为零。影响力满分100分，是最强杠杆，也是被最多人忽视的短板。",
+    insight: "舍费尔提出了一个惊人的收入公式：五个板块相乘再除以二。关键洞察：这是乘法关系，不是加法。如果你的影响力只有3分（满分100），即使其他四项都是满分10，月收入也只有15000欧元。但如果你把影响力提到30分，其他不变，收入就变成150000欧元——整整10倍。\n\n网球运动员贝克尔挣到大钱不是因为他最优秀，而是因为成千上万的观众观看他的比赛。影响力是最强的杠杆，也是被最多人忽视的短板。\n\n你获得的收入来自你为市场创造的四种价值：产品价值（你卖什么）、知识价值（你知道什么）、服务价值（你能做什么）、创意价值（你能想到什么）。",
+    cases: [
+      {
+        title: "展示强项而非需求来谈加薪",
+        preview: "金钱和机遇应能力而产生，而非应需求而产生——这是最反直觉也最有效的加薪逻辑。",
+        scene: "员工「需求」先生对老板说：「我们家又添了一个小孩，需要更大的公寓，需要新车……我需要加薪。」",
+        conflict: "老板不仅拒绝了，还可能决定不再需要「需求」先生——因为他表达的是「我的需要」，而不是「我的价值」。",
+        turning: "如果你想获得加薪，你得解释清楚你为什么「值得」。罗列你为公司创造的价值，展示你的强项，说明你的贡献如何帮助公司赚更多钱。",
+        result: "「金钱和机遇应能力而产生，而非应需求而产生。」这是最反直觉也最有效的加薪逻辑。从「我需要」转变为「我值得」，是收入跃升的第一步。",
+      },
+      {
+        title: "博多教练倒咖啡的教训",
+        preview: "没有自律，你的才能一文不值——就像倒在地上的咖啡，再好的豆子也是浪费。",
+        scene: "博多和教练一起去厨房取咖啡。教练拿起一壶咖啡，直接往地上倒。博多跳到一边：「等等！您还没拿杯子呢！」教练无动于衷地继续倒。",
+        conflict: "博多愣住了。教练缓慢而有力地说：「你看到了吗？咖啡就好像是你的才能，它们一文不值地躺在地上。没有倒进杯子的咖啡一文不值，再多也无用。」",
+        turning: "「没有自律，你的才能也是一文不值。」博多在擦拭厨房地面的咖啡时，第一次将自律看作才能的杠杆。",
+        result: "从「无才之人才需要的过时品质」变为「才能的放大器」——这彻底改变了博多对自律的信仰。你的才能已经足够了吗？你的「杯子」准备好了吗？",
+      },
+      {
+        title: "瑞德·埃德尔的专家定位",
+        preview: "全世界有数百万消防员，他们鲜为人知。但瑞德·埃德尔几乎家喻户晓——因为他只处理大型油井火灾。",
+        scene: "全世界有数百万消防员，他们默默无闻地工作。但有一个消防员几乎家喻户晓——瑞德·埃德尔，因为他只处理大型油井火灾。",
+        conflict: "如果你做所有人都做的事情，你只会拥有所有人都有的东西。如何在一个竞争激烈的领域脱颖而出？",
+        turning: "关键不在于你比别人更好，而在于你与众不同。如果你把自己定位为特定领域的专家，客户就会主动来找你。你今天就能写一个「专家广告」——假设你已经是这个领域的专家，你会怎么介绍自己？",
+        result: "「3年后成为你所在领域的专家」——这是舍费尔给出的时间框架。今天写一个整版广告把自己宣传为专家，这个练习会逼你从客户角度思考你的价值。",
+      },
+    ],
+    action: {
+      five: "给自己的能力（1-10）、精力（1-10）、影响力（1-100）、自我评价（1-10）、创意（1-10）各打一分，算出总分÷2=你的月收入上限估算。找出最低的那一项。",
+      ten: "为最低项制定一个72小时内可执行的具体行动。比如影响力最低→今天在社交媒体/朋友圈发布一条关于你专业领域的见解，配合你真实的经历。",
+      fifteen: "写一个「专家广告」——假设你已经是这个领域的专家，写出一段100字的自我介绍，从客户的痛点出发，说明你能解决什么问题、有什么独特能力。写完后，发给一个信任的朋友寻求反馈。",
+    },
+    insight2: "大多数人试图通过「更努力地工作」来增加收入，这是加法思维。真正的收入倍增来自乘法思维——找到你公式里的最短板（通常是影响力），集中突破。把影响力从3分提到30分，比把能力从8分提到9分，效果大10倍。",
+    commentary: "影响力确实是最强杠杆，但舍费尔低估了一件事：他写这本书时（1990年代末），对「影响力」的理解还停留在「让更多人知道你」的层面。今天，影响力的构建方式已经完全不同——一个TikTok视频就可能让你一夜之间被百万人知道。但这也意味着竞争更激烈、注意力更稀缺。核心原则不变，但执行方式需要完全更新。",
+    transition: "收入倍增解决了「开源」的问题，但如果你赚多少花多少，永远不会富有。接下来，我们要面对一个残酷的真相：使你变得富有的不是收入，而是储蓄。",
+  },
+
+  /* ---- Module 5: 储蓄纪律 ---- */
+  {
+    title: "储蓄纪律与债务脱困",
+    subtitle: "别杀你的鹅",
+    icon: "🐦",
+    color: C.m5,
+    formula: "财富 = 储蓄率 × 时间 × 复利",
+    formulaNote: "收入高不等于富有。存下来的钱才算你的，是你的「鹅」，能为你生「金蛋」。",
+    insight: "一个贫穷的农夫发现鹅每天下一枚金蛋，很快变得富有。他贪心不足，想一次性得到所有金蛋，于是杀了鹅。结果只看到一个尚未成形的金蛋。\n\n鹅 = 你的资本；金蛋 = 利息/收益；杀鹅 = 动用你的本金。\n\n大多数人都在杀自己的鹅。他们把所有收入花光，「鹅」永远长不大，自然也下不了金蛋。解决方案只有一个：月初先支付自己10%——不是月末存剩的钱（那永远不会有剩余），而是月初发工资的第一件事，就把10%转入「鹅账户」。\n\n惊人的真相：使用收入的90%生活，与使用100%相比，几乎没有区别。你根本感觉不到少了那10%。",
+    cases: [
+      {
+        title: "沃伦·巴菲特的报童时代",
+        preview: "他看到的不是今天的10000美元，而是这10000美元在20年后的价值。这一个思维差异，造就了世界首富。",
+        scene: "巴菲特起初是一个报童——极早开始存钱。他几乎不买任何东西，不是因为买不起，而是因为他看到的不是今天的10000美元，而是这10000美元在20年后的价值。",
+        conflict: "「也许你会说：无聊至极。」——大多数人觉得现在享受比留着钱更值得，毕竟未来不确定。",
+        turning: "如果你40年前把10000美元交给巴菲特去投资，今天就变成8000万美元。巴菲特1993年个人资产已达170亿美元。",
+        result: "秘诀极其简单：储蓄，投资；继续储蓄，继续投资。没有捷径，没有秘密武器，只有复利在时间的长河中安静地工作。你的「报童时代」从今天开始还不晚。",
+      },
+      {
+        title: "约翰·邓普顿勋爵的50%储蓄率",
+        preview: "关键性的时刻，恰恰是那些收入太少、几乎无法存下50%的月份——那才是真正建立财富意识的时刻。",
+        scene: "邓普顿19岁时，与妻子共同决定存下每月收入的50%。有些月份收入极低，50%几乎不可能。",
+        conflict: "在最困难的时候，是选择降低储蓄率「喘口气」，还是无论如何坚持？",
+        turning: "后来他成了亿万富翁和世界上最受尊敬的基金经理之一。他说：关键性的时刻恰恰是那些收入太少、几乎无法存下50%的月份。",
+        result: "正是在最困难的时候坚持储蓄，才建立起了真正的财富意识和自律能力。困难的月份不是例外情况，而是你财富意识的真正考场。",
+      },
+      {
+        title: "博多的「5马克计划」",
+        preview: "坚持8个月后，他不仅积累了第一笔现金储备，还清偿了所有债务。更重要的是建立起了极大的自信。",
+        scene: "博多决定每天只用5马克生活（固定支出除外）。他开着没有司机侧门把手的福特嘉年华，每次都要像「96公斤的松鼠」一样从副驾驶爬进去。",
+        conflict: "他甚至试图花180马克买一个新门把手，差点说服自己这是「绝对必需品」。内心的声音说：「这点小钱算什么，买了吧。」",
+        turning: "他没有买。而是每次停车都让司机侧紧靠墙壁，避开问题而不是花钱解决问题。",
+        result: "坚持8个月后，不仅积累了第一笔现金储备，还清偿了所有债务。更重要的是：「从那时起，我就知道，我自律的表现就是——执行我计划好的事情。」这种自信，比那180马克值钱一千倍。",
+      },
+    ],
+    action: {
+      five: "今天就在你的银行app上开一个新的储蓄子账户，命名为「鹅」。设置月初自动转账，金额为月收入的10%（哪怕先从5%开始）。",
+      ten: "计算你的「杀鹅行为」——过去3个月，你有哪些支出是用本该属于「鹅」的钱买的？列出来。不是为了自责，而是为了看清楚。",
+      fifteen: "写下你的「5马克计划」版本——挑战自己一周内每天的随机消费不超过___元（金额由你定，比现在低50%）。把这个挑战告诉一个会监督你的朋友。",
+    },
+    insight2: "你以为你「需要」100%的收入来维持生活。这是你的潜意识在为消费行为辩解。真相是：你真正「需要」的东西少之又少，其余都是「想要」伪装成的「需要」。认清这一点，储蓄就不再是「牺牲」，而是「选择」。",
+    commentary: "舍费尔的「50/50原则」（有债务时50%还债、50%储蓄）在财务顾问眼中是有争议的。传统理财建议是优先还清高息债务，因为信用卡利率（15-25%）远高于储蓄收益。从纯数学角度看，先还高息债确实更划算。但舍费尔的逻辑不是数学逻辑，而是心理学逻辑——他关注的是人的行为动机和自我认同。我的建议：如果你的消费债利率超过15%，先集中还清它，然后立即开始50/50。",
+    transition: "储蓄解决了「留住钱」的问题，但钱放着不动会被通胀吃掉。接下来，我们要让钱为你工作——进入复利和投资的世界。",
+  },
+
+  /* ---- Module 6: 复利投资 ---- */
+  {
+    title: "复利与投资原则",
+    subtitle: "让你的钱替你上班",
+    icon: "📈",
+    color: C.m6,
+    formula: "72 ÷ 年利率 = 资金翻倍所需年数",
+    formulaNote: "72法则：12%利率下，你的钱每6年翻一倍。利率从7%提升到21%，最终收益不是3倍——而是接近30倍。",
+    insight: "复利只有三个要素：时间、利率、本金。三者缺一不可。\n\n每月存100欧元，坚持35年：年利率7%→166,722欧元；年利率12%→524,785欧元；年利率21%→4,671,602欧元。利率3倍，收益接近30倍——这就是乘法的威力。\n\n投资 vs 投机 vs 债务的本质区别：资金流动的方向说明一切。\n• 投资：从购买那一刻起就定期获得收益（租金、股息）\n• 投机：购买后等待升值，卖出时才知道赚还是亏\n• 债务：金钱从你的口袋流出（房贷、车贷）\n\n穷人付出复利（信用卡利息越滚越大），富人收获复利（投资收益越滚越大）。",
+    cases: [
+      {
+        title: "自住房是投资还是债务？",
+        preview: "「购买房子对你是债务，对银行是投资。」这是全书最颠覆认知的一句话。",
+        scene: "一位年迈的女士问舍费尔：「银行说房子是最好的投资啊？」",
+        conflict: "舍费尔回答：「银行说得对，但没说清楚——对谁来说是投资？」你每月支付利息给银行，金钱从你的口袋流出。对你来说是债务。但这些利息流入银行的口袋，对银行来说是投资。",
+        turning: "即使你还清了房贷，房子仍然是债务——税费、保险费、维修费持续流出。「购买房子对你是债务，对银行是投资。」",
+        result: "自住房是奢侈品，不是投资。舍费尔不反对买房，但强调：先投资、后买房。先让你的鹅长大，用金蛋的收益来支付房贷——这才是正确的顺序。",
+      },
+      {
+        title: "法老的7头肥牛和7头瘦牛",
+        preview: "「大多数人的生活方式都好像自己永远不会出现收入微薄的情况。但这种情况肯定会出现的。」",
+        scene: "法老梦见7头肥美的奶牛从尼罗河中爬出来，身后跟着7头干瘦的奶牛——瘦牛吞噬了肥牛。约瑟夫析梦：7年丰年之后将有7年饥荒。",
+        conflict: "约瑟夫建议委任财务部长，在丰年收集所有人1/5的粮食储备。这意味着在好日子里主动「克制」。",
+        turning: "埃及因此度过了饥荒。其他没有准备的国家则陷入绝境。",
+        result: "教练用这个故事告诉博多：「大多数人的生活方式都好像自己永远不会出现收入微薄的情况。但这种情况肯定会出现的。」你必须成为自己的财务部长——在丰年存粮，而不是在饥荒时才后悔。",
+      },
+      {
+        title: "沃尔玛的投资奇迹",
+        preview: "1975年投入90000欧元购买沃尔玛股票，20年后变成2663万欧元——而沃尔顿本人还住在第一栋房子里，开着老旧的皮卡。",
+        scene: "山姆·沃尔顿用岳父借来的钱买了一家小商店，创造了折扣店概念。初期遭遇挫折，但他没有放弃，持续扩张。",
+        conflict: "如果你在1975年有90000欧元，你会怎么用？买房？消费？还是投资一家看起来「还不够大」的折扣连锁店？",
+        turning: "1975年投入90000欧元购买沃尔玛股票，10年后变成320万欧元，20年后变成2663万欧元。",
+        result: "这就是复利+投资的力量。而沃尔顿本人生活极为朴素——还住在第一栋房子里，开着老旧的皮卡。财富不是为了炫耀，而是为了积累更多产生金蛋的鹅。",
+      },
+    ],
+    action: {
+      five: "用72法则算一下——按你现在的储蓄利率，你的钱要多久才能翻倍？如果答案让你不安，那就对了。这个「不安感」就是你开始行动的动力。",
+      ten: "区分你的资产——列出你所有的「资产」，在每一项旁边标注「投资」（金钱流入）还是「债务」（金钱流出）。你可能会发现，你以为的「投资」其实都是债务。",
+      fifteen: "开始建立你的投资知识体系——挑选一本投资入门书籍，或者注册一个投资模拟账户。目标不是马上投资，而是开始学习。知识是你投资的第一笔本金。",
+    },
+    insight2: "复利是这个世界上最强大的力量之一。但它既可以为你工作（投资），也可以对你工作（债务利息）。穷人付出复利（信用卡利息越滚越大），富人收获复利（投资收益越滚越大）。你站在哪一边，取决于你今天的选择。",
+    commentary: "这是全书最需要打折扣的部分。舍费尔反复提到12%甚至更高的年收益率，在他写书的年代（1990年代末）或许不算离谱，但在今天的市场环境下，普通投资者要持续获得12%的年收益率是非常困难的。更大的问题是他对风险的讨论过于轻描淡写。我的建议：接受他的核心原则（尽早开始、长期持有、分散投资），但对具体的收益率预期保持谨慎——6-8%的长期预期可能更现实。",
+    transition: "有了储蓄和投资的基础，现在该来回答最终极的问题了：你到底需要多少钱才能自由？接下来，我们搭建通往财务自由的三级阶梯。",
+  },
+
+  /* ---- Module 7: 自由阶梯 ---- */
+  {
+    title: "三级财务自由阶梯",
+    subtitle: "从生存到梦想",
+    icon: "🏔️",
+    color: C.m7,
+    formula: "财务自由 = 月梦想支出 × 150",
+    formulaNote: "这个数字是你的「鹅」需要长到多大，才能每月下出足够的金蛋来覆盖你的梦想生活（按8%年收益率计算）。",
+    insight: "舍费尔将财务自由分为三个递进的层级，每一级都有明确的数字定义：\n\n第一级·财务保障：存够6-12个月的生活费，应对突发的失业、疾病等意外。这是最低限度的安全网。\n\n第二级·财务安全：积累足够的资本，使利息能覆盖基本生活支出。公式：每月必要支出 × 150 = 所需资本。\n\n第三级·财务自由：利息不仅覆盖基本支出，还能覆盖梦想生活支出。公式：每月梦想支出 × 150 = 所需资本。\n\n大多数人之所以实现不了财务自由，不是因为它太难，而是因为他们从来没有算过具体需要多少钱。「我想有钱」是梦想，「我需要375万元」才是计划。",
+    cases: [
+      {
+        title: "「败家子」保罗 vs「守财奴」海蒂",
+        preview: "三条规律：目标越小越快实现，支出越少结余越多，第一个目标要让你感觉触手可及。",
+        scene: "「败家子」保罗月入2500欧元，支出2375欧元，每月只能存125欧元。要实现10个月的财务保障（23750欧元），需要15年零10个月。",
+        conflict: "因为目标太遥远，保罗很快失去兴趣，选择放弃。而「守财奴」海蒂同样月入2500欧元，但每月只花1750欧元。",
+        turning: "海蒂的财务保障目标是17500欧元（更小），每月可以存750欧元（更多），只需2年就能实现。",
+        result: "三条规律：① 目标越小越快实现；② 支出越少结余越多；③ 第一个目标要让你感觉触手可及。先实现一个小目标，用成功感来驱动下一个目标——这才是正确的心理学序列。",
+      },
+      {
+        title: "可口可乐的资金缺乏悲剧",
+        preview: "财务保障不只是让你安心——它让你在机会出现时有资本去抓住。",
+        scene: "约翰·潘伯顿医生发明了可口可乐配方。第一年花了73.96美元做广告，只卖了50美元。5年后情况没有太大改善。",
+        conflict: "由于资金缺乏，他以2300美元卖掉了配方。药剂师凯德勒有足够资金让产品打入市场，11年后以2500万美元卖出。后来的银行家伍德瑞夫将其变成股份公司，第一年卖出4000万美元股票。",
+        turning: "即使在1929年大萧条中，1932年以20美元买入可口可乐股票的人，5年后以160美元卖出——翻了8倍。",
+        result: "如果潘伯顿有足够的财务保障，他永远不需要以2300美元卖掉一个后来价值数百亿美元的配方。财务保障不只是让你安心，它让你在机会出现时有资本去抓住，而不是被迫廉价出售。",
+      },
+      {
+        title: "博多在苏格兰城堡的教练面试",
+        preview: "最优秀的教练拥有最有才能的学生——你要得到顶尖教练，首先要让自己配得上。",
+        scene: "博多在伦敦听一位亿万富翁演讲后，打了7次电话才联系上本人，被邀请到苏格兰城堡。",
+        conflict: "到达后，亿万富翁的第一句话是：「我为什么要将我的星期天浪费在你身上？」然后用几个小时来羞辱他、问尖锐的问题。",
+        turning: "凌晨2点半，亿万富翁说：「好了，用10分钟告诉我你能为我做什么，你想从我这里得到什么。说服我，否则明天黎明你就走。」",
+        result: "博多说服了他。接下来6个月，博多学到的高级金融知识比之前学到的总和还要多。财务教练的资产至少应该是你的10倍——而你需要先让自己值得那份指导。",
+      },
+      {
+        title: "以色列人的1/10传统",
+        preview: "卡内基、沃尔顿、洛克菲勒、邓普顿——他们在几乎一无所有时就已经开始捐赠了。",
+        scene: "在《旧约》时代，以色列人习惯捐出收入的1/10。农业中，1/10的收成重新埋入土地以维持地力，另有1/10保存为种子。",
+        conflict: "这在逻辑上说不通——90%怎么会比100%多？但事实是，定期捐赠的人从来没有金钱问题。",
+        turning: "卡内基、沃尔顿、洛克菲勒、邓普顿——他们在还几乎一无所有时就已经开始捐赠了。舍费尔说：「付出给人美好的感觉，付出证明你能妥善运用金钱，付出向自己发送'我拥有的比需要的多'的信号。」",
+        result: "舍费尔自己也承认：「这一切都只是浅显地触碰到这一奇迹的本质。」不必把它当成因果律，但慷慨本身确实是富有者共同的品质之一——值得实践，不必追问原因。",
+      },
+    ],
+    action: {
+      five: "算出你的财务保障数字——月必要支出 × 6（或 × 12）。这是你的第一个具体目标，写下来，贴在你每天看得到的地方。",
+      ten: "算出你的财务安全数字——月必要支出 × 150（或更保守地 × 200）。这是你的「鹅」需要长到的大小。计算一下：按你现在的储蓄速度，需要多少年？",
+      fifteen: "算出你的财务自由数字——想象你的梦想生活，列出所有支出（旅行、理想居所、爱好等），月总支出 × 150。这个数字可能让你震惊——但至少你现在知道了「自由」的确切价格。当模糊的愿望变成精确的数字，你的大脑才会开始为你寻找实现路径。",
+    },
+    insight2: "大多数人之所以实现不了财务自由，不是因为它太难，而是因为他们从来没有算过具体需要多少钱。「我想有钱」是梦想，「我需要375万元，按8%收益率每月可得25000元利息」才是计划。当你把模糊的愿望变成精确的数字，你的大脑才会开始为你寻找实现路径。",
+    commentary: "「捐出1/10就会更富」的论证更像信仰而非逻辑。舍费尔自己也承认这在逻辑上说不通。我不反对捐赠——慷慨是一种美德，也确实能改善你与金钱的关系。但把它包装成「因果律」是有问题的。更诚实的说法：慷慨的人通常也拥有其他有利于致富的品质（自信、格局、长期思维），是这些品质综合作用的结果。此外，三级阶梯基于8%的年净收益率假设——在今天的市场，「月支出×200甚至×250」可能更稳妥。但框架本身是极好的。",
+    transition: "七级阶梯全部走完。现在让我们回头看这整条路——从6岁男孩到财务自由，博多走了什么路，你又将走什么路？",
+  },
+];
+
+/* ===== OVERVIEW DATA ===== */
+const OVERVIEW = {
+  coreInsight: "一个德国男人，26岁负债累累、体重96公斤，4年后仅靠利息生活。这本书讲的就是他走过的路——但核心不是理财公式，而是回答一个更深层的问题：为什么你明明知道该怎么做，却就是做不到？\n\n答案是：你的金钱信仰在暗中操控一切。你嘴上说「我想有钱」，潜意识里却可能认为「有钱人都不是好人」。两股力量撕扯，你原地踏步。\n\n这本书最有价值的部分是金钱心理学——信仰如何决定财务行为。把它当「金钱心理学」来读，价值远超当「理财指南」来读。信仰改造那几章值回全书价格，投资技术章节可以跳读。",
+  pros: ["信仰改造的「桌子模型」极其精妙，是对信念系统最直观的比喻", "「责任=权力」的论证逻辑严密，能真正改变一个人的归因方式", "案例来自真实生活，不是鸡汤式的名人轶事堆砌", "三级财务自由阶梯的框架清晰实用，任何人都能计算出自己的数字"],
+  cons: ["投资部分严重过时——书中推荐的网站和具体产品已是20年前的", "对风险的讨论偏乐观——12%年收益率在当今市场并非轻松可得", "明显的「幸存者偏差」——他成功了，所以回头看一切都合理", "「捐出1/10就会更富」的论证更像信仰而非逻辑"],
+};
+
+/* ===== RETROSPECTIVE DATA ===== */
+const RETRO_STEPS = [
+  { step: "心智重塑", desc: "你意识到四根支柱必须对齐——梦想、目标、价值观、策略，任何一根偏离都会让你原地打转。" },
+  { step: "信仰改造", desc: "你开始拆除旧桌子、建立新桌子。用真实的新经验加固你的新信仰，而不是靠自我催眠。" },
+  { step: "习惯打破", desc: "你识别出那8条让你原地踏步的模式，把「大目标」变成真正的行动指南针。" },
+  { step: "收入倍增", desc: "你开始创造更多价值，找到公式里最弱的那一根（通常是影响力），集中突破。" },
+  { step: "储蓄纪律", desc: "你学会留住创造的价值。月初先支付自己，不杀你的鹅，50/50原则处理债务。" },
+  { step: "复利投资", desc: "你让留住的价值为你工作。区分投资与债务，把时间变成你最大的资产。" },
+  { step: "自由阶梯", desc: "你给「自由」一个精确的价格标签，让模糊的愿望变成可追踪的计划。" },
+];
+const FINAL_QUOTE = "如果你（现在）不做决定，就意味着你已经做好了决定。你决定让一切照旧，不做任何改变。";
+
+/* ===== COMPONENT: ReadBar ===== */
+function ReadBar() {
+  const [pct, setPct] = useState(0);
+  useEffect(() => {
+    const onScroll = () => {
+      const el = document.documentElement;
+      const scrolled = el.scrollTop;
+      const total = el.scrollHeight - el.clientHeight;
+      setPct(total > 0 ? Math.round((scrolled / total) * 100) : 0);
+    };
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: 3, background: C.border, zIndex: 1000 }}>
+      <div style={{ height: "100%", width: `${pct}%`, background: C.gold, transition: "width 0.1s" }} />
+    </div>
+  );
+}
+
+/* ===== COMPONENT: TabNav ===== */
+function TabNav({ active, onSelect }) {
+  const scrollRef = useRef(null);
+  return (
+    <div style={{ background: C.white, borderBottom: `1px solid ${C.border}`, position: "sticky", top: 3, zIndex: 900, boxShadow: "0 1px 8px rgba(0,0,0,0.06)" }}>
+      <div style={{ maxWidth: 720, margin: "0 auto", position: "relative" }}>
+        <div ref={scrollRef} style={{ display: "flex", overflowX: "auto", scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}>
+          {CHS.map((ch, i) => (
+            <button key={i} onClick={() => onSelect(i)} style={{
+              flexShrink: 0, padding: "14px 16px", fontSize: 13, fontWeight: active === i ? 700 : 400,
+              color: active === i ? CH_COLORS[i] : C.muted, background: "none", border: "none",
+              borderBottom: active === i ? `2px solid ${CH_COLORS[i]}` : "2px solid transparent",
+              cursor: "pointer", transition: "all 0.2s", fontFamily: "inherit", whiteSpace: "nowrap",
+            }}>
+              {CH_ICONS[i]} {ch}
+            </button>
+          ))}
+        </div>
+        <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 32, background: "linear-gradient(to right, transparent, white)", pointerEvents: "none" }} />
+      </div>
+    </div>
+  );
+}
+
+/* ===== COMPONENT: Formula ===== */
+function Formula({ text, note, color }) {
+  return (
+    <div style={{ borderLeft: `3px solid ${color || C.gold}`, background: "#f8f9fb", borderRadius: "0 8px 8px 0", padding: "16px 20px", margin: "24px 0" }}>
+      <div style={{ fontSize: 17, fontWeight: 700, color: C.text, fontFamily: "'Inter', sans-serif", letterSpacing: 0.3, marginBottom: note ? 8 : 0 }}>
+        {text}
+      </div>
+      {note && <div style={{ fontSize: 13, color: C.light, lineHeight: 1.7 }}>{note}</div>}
+    </div>
+  );
+}
+
+/* ===== COMPONENT: Insight ===== */
+function Insight({ text }) {
+  return (
+    <div style={{ background: C.white, border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.gold}`, borderRadius: "0 8px 8px 0", padding: "16px 20px", margin: "24px 0" }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: C.gold, letterSpacing: 1, marginBottom: 8 }}>💡 核心洞察</div>
+      <p style={{ fontSize: 14, color: C.text, lineHeight: 1.9, textAlign: "left" }}>{text}</p>
+    </div>
+  );
+}
+
+/* ===== COMPONENT: CaseStudy ===== */
+function CaseStudy({ cs, index, color }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ border: `1px solid ${open ? color + "50" : C.border}`, borderRadius: 8, overflow: "hidden", marginBottom: 10, background: C.white, transition: "border-color 0.2s" }}>
+      <button onClick={() => setOpen(!open)} style={{
+        width: "100%", display: "flex", alignItems: "flex-start", gap: 12, padding: "14px 16px",
+        background: "none", border: "none", cursor: "pointer", textAlign: "left", fontFamily: "inherit",
+      }}>
+        <div style={{ background: color + "18", color: color, width: 26, height: 26, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, flexShrink: 0, marginTop: 1 }}>
+          {String(index + 1).padStart(2, "0")}
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: C.text, marginBottom: 4 }}>{cs.title}</div>
+          {!open && <div style={{ fontSize: 12, color: C.light, lineHeight: 1.6 }}>{cs.preview}</div>}
+        </div>
+        <span style={{ fontSize: 11, color: C.muted, flexShrink: 0, marginTop: 4 }}>{open ? "▾" : "▸"}</span>
+      </button>
+      {open && (
+        <div style={{ padding: "0 16px 16px 54px", animation: "fadeUp 0.2s ease" }}>
+          {[["🎬 场景", cs.scene], ["⚡ 冲突", cs.conflict], ["🔄 转折", cs.turning], ["✅ 结果", cs.result]].map(([label, text]) => (
+            <div key={label} style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: color, marginBottom: 4, letterSpacing: 0.5 }}>{label}</div>
+              <p style={{ fontSize: 13, color: C.light, lineHeight: 1.8, textAlign: "left" }}>{text}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ===== COMPONENT: ActionBox ===== */
+function ActionBox({ action, color }) {
+  const [tab, setTab] = useState(0);
+  const tabs = [["⏱ 5分钟", action.five], ["⏱ 10分钟", action.ten], ["⏱ 15分钟", action.fifteen]];
+  return (
+    <div style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: 10, overflow: "hidden", margin: "32px 0" }}>
+      <div style={{ padding: "14px 20px 0", borderBottom: `1px solid ${C.border}` }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 12 }}>🏃 行动指南</div>
+        <div style={{ display: "flex", gap: 0 }}>
+          {tabs.map(([label], i) => (
+            <button key={i} onClick={() => setTab(i)} style={{
+              padding: "8px 16px", fontSize: 12, fontWeight: tab === i ? 700 : 400,
+              color: tab === i ? color : C.muted, background: "none", border: "none",
+              borderBottom: tab === i ? `2px solid ${color}` : "2px solid transparent",
+              cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s",
+            }}>{label}</button>
+          ))}
+        </div>
+      </div>
+      <div style={{ padding: "16px 20px" }}>
+        <p style={{ fontSize: 14, color: C.text, lineHeight: 1.9, textAlign: "left", animation: "fadeUp 0.2s ease" }}>
+          {tabs[tab][1]}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ===== COMPONENT: Commentary ===== */
+function Commentary({ text }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ border: `1px solid ${C.border}`, borderRadius: 8, margin: "24px 0", overflow: "hidden" }}>
+      <button onClick={() => setOpen(!open)} style={{
+        width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "12px 16px", background: "#fafafa", border: "none", cursor: "pointer",
+        fontFamily: "inherit", textAlign: "left",
+      }}>
+        <span style={{ fontSize: 12, fontWeight: 700, color: C.light, letterSpacing: 0.5 }}>📝 拆书师批判性评论</span>
+        <span style={{ fontSize: 11, color: C.muted }}>{open ? "收起 ▾" : "展开 ▸"}</span>
+      </button>
+      {open && (
+        <div style={{ padding: "14px 16px", animation: "fadeUp 0.2s ease" }}>
+          <p style={{ fontSize: 13, color: C.light, lineHeight: 1.9, textAlign: "left" }}>{text}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ===== COMPONENT: TransitionCard ===== */
+function TransitionCard({ text, onNext }) {
+  return (
+    <div style={{ borderTop: `1px solid ${C.border}`, margin: "40px 0 0", paddingTop: 32, textAlign: "center" }}>
+      <p style={{ fontSize: 14, color: C.light, lineHeight: 1.8, fontStyle: "italic", maxWidth: 540, margin: "0 auto 20px", textAlign: "center" }}>
+        {text}
+      </p>
+      {onNext && (
+        <button onClick={onNext} style={{
+          padding: "10px 24px", fontSize: 13, fontWeight: 600, color: C.gold,
+          background: "none", border: `1px solid ${C.gold}`, borderRadius: 20,
+          cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s",
+        }}
+          onMouseEnter={e => { e.target.style.background = C.gold; e.target.style.color = C.white; }}
+          onMouseLeave={e => { e.target.style.background = "none"; e.target.style.color = C.gold; }}
+        >
+          继续阅读 →
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ===== PAGE: Overview ===== */
+function OverviewPage({ onGoModule }) {
+  const [showDetail, setShowDetail] = useState(false);
+  const caseCounts = [3, 3, 5, 3, 3, 3, 4];
+  const moduleColors = [C.m1, C.m2, C.m3, C.m4, C.m5, C.m6, C.m7];
+  return (
+    <div style={{ animation: "fadeUp 0.4s ease" }}>
+      {/* Book card */}
+      <div style={{ background: C.white, borderRadius: 12, padding: "32px 28px", border: `1px solid ${C.border}`, marginBottom: 32, textAlign: "center" }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, letterSpacing: 2, marginBottom: 16 }}>
+          现代出版社 · 博多·舍费尔
+        </div>
+        <h1 style={{ fontSize: 28, fontWeight: 900, color: C.text, lineHeight: 1.3, marginBottom: 8 }}>
+          财务自由之路
+        </h1>
+        <p style={{ fontSize: 14, color: C.muted, marginBottom: 24 }}>7年内赚到你的第一个1000万</p>
+        <div style={{ width: 40, height: 2, background: C.gold, margin: "0 auto 24px" }} />
+        <div style={{ textAlign: "left", fontSize: 15, color: C.text, lineHeight: 1.9, whiteSpace: "pre-line" }}>
+          {OVERVIEW.coreInsight}
+        </div>
+      </div>
+
+      {/* 7 module cards */}
+      <div style={{ marginBottom: 24 }}>
+        <h2 style={{ fontSize: 14, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 16, textAlign: "center" }}>
+          七个模块
+        </h2>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+          {MODULES.map((m, i) => (
+            <button key={i} onClick={() => onGoModule(i + 1)} style={{
+              flex: "1 1 calc(50% - 6px)", minWidth: 140,
+              background: C.white, border: `1px solid ${C.border}`,
+              borderTop: `3px solid ${moduleColors[i]}`,
+              borderRadius: "0 0 8px 8px", padding: "16px 14px",
+              cursor: "pointer", textAlign: "left", fontFamily: "inherit",
+              transition: "all 0.2s",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.08)"; }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; }}
+            >
+              <div style={{ fontSize: 22, marginBottom: 8 }}>{m.icon}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 4, lineHeight: 1.4 }}>{m.title}</div>
+              <div style={{ fontSize: 11, color: C.muted, marginBottom: 8, lineHeight: 1.5 }}>{m.subtitle}</div>
+              <div style={{ fontSize: 10, color: moduleColors[i], fontWeight: 600 }}>
+                {caseCounts[i]}个案例
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Pros/Cons toggle */}
+      <button onClick={() => setShowDetail(!showDetail)} style={{
+        width: "100%", padding: "12px 20px", background: C.white, border: `1px solid ${C.border}`,
+        borderRadius: 8, cursor: "pointer", fontFamily: "inherit", fontSize: 13, color: C.light,
+        textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+      }}>
+        <span>全书优缺点评析</span>
+        <span style={{ fontSize: 11, color: C.muted }}>{showDetail ? "▾" : "▸"}</span>
+      </button>
+      {showDetail && (
+        <div style={{ background: C.white, border: `1px solid ${C.border}`, borderTop: "none", borderRadius: "0 0 8px 8px", padding: "20px", animation: "fadeUp 0.2s ease" }}>
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "#4A9D7B", letterSpacing: 0.5, marginBottom: 10 }}>✅ 优点</div>
+            {OVERVIEW.pros.map((p, i) => (
+              <div key={i} style={{ fontSize: 13, color: C.light, lineHeight: 1.7, marginBottom: 6, paddingLeft: 14, borderLeft: "2px solid #4A9D7B20" }}>
+                {p}
+              </div>
+            ))}
+          </div>
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "#D4605A", letterSpacing: 0.5, marginBottom: 10 }}>⚠ 缺点</div>
+            {OVERVIEW.cons.map((p, i) => (
+              <div key={i} style={{ fontSize: 13, color: C.light, lineHeight: 1.7, marginBottom: 6, paddingLeft: 14, borderLeft: "2px solid #D4605A20" }}>
+                {p}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ===== PAGE: Module ===== */
+function ModulePage({ moduleIndex, onNext }) {
+  const m = MODULES[moduleIndex];
+  const isLast = moduleIndex === MODULES.length - 1;
+  return (
+    <div style={{ animation: "fadeUp 0.4s ease" }}>
+      {/* Header */}
+      <div style={{ background: C.white, borderRadius: 12, padding: "28px 24px", border: `1px solid ${C.border}`, borderTop: `3px solid ${m.color}`, marginBottom: 32 }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: m.color, letterSpacing: 1.5, marginBottom: 12 }}>
+          模块 {moduleIndex + 1} / 7
+        </div>
+        <h2 style={{ fontSize: 26, fontWeight: 900, color: C.text, marginBottom: 6 }}>{m.icon} {m.title}</h2>
+        <p style={{ fontSize: 14, color: C.muted, marginBottom: 0 }}>{m.subtitle}</p>
+      </div>
+
+      {/* Formula */}
+      <Formula text={m.formula} note={m.formulaNote} color={m.color} />
+
+      {/* Core insight */}
+      <div style={{ margin: "28px 0" }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 12 }}>核心论点</div>
+        <p style={{ fontSize: 15, color: C.text, lineHeight: 1.9, whiteSpace: "pre-line", textAlign: "left" }}>{m.insight}</p>
+      </div>
+
+      {/* Cases */}
+      <div style={{ margin: "32px 0" }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 16 }}>
+          📖 书中案例（点击展开四要素）
+        </div>
+        {m.cases.map((cs, i) => (
+          <CaseStudy key={i} cs={cs} index={i} color={m.color} />
+        ))}
+      </div>
+
+      {/* Insight */}
+      <Insight text={m.insight2} />
+
+      {/* Action Box */}
+      <ActionBox action={m.action} color={m.color} />
+
+      {/* Commentary */}
+      <Commentary text={m.commentary} />
+
+      {/* Transition */}
+      <TransitionCard text={m.transition} onNext={!isLast ? onNext : undefined} />
+    </div>
+  );
+}
+
+/* ===== PAGE: Retrospective ===== */
+function RetroPage() {
+  return (
+    <div style={{ animation: "fadeUp 0.4s ease" }}>
+      <div style={{ background: C.white, borderRadius: 12, padding: "32px 24px", border: `1px solid ${C.border}`, borderTop: `3px solid ${C.gold}`, marginBottom: 32, textAlign: "center" }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, letterSpacing: 2, marginBottom: 16 }}>全书回望</div>
+        <h2 style={{ fontSize: 24, fontWeight: 900, color: C.text, marginBottom: 8 }}>🌅 从恐惧到自由的心理地图</h2>
+        <p style={{ fontSize: 14, color: C.muted }}>七个模块的完整逻辑链条</p>
+      </div>
+
+      {/* Story thread */}
+      <div style={{ background: C.white, borderRadius: 10, padding: "20px 24px", border: `1px solid ${C.border}`, marginBottom: 32 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 16 }}>博多·舍费尔的人生时间线</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+          {[
+            ["6岁", "父亲病房，目睹贫穷的丑陋，立志30岁成为百万富翁"],
+            ["18-25岁", "挥金如土，信用卡交替还款，「头等生活」的幻觉"],
+            ["26岁", "负债近4万欧元，体重96公斤，离梦想遥不可及"],
+            ["认识教练", "被要求存下收入的50%，博多觉得不可能"],
+            ["5马克计划", "像96公斤的松鼠一样从副驾驶爬进没有把手的福特嘉年华"],
+            ["30岁", "实现目标：仅靠利息生活，成为百万富翁"],
+          ].map(([time, desc], i, arr) => (
+            <div key={i} style={{ display: "flex", gap: 16, paddingBottom: i < arr.length - 1 ? 20 : 0, position: "relative" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 28, flexShrink: 0 }}>
+                <div style={{ width: 10, height: 10, borderRadius: "50%", background: C.gold, marginTop: 3, flexShrink: 0 }} />
+                {i < arr.length - 1 && <div style={{ width: 1, flex: 1, background: C.border, marginTop: 4 }} />}
+              </div>
+              <div style={{ paddingBottom: i < arr.length - 1 ? 4 : 0 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, marginBottom: 3 }}>{time}</div>
+                <p style={{ fontSize: 13, color: C.light, lineHeight: 1.7, textAlign: "left" }}>{desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Logic chain */}
+      <div style={{ marginBottom: 32 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 16 }}>七步逻辑递进</div>
+        {RETRO_STEPS.map((item, i) => (
+          <div key={i} style={{ display: "flex", gap: 14, marginBottom: 16, alignItems: "flex-start" }}>
+            <div style={{ width: 28, height: 28, borderRadius: "50%", background: CH_COLORS[i + 1] + "20", color: CH_COLORS[i + 1], display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, flexShrink: 0 }}>
+              {i + 1}
+            </div>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 4 }}>{item.step}</div>
+              <p style={{ fontSize: 13, color: C.light, lineHeight: 1.7, textAlign: "left" }}>{item.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Final quote */}
+      <div style={{ background: C.white, border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.gold}`, borderRadius: "0 10px 10px 0", padding: "24px 24px", margin: "32px 0", textAlign: "left" }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, letterSpacing: 1, marginBottom: 12 }}>全书最核心的一句话</div>
+        <p style={{ fontSize: 17, fontWeight: 700, color: C.text, lineHeight: 1.8, fontStyle: "italic" }}>
+          「{FINAL_QUOTE}」
+        </p>
+        <p style={{ fontSize: 12, color: C.muted, marginTop: 12, textAlign: "right" }}>—— 博多·舍费尔</p>
+      </div>
+
+      <p style={{ fontSize: 14, color: C.light, lineHeight: 1.9, textAlign: "left" }}>
+        这本书不是读完就算了的。它是一面镜子、一张地图、一份行动清单。核心不是「知道了」，而是「做到了」。
+        七年时间，足够了。从今天开始。
+      </p>
+    </div>
+  );
+}
+
+/* ===== FOOTER ===== */
+function Footer() {
+  return (
+    <footer style={{ borderTop: `1px solid ${C.border}`, background: C.white, padding: "32px 16px", marginTop: 60 }}>
+      <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "left" }}>
+        <p style={{ fontSize: 11, color: C.muted, lineHeight: 1.8, marginBottom: 8 }}>
+          ⚠ 免责声明：本页面为读书拆解内容，基于原书概念进行二次整理与批判性分析，不代表完全认同原书所有观点。原书版权归博多·舍费尔及现代出版社所有。本页面不含原文直接摘录，仅供学习交流。
+        </p>
+        <p style={{ fontSize: 11, color: C.muted }}>
+          原书 ISBN：978-7-5143-4092-1　|　拆卷项目出品
+        </p>
+      </div>
+    </footer>
+  );
+}
+
+/* ===== APP ===== */
+function App() {
+  const [active, setActive] = useState(0);
+
+  const goTo = (i) => {
+    setActive(i);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  return (
+    <div style={{ minHeight: "100vh", background: C.bg }}>
+      <ReadBar />
+      <TabNav active={active} onSelect={goTo} />
+      <main style={{ maxWidth: 720, margin: "0 auto", padding: "32px 16px 60px" }}>
+        {active === 0 && <OverviewPage onGoModule={(i) => goTo(i)} />}
+        {active >= 1 && active <= 7 && (
+          <ModulePage
+            moduleIndex={active - 1}
+            onNext={() => goTo(active === 7 ? 8 : active + 1)}
+          />
+        )}
+        {active === 8 && <RetroPage />}
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
