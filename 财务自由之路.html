@@ -583,6 +583,71 @@ function TransitionCard({ text, onNext }) {
   );
 }
 
+/* ===== SPEED READ ===== */
+function SpeedRead({ onStart }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div style={{ maxWidth: 720, margin: "0 auto 28px", animation: "fadeUp 0.5s ease both" }}>
+      <div onClick={() => setOpen(!open)} style={{
+        background: C.white, borderRadius: 12, overflow: "hidden",
+        border: `1px solid ${C.border}`, boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+        cursor: "pointer", transition: "all 0.3s",
+      }}>
+        <div style={{ padding: "16px 20px 14px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: open ? `1px solid ${C.border}` : "none", background: `linear-gradient(135deg,${C.gold}12,${C.gold}06)` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg,${C.gold},#C4944F)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, color: "#fff" }}>⚡</div>
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: C.text, letterSpacing: 1 }}>3分钟速览</div>
+              <div style={{ fontSize: 11, color: C.muted, marginTop: 1 }}>不想读全文？看这里就够了</div>
+            </div>
+          </div>
+          <span style={{ fontSize: 12, color: C.muted, transition: "transform 0.3s", transform: open ? "rotate(180deg)" : "rotate(0)", display: "inline-block" }}>▲</span>
+        </div>
+        {open && (
+          <div style={{ padding: "0 20px 20px" }} onClick={e => e.stopPropagation()}>
+            <div style={{ margin: "18px 0 16px", padding: "14px 18px", background: `${C.gold}10`, borderRadius: 12, borderLeft: `3px solid ${C.gold}` }}>
+              <div style={{ fontSize: 11, color: C.gold, fontWeight: 700, letterSpacing: 2, marginBottom: 6 }}>一句话说清这本书</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: C.text, lineHeight: 1.8 }}>你不是不会理财，是你的潜意识不让你有钱——信仰决定财务行为。</div>
+            </div>
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: C.text, letterSpacing: 1, marginBottom: 10, display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ display: "inline-block", width: 20, height: 20, borderRadius: "50%", background: `${C.gold}20`, color: C.gold, fontSize: 11, fontWeight: 900, textAlign: "center", lineHeight: "20px" }}>3</span>
+                记住这三点就够了
+              </div>
+              {[
+                { num: "①", text: "你对金钱的信仰像一张桌子，每条桌腿是一次经历。你不是「不想存钱」，是童年经历造的那张旧桌子在控制你。想改变财务状况，先拆旧桌子。" },
+                { num: "②", text: "收入 = 能力 × 精力 × 影响力 × 自我评价 × 创意。大多数人卡在「自我评价」和「影响力」——你值多少钱，你说了算。" },
+                { num: "③", text: "72 ÷ 利率 = 资金翻倍年数。12%收益率6年翻倍，但别被数字催眠——书中12%在今天的市场偏乐观，量力而行。" },
+              ].map((item, i) => (
+                <div key={i} style={{ display: "flex", gap: 10, marginBottom: 10, padding: "12px 14px", background: "#f8f6f2", borderRadius: 10, border: `1px solid ${C.border}` }}>
+                  <span style={{ fontSize: 14, fontWeight: 900, color: C.gold, flexShrink: 0, marginTop: 1 }}>{item.num}</span>
+                  <span style={{ fontSize: 13, color: C.text, lineHeight: 1.8 }}>{item.text}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginBottom: 14, padding: "14px 18px", background: "#4A9D7B10", borderRadius: 12, border: "1px solid #4A9D7B25" }}>
+              <div style={{ fontSize: 11, color: "#4A9D7B", fontWeight: 700, letterSpacing: 2, marginBottom: 8 }}>看完立刻能做的事</div>
+              <div style={{ fontSize: 13, color: C.text, lineHeight: 1.8 }}>今晚写下5条你关于金钱的信念（比如"有钱人都不是好人""赚钱很辛苦"），看看哪些是限制性的。这就是你的旧桌子——认出它，才能拆掉它。</div>
+            </div>
+            <div style={{ marginBottom: 16, padding: "14px 18px", background: `${C.gold}08`, borderRadius: 12, border: `1px solid ${C.gold}20` }}>
+              <div style={{ fontSize: 11, color: C.gold, fontWeight: 700, letterSpacing: 2, marginBottom: 8 }}>这本书适合你吗？</div>
+              <div style={{ fontSize: 13, color: C.text, lineHeight: 1.8 }}>觉得"我就不是有钱的命"、每月工资花完但说不清花哪了、知道该理财但就是迈不出第一步的人。</div>
+            </div>
+            <div style={{ textAlign: "center", paddingTop: 4 }}>
+              <button onClick={() => onStart && onStart()} style={{
+                background: `linear-gradient(135deg,${C.gold},#C4944F)`,
+                border: "none", borderRadius: 10, padding: "11px 32px",
+                cursor: "pointer", fontSize: 13, fontWeight: 700, color: "#fff",
+                letterSpacing: 1, boxShadow: `0 4px 12px ${C.gold}40`, transition: "all 0.3s",
+              }}>想深入了解 → 开始阅读全文</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ===== PAGE: Overview ===== */
 function OverviewPage({ onGoModule }) {
   const [showDetail, setShowDetail] = useState(false);
@@ -590,6 +655,8 @@ function OverviewPage({ onGoModule }) {
   const moduleColors = [C.m1, C.m2, C.m3, C.m4, C.m5, C.m6, C.m7];
   return (
     <div style={{ animation: "fadeUp 0.4s ease" }}>
+      {/* Speed Read */}
+      <SpeedRead onStart={() => onGoModule(1)} />
       {/* Book card */}
       <div style={{ background: C.white, borderRadius: 12, padding: "32px 28px", border: `1px solid ${C.border}`, marginBottom: 32, textAlign: "center" }}>
         <div style={{ fontSize: 11, fontWeight: 700, color: C.gold, letterSpacing: 2, marginBottom: 16 }}>
