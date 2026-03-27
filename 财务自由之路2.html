@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拆卷 · 财务自由之路 Ⅱ</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=ZCOOL+XiaoWei&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#f5f0e8;font-family:'Noto Serif SC','PingFang SC',Georgia,serif;color:#2c2418;overflow-x:hidden}
+  html{scroll-behavior:smooth}
+  ::selection{background:rgba(180,120,60,0.2)}
+  ::-webkit-scrollbar{width:5px}
+  ::-webkit-scrollbar-track{background:#ebe5d8}
+  ::-webkit-scrollbar-thumb{background:rgba(140,110,70,0.3);border-radius:3px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes glowPulse{0%,100%{opacity:0.3}50%{opacity:0.7}}
+  @keyframes slideOpen{from{max-height:0;opacity:0}to{max-height:8000px;opacity:1}}
+  @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  @keyframes pageIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+  .fade-up{animation:fadeUp 0.4s ease both}
+  .page-in{animation:pageIn 0.35s ease both}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const useState = React.useState;
+
+const P={
+  paper:"#f5f0e8",paperDeep:"#efe9dd",paperLight:"#faf7f0",
+  pageShadow:"rgba(120,100,70,0.06)",
+  text:"#2c2418",textSoft:"#6a5d4e",textMuted:"#a89a88",textChapter:"#4a3f30",
+  vermillion:"#c85030",
+  colors:[
+    {name:"赭石",hex:"#a87a28",glow:"rgba(168,122,40,0.12)",char:"轮",desc:"仓鼠之轮"},
+    {name:"花青",hex:"#3a7090",glow:"rgba(58,112,144,0.12)",char:"则",desc:"致富规则"},
+    {name:"石青",hex:"#3a8a6a",glow:"rgba(58,138,106,0.12)",char:"流",desc:"心流密码"},
+    {name:"胭脂",hex:"#a84a58",glow:"rgba(168,74,88,0.12)",char:"径",desc:"三条路径"},
+    {name:"藤黄",hex:"#b89a28",glow:"rgba(184,154,40,0.12)",char:"钱",desc:"钱生钱"},
+  ],
+};
+
+function PaperBg(){
+  return(
+    <div style={{position:"fixed",inset:0,zIndex:0,pointerEvents:"none"}}>
+      <svg width="100%" height="100%" style={{position:"absolute",inset:0,opacity:0.035}}>
+        <defs><filter id="pf"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="4" seed="8"/><feColorMatrix type="saturate" values="0"/></filter></defs>
+        <rect width="100%" height="100%" fill="#a09070" filter="url(#pf)"/>
+      </svg>
+      <svg width="100%" height="100%" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice" style={{position:"absolute",inset:0,opacity:0.03}}>
+        <defs><filter id="ms"><feGaussianBlur stdDeviation="18"/></filter></defs>
+        <path d="M-50 580 Q200 460 400 510 Q600 420 800 480 Q1000 400 1200 460 Q1400 430 1450 470 L1450 900 L-50 900Z" fill="#a09080" opacity="0.5" filter="url(#ms)"/>
+      </svg>
+    </div>
+  );
+}
+
+function SealIcon({char="拆",color=P.vermillion,size=48,glow=true}){
+  const[h,setH]=useState(false);
+  return(
+    <div onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)}
+      style={{width:size,height:size,position:"relative",flexShrink:0,cursor:"default"}}>
+      <div style={{position:"absolute",inset:-4,borderRadius:"50%",background:`radial-gradient(circle,${color}${h?"15":"08"} 0%,transparent 70%)`,transition:"all 0.5s",animation:glow?"glowPulse 3s ease infinite":"none",filter:"blur(3px)"}}/>
+      <div style={{position:"absolute",inset:0,border:`1.5px solid ${h?color:color+"60"}`,borderRadius:5,transform:"rotate(-3deg)",transition:"all 0.4s",boxShadow:h?`0 0 14px ${color}20`:"none"}}/>
+      <div style={{position:"absolute",inset:3,border:`1px solid ${h?color+"50":color+"25"}`,borderRadius:3,transform:"rotate(-3deg)",transition:"all 0.4s"}}/>
+      <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",transform:"rotate(-3deg)"}}>
+        <span style={{fontSize:size*0.42,fontWeight:900,color,fontFamily:"'ZCOOL XiaoWei','Noto Serif SC',serif",textShadow:h?`0 0 12px ${color}30`:`0 0 6px ${color}10`,transition:"all 0.4s"}}>{char}</span>
+      </div>
+    </div>
+  );
+}
+
+function MiniLandscape({color=P.colors[0].hex,size=44,variant=0}){
+  const v=variant%4;
+  return(
+    <svg width={size} height={size} viewBox="0 0 52 52" style={{flexShrink:0,opacity:0.85}}>
+      {v===0&&<g><path d="M4 38 Q14 12 26 28 Q34 10 48 34 L48 48 L4 48Z" fill={color+"15"} stroke={color+"40"} strokeWidth="0.8"/><path d="M0 42 Q12 28 24 38 Q36 24 52 36 L52 52 L0 52Z" fill={color+"20"} stroke={color+"50"} strokeWidth="0.8"/></g>}
+      {v===1&&<g><line x1="20" y1="48" x2="18" y2="6" stroke={color+"50"} strokeWidth="1.5" strokeLinecap="round"/><path d="M18 12 Q10 8 6 14" fill="none" stroke={color+"40"} strokeWidth="1" strokeLinecap="round"/><path d="M18 20 Q12 16 8 22" fill="none" stroke={color+"35"} strokeWidth="1" strokeLinecap="round"/><path d="M18 28 Q24 24 28 30" fill="none" stroke={color+"40"} strokeWidth="1" strokeLinecap="round"/></g>}
+      {v===2&&<g><path d="M4 22 Q14 16 26 22 Q38 28 48 22" fill="none" stroke={color+"45"} strokeWidth="1" strokeLinecap="round"/><path d="M8 30 Q18 24 30 30 Q42 36 48 30" fill="none" stroke={color+"35"} strokeWidth="0.8" strokeLinecap="round"/><path d="M4 38 Q14 32 26 38 Q38 44 48 38" fill="none" stroke={color+"25"} strokeWidth="0.6" strokeLinecap="round"/></g>}
+      {v===3&&<g><ellipse cx="26" cy="30" rx="20" ry="8" fill={color+"08"} stroke={color+"20"} strokeWidth="0.5"/><ellipse cx="18" cy="26" rx="10" ry="5" fill={color+"0c"} stroke={color+"28"} strokeWidth="0.5"/><path d="M10 20 Q16 8 26 14 Q36 6 44 16" fill="none" stroke={color+"30"} strokeWidth="0.7" strokeLinecap="round"/></g>}
+    </svg>
+  );
+}
+
+function ReadBar({progress}){
+  return(
+    <div style={{position:"fixed",top:0,left:0,right:0,height:2,zIndex:100,background:"rgba(160,140,110,0.1)"}}>
+      <div style={{height:"100%",width:`${progress}%`,background:`linear-gradient(90deg,${P.vermillion}60,${P.vermillion})`,transition:"width 0.3s ease",borderRadius:"0 1px 1px 0"}}/>
+    </div>
+  );
+}
+
+function ChTab({label,char,color,active,onClick,isOverview}){
+  return(
+    <button onClick={onClick} style={{
+      padding:"10px 14px",border:"none",display:"flex",alignItems:"center",gap:6,
+      background:active?P.paperLight:"transparent",
+      borderBottom:active?`2px solid ${color}`:"2px solid transparent",
+      borderRight:isOverview?"1px solid rgba(160,140,110,0.15)":"none",
+      color:active?P.textChapter:P.textMuted,fontSize:13,fontWeight:active?700:400,
+      letterSpacing:active?1.5:0.5,cursor:"pointer",transition:"all 0.3s",
+      fontFamily:"'Noto Serif SC',serif",whiteSpace:"nowrap",flexShrink:0,
+    }}>
+      {char&&<span style={{fontSize:10,fontWeight:900,fontFamily:"'ZCOOL XiaoWei',serif",border:`1px solid ${active?color+"60":color+"25"}`,color:active?color:color+"60",width:18,height:18,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)",transition:"all 0.3s",background:active?color+"08":"transparent"}}>{char}</span>}
+      {label}
+    </button>
+  );
+}
+
+function Sidebar({chapters,current,onSelect,open,onClose}){
+  const isNarrow=typeof window!=="undefined"&&window.innerWidth<=480;
+  const sidebarWidth=isNarrow?"min(82vw,300px)":300;
+  return(
+    <div>
+      {open&&<div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(60,50,30,0.28)",backdropFilter:"blur(2px)",zIndex:98}}/>}
+      <div style={{position:"fixed",top:0,left:open?0:`calc(-1 * ${sidebarWidth})`,width:sidebarWidth,height:"100vh",background:P.paperDeep,borderRight:`1px solid rgba(160,140,110,0.15)`,boxShadow:open?"8px 0 36px rgba(80,60,30,0.14)":"none",zIndex:99,transition:"left 0.35s cubic-bezier(.4,0,.2,1)",padding:"32px 0 max(24px, env(safe-area-inset-bottom))",overflowY:"auto"}}>
+        <div style={{padding:"0 24px 24px",borderBottom:`1px solid rgba(160,140,110,0.12)`}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <SealIcon char="目" color={P.vermillion} size={28} glow={false}/>
+            <span style={{fontSize:16,fontWeight:700,color:P.textChapter,letterSpacing:3}}>目录</span>
+          </div>
+        </div>
+        {chapters.map((ch,i)=>(
+          <div key={i} onClick={()=>{onSelect(i);onClose();}} style={{padding:"14px 24px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,background:current===i?ch.color+"08":"transparent",borderLeft:current===i?`3px solid ${ch.color}`:"3px solid transparent",transition:"all 0.25s"}}>
+            <span style={{fontSize:11,fontWeight:900,fontFamily:"'ZCOOL XiaoWei',serif",color:current===i?ch.color:P.textMuted,border:`1px solid ${current===i?ch.color+"50":P.textMuted+"30"}`,width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)"}}>{ch.char}</span>
+            <span style={{fontSize:14,color:current===i?P.textChapter:P.textSoft,fontWeight:current===i?600:400}}>{ch.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PageNav({current,total,name,onPrev,onNext}){
+  return(
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 0",borderTop:`1px solid rgba(160,140,110,0.15)`,marginTop:40}}>
+      <button onClick={current>0?onPrev:undefined} style={{padding:"10px 20px",border:current>0?"1px solid rgba(160,140,110,0.25)":"1px solid transparent",borderRadius:6,background:current>0?P.paperLight:"transparent",color:current>0?P.textSoft:"transparent",fontSize:14,cursor:current>0?"pointer":"default",fontFamily:"'Noto Serif SC',serif"}}>{"← 上一页"}</button>
+      <div style={{textAlign:"center"}}>
+        <div style={{fontSize:12,color:P.textMuted,letterSpacing:2}}>{name}</div>
+        <div style={{fontSize:11,color:P.textMuted,marginTop:2}}>{current+1} / {total}</div>
+      </div>
+      <button onClick={current<total-1?onNext:undefined} style={{padding:"10px 20px",border:current<total-1?"1px solid rgba(160,140,110,0.25)":"1px solid transparent",borderRadius:6,background:current<total-1?P.paperLight:"transparent",color:current<total-1?P.textSoft:"transparent",fontSize:14,cursor:current<total-1?"pointer":"default",fontFamily:"'Noto Serif SC',serif"}}>{"下一页 →"}</button>
+    </div>
+  );
+}
+
+function SecTitle({title,sub,color=P.colors[0].hex,char,ls=0}){
+  return(
+    <div style={{marginBottom:32,paddingTop:8}}>
+      <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:10}}>
+        <SealIcon char={char} color={color} size={44} glow={false}/>
+        <div style={{opacity:0.3,marginLeft:-28,marginTop:14}}><MiniLandscape color={color} size={32} variant={ls}/></div>
+        <h2 style={{fontSize:26,fontWeight:900,letterSpacing:4,color:P.textChapter,fontFamily:"'Noto Serif SC',serif",lineHeight:1.4}}>{title}</h2>
+      </div>
+      {sub&&<p style={{fontSize:15,color:P.textSoft,lineHeight:1.9,borderLeft:`2px solid ${color}30`,paddingLeft:16,marginLeft:2}}>{sub}</p>}
+      <div style={{height:1,background:`linear-gradient(90deg,${color}40,transparent 60%)`,marginTop:16}}/>
+    </div>
+  );
+}
+
+function Card({children,color=P.colors[0].hex,style={}}){
+  const[h,setH]=useState(false);
+  return(
+    <div onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{background:P.paperLight,borderRadius:10,padding:28,borderLeft:`3px solid ${h?color:color+"50"}`,boxShadow:h?`0 4px 24px ${P.pageShadow},0 0 20px ${color}08`:`0 1px 8px ${P.pageShadow}`,transition:"all 0.35s ease",transform:h?"translateY(-2px)":"none",position:"relative",overflow:"hidden",...style}}>
+      {children}
+    </div>
+  );
+}
+
+function Para({children}){
+  return <p style={{fontSize:16,color:P.text,lineHeight:2.0,marginBottom:16,textAlign:"justify"}}>{children}</p>;
+}
+
+function Step({n,text,detail,color=P.colors[1].hex}){
+  return(
+    <div style={{display:"flex",gap:16,marginBottom:20,alignItems:"flex-start"}}>
+      <div style={{width:30,height:30,borderRadius:"50%",background:color+"10",border:`1.5px solid ${color}35`,color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:800,flexShrink:0,fontFamily:"'Inter',sans-serif"}}>{n}</div>
+      <div style={{flex:1}}>
+        <div style={{fontSize:16,fontWeight:700,color:P.textChapter,lineHeight:1.7}}>{text}</div>
+        {detail&&<div style={{fontSize:15,color:P.textSoft,lineHeight:2.0,marginTop:6}}>{detail}</div>}
+      </div>
+    </div>
+  );
+}
+
+function Quote({text,color=P.vermillion}){
+  return(
+    <div style={{borderLeft:`3px solid ${color}40`,background:color+"06",borderRadius:"0 8px 8px 0",padding:"16px 22px",margin:"20px 0"}}>
+      <span style={{fontSize:15,color:P.textSoft,lineHeight:2.0,fontStyle:"italic"}}>{text}</span>
+    </div>
+  );
+}
+
+function Formula({text,color=P.vermillion}){
+  return(
+    <div style={{textAlign:"center",padding:28,margin:"24px 0",background:P.paperLight,borderRadius:10,border:`1px solid ${color}15`,position:"relative",overflow:"hidden",boxShadow:`0 1px 6px ${P.pageShadow}`}}>
+      <div style={{position:"absolute",inset:0,background:`linear-gradient(90deg,transparent,${color}04,transparent)`,backgroundSize:"200% 100%",animation:"shimmer 5s ease infinite"}}/>
+      <span style={{fontSize:20,fontWeight:900,letterSpacing:4,color:P.textChapter,fontFamily:"'Noto Serif SC',serif",position:"relative"}}>{text}</span>
+    </div>
+  );
+}
+
+function Expand({title,children,color=P.colors[0].hex,char,defaultOpen=false}){
+  const[open,setOpen]=useState(defaultOpen);
+  return(
+    <div style={{background:open?P.paperLight:P.paperDeep,borderRadius:8,border:`1px solid ${open?color+"20":"rgba(160,140,110,0.1)"}`,overflow:"hidden",transition:"all 0.3s",marginBottom:10,boxShadow:open?`0 2px 12px ${P.pageShadow}`:"none"}}>
+      <div onClick={()=>setOpen(!open)} style={{padding:"16px 22px",display:"flex",alignItems:"center",justifyContent:"space-between",cursor:"pointer"}}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          {char&&<span style={{fontSize:13,fontWeight:900,color:open?color:color+"60",fontFamily:"'ZCOOL XiaoWei',serif",border:`1px solid ${open?color+"50":color+"25"}`,width:22,height:22,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)",transition:"all 0.3s"}}>{char}</span>}
+          <span style={{fontSize:16,fontWeight:open?700:500,color:open?P.textChapter:P.textSoft,letterSpacing:1,transition:"all 0.3s"}}>{title}</span>
+        </div>
+        <span style={{fontSize:10,color:open?color:P.textMuted,transition:"transform 0.3s",transform:open?"rotate(90deg)":"none",display:"inline-block"}}>{"▶"}</span>
+      </div>
+      {open&&<div style={{padding:"0 22px 20px",animation:"slideOpen 0.3s ease"}} onClick={(e)=>e.stopPropagation()}>{children}</div>}
+    </div>
+  );
+}
+
+function Divider({color=P.textMuted}){
+  return(
+    <div style={{display:"flex",alignItems:"center",gap:8,margin:"32px 0",opacity:0.3}}>
+      <div style={{height:1,flex:1,background:`linear-gradient(90deg,transparent,${color}30)`}}/>
+      <div style={{width:3,height:3,borderRadius:"50%",background:color+"50"}}/>
+      <div style={{width:40,height:1,background:color+"25"}}/>
+      <div style={{width:3,height:3,borderRadius:"50%",background:color+"50"}}/>
+      <div style={{height:1,flex:1,background:`linear-gradient(270deg,transparent,${color}30)`}}/>
+    </div>
+  );
+}
+
+function ActionBox({children,char="行",color=P.vermillion}){
+  return(
+    <div style={{background:color+"05",borderRadius:10,padding:24,border:`1px solid ${color}12`,position:"relative"}}>
+      <div style={{position:"absolute",top:10,right:14,opacity:0.1}}><SealIcon char={char} color={color} size={32} glow={false}/></div>
+      <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
+        <SealIcon char={char} color={color} size={28} glow={false}/>
+        <span style={{fontSize:16,fontWeight:800,color,letterSpacing:2}}>即刻行动</span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function InkFlow({steps,color=P.colors[0].hex,title}){
+  const boxW=Math.min(120,Math.floor(640/steps.length)-16);
+  const gap=12;
+  const w=680;
+  const h=110;
+  const boxH=46;
+  const totalW=steps.length*boxW+(steps.length-1)*gap;
+  const startX=(w-totalW)/2;
+  return(
+    <div style={{margin:"24px 0",background:P.paperLight,borderRadius:10,padding:"20px 8px",border:`1px solid ${color}15`,overflow:"hidden"}}>
+      {title&&<div style={{fontSize:15,fontWeight:700,color,letterSpacing:2,textAlign:"center",marginBottom:12}}>{title}</div>}
+      <svg width="100%" viewBox={`0 0 ${w} ${h}`} style={{display:"block",maxWidth:680,margin:"0 auto"}}>
+        <defs>
+          <filter id="inkBlur2"><feGaussianBlur stdDeviation="0.5"/></filter>
+          <marker id={`arw${color.replace("#","")}`} markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill={color+"80"}/></marker>
+        </defs>
+        {steps.map((s,i)=>{
+          const x=startX+i*(boxW+gap);
+          const y=(h-boxH)/2;
+          const lines=s.length>8?[s.slice(0,Math.floor(s.length/2)),s.slice(Math.floor(s.length/2))]:[s];
+          return(
+            <g key={i}>
+              <rect x={x} y={y} width={boxW} height={boxH} rx="7" fill={color+"0a"} stroke={color+"40"} strokeWidth="1.2" filter="url(#inkBlur2)"/>
+              {lines.map((line,li)=>(
+                <text key={li} x={x+boxW/2} y={y+boxH/2+(li-((lines.length-1)/2))*16} textAnchor="middle" dominantBaseline="middle" fill={P.textChapter} fontSize="12" fontFamily="'Noto Serif SC',serif" fontWeight="600">{line}</text>
+              ))}
+              {i<steps.length-1&&<line x1={x+boxW+2} y1={h/2} x2={x+boxW+gap-2} y2={h/2} stroke={color+"60"} strokeWidth="1.5" strokeDasharray="4 3" markerEnd={`url(#arw${color.replace("#","")})`}/>}
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+function InkCompare({left,right,leftTitle,rightTitle,color=P.colors[0].hex,title}){
+  return(
+    <div style={{margin:"24px 0",background:P.paperLight,borderRadius:10,padding:"20px 20px 16px",border:`1px solid ${color}15`}}>
+      {title&&<div style={{fontSize:15,fontWeight:700,color,letterSpacing:2,textAlign:"center",marginBottom:16}}>{title}</div>}
+      <div style={{display:"flex",gap:16,flexWrap:"wrap"}}>
+        <div style={{flex:"1 1 200px",background:color+"08",borderRadius:8,padding:16,border:`1px solid ${color}20`}}>
+          <div style={{fontSize:14,fontWeight:800,color,letterSpacing:2,marginBottom:10,textAlign:"center"}}>{leftTitle}</div>
+          {left.map((item,i)=><div key={i} style={{fontSize:14,color:P.textSoft,lineHeight:1.9,padding:"4px 0",borderBottom:i<left.length-1?`1px dashed ${color}15`:"none"}}>{item}</div>)}
+        </div>
+        <div style={{width:1,background:`linear-gradient(to bottom,transparent,${color}30,transparent)`,flexShrink:0,minWidth:1}}/>
+        <div style={{flex:"1 1 200px",background:P.vermillion+"06",borderRadius:8,padding:16,border:`1px solid ${P.vermillion}15`}}>
+          <div style={{fontSize:14,fontWeight:800,color:P.vermillion,letterSpacing:2,marginBottom:10,textAlign:"center"}}>{rightTitle}</div>
+          {right.map((item,i)=><div key={i} style={{fontSize:14,color:P.textSoft,lineHeight:1.9,padding:"4px 0",borderBottom:i<right.length-1?`1px dashed ${P.vermillion}12`:"none"}}>{item}</div>)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CaseStory({title,children,color=P.colors[0].hex,icon="📖"}){
+  return(
+    <div style={{margin:"20px 0",background:`linear-gradient(135deg,${color}06,${P.paperLight})`,borderRadius:10,padding:"22px 24px",border:`1px solid ${color}18`,position:"relative",overflow:"hidden"}}>
+      <div style={{position:"absolute",top:12,right:16,fontSize:32,opacity:0.08}}>{icon}</div>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+        <div style={{width:4,height:20,borderRadius:2,background:color}}/>
+        <span style={{fontSize:15,fontWeight:800,color:P.textChapter,letterSpacing:1}}>{title}</span>
+      </div>
+      <div style={{fontSize:15,color:P.textSoft,lineHeight:2.0}}>{children}</div>
+    </div>
+  );
+}
+
+function InsightBox({children,color=P.vermillion}){
+  return(
+    <div style={{background:`linear-gradient(135deg,${color}08,${P.paperLight})`,borderRadius:10,padding:"20px 24px",border:`1px solid ${color}20`,margin:"24px 0",position:"relative",overflow:"hidden"}}>
+      <div style={{position:"absolute",top:0,right:0,width:80,height:80,borderRadius:"0 10px 0 80px",background:color+"05"}}/>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+        <span style={{fontSize:20}}>💎</span>
+        <span style={{fontSize:15,fontWeight:800,color,letterSpacing:2}}>拆书师洞察</span>
+      </div>
+      <div style={{fontSize:15,color:P.text,lineHeight:2.0}}>{children}</div>
+    </div>
+  );
+}
+
+function LogicChain({items,color,question}){
+  return(
+    <div style={{margin:"0 0 28px",background:`linear-gradient(135deg,${color}06,${P.paperLight})`,borderRadius:10,padding:"18px 20px",border:`1px solid ${color}18`}}>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+        <div style={{width:22,height:22,borderRadius:"50%",background:color+"15",border:`1.5px solid ${color}40`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color,fontWeight:800}}>?</div>
+        <span style={{fontSize:14,fontWeight:700,color,letterSpacing:1}}>{question}</span>
+      </div>
+      <div style={{display:"flex",alignItems:"center",flexWrap:"wrap",gap:"6px 2px"}}>
+        {items.map((item,i)=>(
+          <span key={i} style={{display:"inline-flex",alignItems:"center",gap:4}}>
+            <span style={{fontSize:13,fontWeight:600,color:P.textChapter,background:color+"0a",border:`1px solid ${color}18`,borderRadius:6,padding:"4px 9px"}}>{item}</span>
+            {i<items.length-1&&<span style={{fontSize:13,color:color+"50",fontWeight:700,flexShrink:0}}>→</span>}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TransitionCard({text,color}){
+  return(
+    <div style={{margin:"32px 0 0",padding:"18px 24px",background:color+"06",borderRadius:10,border:`1px solid ${color}18`,borderLeft:`4px solid ${color}40`}}>
+      <div style={{fontSize:12,color,fontWeight:700,letterSpacing:2,marginBottom:6}}>→ 下一模块</div>
+      <div style={{fontSize:15,color:P.textSoft,lineHeight:1.9}}>{text}</div>
+    </div>
+  );
+}
+
+/* ===== TAB 0: 导读页 ===== */
+function SpeedRead({onStart}){
+  const c=P.vermillion;
+  const[open,setOpen]=useState(true);
+  return(
+    <div style={{marginBottom:24}}>
+      <div onClick={()=>setOpen(!open)} style={{background:open?P.paperLight:P.paperDeep,borderRadius:10,border:`1px solid ${open?c+"20":"rgba(160,140,110,0.1)"}`,overflow:"hidden",cursor:"pointer",transition:"all 0.3s",boxShadow:open?`0 2px 16px ${c}08`:"none"}}>
+        <div style={{padding:"16px 20px 12px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:open?`1px solid ${c}10`:"none"}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <SealIcon char="览" color={c} size={32} glow={false}/>
+            <div>
+              <div style={{fontSize:16,fontWeight:800,color:P.textChapter,letterSpacing:2}}>3分钟速览</div>
+              <div style={{fontSize:11,color:P.textMuted,marginTop:2}}>不想读全文？看这里就够了</div>
+            </div>
+          </div>
+          <span style={{fontSize:13,color:P.textMuted,transition:"transform 0.3s",transform:open?"rotate(180deg)":"rotate(0)"}}>{"\u25B2"}</span>
+        </div>
+        {open&&(
+          <div style={{padding:"0 20px 20px",animation:"fadeUp 0.3s ease both"}} onClick={e=>e.stopPropagation()}>
+            <div style={{margin:"16px 0 18px",padding:"14px 18px",background:c+"08",borderRadius:10,borderLeft:`3px solid ${c}60`}}>
+              <div style={{fontSize:11,color:c,fontWeight:700,letterSpacing:2,marginBottom:6}}>一句话说清这本书</div>
+              <div style={{fontSize:15,fontWeight:700,color:P.textChapter,lineHeight:1.8}}>赚钱是一场游戏，大多数人输了只因为不知道规则——你在哪个赛道比你跑多快更重要。</div>
+            </div>
+            <div style={{marginBottom:18}}>
+              <div style={{fontSize:13,fontWeight:800,color:P.textChapter,letterSpacing:1,marginBottom:10,display:"flex",alignItems:"center",gap:6}}>
+                <span style={{display:"inline-block",width:18,height:18,borderRadius:"50%",background:c+"12",color:c,fontSize:10,fontWeight:900,textAlign:"center",lineHeight:"18px"}}>3</span>
+                记住这三点就够了
+              </div>
+              {[
+                {num:"①",text:"你在哪个"收入领域"运作，比你有多努力更重要——AFIUE五角星里，右侧两类（雇员/自由职业者）用时间换钱，左侧三类（投资者/企业家/专家）用思想和资产换钱"},
+                {num:"②",text:"专家不是学历高、懂得多的人，而是在精细领域建立不可替代稀缺性的人——你越聚焦，越稀缺，越有资格自己定价"},
+                {num:"③",text:"不是赚得更多才能开始投资，而是先管好现有的钱——先分清投资和负债，建立强制储蓄机制，然后才让钱为你工作"},
+              ].map((item,i)=>(
+                <div key={i} style={{display:"flex",gap:10,marginBottom:10,padding:"10px 14px",background:P.paperLight,borderRadius:8,border:`1px solid rgba(160,140,110,0.08)`}}>
+                  <span style={{fontSize:14,fontWeight:900,color:c,flexShrink:0,marginTop:1}}>{item.num}</span>
+                  <span style={{fontSize:13,color:P.text,lineHeight:1.8}}>{item.text}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{marginBottom:18,padding:"14px 18px",background:P.colors[2].hex+"06",borderRadius:10,border:`1px solid ${P.colors[2].hex}12`}}>
+              <div style={{fontSize:11,color:P.colors[2].hex,fontWeight:700,letterSpacing:2,marginBottom:8}}>看完立刻能做的事</div>
+              <div style={{fontSize:13,color:P.text,lineHeight:1.8}}>右手拿纸，诚实回答这一个问题：<span style={{fontWeight:700,color:P.colors[2].hex}}>如果我停止工作一个月，我还会有收入进账吗？</span>这个答案会告诉你，你现在在五角星的哪个位置。</div>
+            </div>
+            <div style={{marginBottom:16,padding:"14px 18px",background:P.colors[1].hex+"08",borderRadius:10,border:`1px solid ${P.colors[1].hex}12`}}>
+              <div style={{fontSize:11,color:P.colors[1].hex,fontWeight:700,letterSpacing:2,marginBottom:8}}>这本书适合你吗？</div>
+              <div style={{fontSize:13,color:P.text,lineHeight:1.8}}>想增加收入但不知从哪里突破的职场人、想转型的打工者、想系统理财的初学者。如果你已经是资深投资者或成熟企业家，这本书的框架部分你可能早已知道——但案例和专家定位部分仍然值得一读。</div>
+            </div>
+            <div style={{textAlign:"center",paddingTop:4}}>
+              <button onClick={()=>onStart&&onStart()} style={{background:`linear-gradient(135deg,${c}15,${c}08)`,border:`1px solid ${c}30`,borderRadius:8,padding:"10px 28px",cursor:"pointer",fontSize:13,fontWeight:700,color:c,letterSpacing:2,transition:"all 0.3s"}}>
+                开始阅读全文 →
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function OverviewPage({onJump}){
+  const c=P.vermillion;
+  const chapters=[
+    {char:"轮",title:"仓鼠之轮",color:P.colors[0].hex,question:"为什么拼命工作却越来越穷？",core:"选错赛道 × 再多努力 = 原地打转",concepts:["AFIUE五角星","三阶层差异","四种仓鼠轮","多次收益","赛道选择"]},
+    {char:"则",title:"致富规则",color:P.colors[1].hex,question:"为什么努力却没有突破？",core:"旧规则 + 新时代 = 加速失败",concepts:["12条新规则","时间三分法","多次收益","弱点转化","重新定位"]},
+    {char:"流",title:"心流密码",color:P.colors[2].hex,question:"什么才是值得奋斗一生的方向？",core:"强烈兴趣 × 天赋 = 心流 = 可持续高表现",concepts:["心流七条件","三环交集法","乐趣交集","天赋交集","心流战场"]},
+    {char:"径",title:"三条路径",color:P.colors[3].hex,question:"怎么一步步实现收入翻倍？",core:"稀缺性 × 传播度 = 专家定价权",concepts:["雇员15条规则","专家10条原则","企业家6任务","帕累托原则","加薪谈判"]},
+    {char:"钱",title:"钱生钱",color:P.colors[4].hex,question:"有了收入，怎么让钱产生更多钱？",core:"节约 + 增值 = 投资者身份",concepts:["投资vs负债","账户模式","印钞机思维","强制储蓄","复利机制"]},
+  ];
+  return(
+    <div className="page-in">
+      <SecTitle title="全书导读" sub="这不是一本教你省钱或炒股的书，而是一本讲底层逻辑的书——它回答一个问题：为什么有些人比你努力不了多少，却赚你的5倍、10倍？" color={c} char="导" ls={0}/>
+
+      {/* 书籍信息卡 */}
+      <div style={{display:"flex",gap:20,marginBottom:32,padding:24,background:P.paperLight,borderRadius:12,border:`1px solid rgba(160,140,110,0.12)`,flexWrap:"wrap"}}>
+        <div style={{flexShrink:0}}>
+          <img src="covers/cwzyzl2.jpg" alt="财务自由之路Ⅱ封面" style={{width:100,height:140,objectFit:"cover",borderRadius:6,boxShadow:"0 4px 16px rgba(60,40,20,0.18)",display:"block"}}
+            onError={e=>{e.target.style.display="none";}}
+          />
+        </div>
+        <div style={{flex:1,minWidth:200}}>
+          <div style={{fontSize:20,fontWeight:900,color:P.textChapter,letterSpacing:2,lineHeight:1.5,marginBottom:4,fontFamily:"'ZCOOL XiaoWei',serif"}}>财务自由之路 Ⅱ</div>
+          <div style={{fontSize:14,color:P.textSoft,marginBottom:8}}>3年内让你的个人资产翻一番</div>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:12}}>
+            <span style={{fontSize:12,color:P.textMuted,background:P.paperDeep,borderRadius:4,padding:"2px 8px"}}>博多·舍费尔 著</span>
+            <span style={{fontSize:12,color:P.textMuted,background:P.paperDeep,borderRadius:4,padding:"2px 8px"}}>现代出版社</span>
+            <span style={{fontSize:12,color:P.vermillion,background:P.vermillion+"0a",borderRadius:4,padding:"2px 8px",fontWeight:700}}>★ 7.8分</span>
+          </div>
+          <div style={{fontSize:13,color:P.textSoft,lineHeight:1.8}}>适合人群：想增加收入但不知从哪里突破的职场人、想转型的打工者、想系统理财的初学者</div>
+        </div>
+      </div>
+
+      {/* 全书核心公式 */}
+      <Formula text="认清现状 → 重建思维 → 找到方向 → 执行路径 → 财富增长" color={c}/>
+
+      {/* 全书逻辑架构 */}
+      <div style={{margin:"28px 0",background:P.paperLight,borderRadius:12,padding:"24px 12px 16px",border:`1px solid ${c}12`}}>
+        <div style={{fontSize:16,fontWeight:800,color:c,letterSpacing:3,textAlign:"center",marginBottom:4}}>全书五模块架构</div>
+        <div style={{fontSize:12,color:P.textMuted,textAlign:"center",marginBottom:16}}>从认知突破到行动路径，五个模块层层递进</div>
+        <svg width="100%" viewBox="0 0 680 240" style={{display:"block",maxWidth:680,margin:"0 auto"}}>
+          <defs>
+            <marker id="arrowMain" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4" fill={c+"80"}/></marker>
+          </defs>
+          <path d="M30,210 Q340,185 650,210" fill="none" stroke={c+"12"} strokeWidth="32" strokeLinecap="round"/>
+          <text x="340" y="224" textAnchor="middle" fill={c+"35"} fontSize="10" fontFamily="'Noto Serif SC',serif">认知→思维→方向→路径→财富，五步闭环 →</text>
+          {chapters.map((ch,i)=>{
+            const w=104,h=44,gap=22;
+            const totalW=5*w+4*gap;
+            const startX=(680-totalW)/2;
+            const x=startX+i*(w+gap);
+            const y=16;
+            return(
+              <g key={i} style={{cursor:"pointer"}} onClick={()=>onJump&&onJump(i+1)}>
+                <rect x={x} y={y} width={w} height={h} rx="7" fill={ch.color+"0c"} stroke={ch.color+"40"} strokeWidth="1.5"/>
+                <text x={x+w/2} y={y+17} textAnchor="middle" fill={ch.color} fontSize="13" fontWeight="900" fontFamily="'ZCOOL XiaoWei',serif" style={{pointerEvents:"none"}}>{ch.char}</text>
+                <text x={x+w/2} y={y+34} textAnchor="middle" fill={P.textChapter} fontSize="10" fontWeight="600" fontFamily="'Noto Serif SC',serif" style={{pointerEvents:"none"}}>{ch.title}</text>
+                <line x1={x+w/2} y1={y+h} x2={x+w/2} y2={y+h+10} stroke={ch.color+"30"} strokeWidth="1" strokeDasharray="3 2"/>
+                <rect x={x+2} y={y+h+12} width={w-4} height={82} rx="5" fill={ch.color+"05"} stroke={ch.color+"12"} strokeWidth="0.7"/>
+                {ch.concepts.slice(0,4).map((cv,j)=>(
+                  <text key={j} x={x+w/2} y={y+h+25+j*16} textAnchor="middle" fill={P.textSoft} fontSize="9.5" fontFamily="'Noto Serif SC',serif" style={{pointerEvents:"none"}}>{cv}</text>
+                ))}
+                {i<4&&<line x1={x+w+1} y1={y+h/2} x2={x+w+gap-1} y2={y+h/2} stroke={c+"45"} strokeWidth="1.5" strokeDasharray="4 3" markerEnd="url(#arrowMain)"/>}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* 5个模块导航卡 */}
+      <div style={{fontSize:16,fontWeight:800,color:P.textChapter,letterSpacing:2,marginBottom:14,marginTop:28}}>五模块速览（点击进入）</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+        {chapters.map((ch,i)=>(
+          <div key={i} onClick={()=>onJump&&onJump(i+1)} style={{background:P.paperLight,borderRadius:10,padding:"14px 16px",border:`1px solid ${ch.color}15`,cursor:"pointer",transition:"all 0.3s",borderLeft:`3px solid ${ch.color}60`}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+              <span style={{fontSize:11,fontWeight:900,fontFamily:"'ZCOOL XiaoWei',serif",color:ch.color,border:`1px solid ${ch.color}40`,width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)",background:ch.color+"08"}}>{ch.char}</span>
+              <span style={{fontSize:14,fontWeight:700,color:P.textChapter}}>模块{i+1}·{ch.title}</span>
+            </div>
+            <div style={{fontSize:13,color:ch.color,fontWeight:600,marginBottom:4,lineHeight:1.6}}>{ch.question}</div>
+            <div style={{fontSize:12,color:P.textSoft,lineHeight:1.7}}>{ch.core}</div>
+          </div>
+        ))}
+      </div>
+
+      <Divider color={c}/>
+
+      {/* 全书优缺点评析 */}
+      <Expand title="全书优缺点评析" char="评" color={c} defaultOpen={false}>
+        <div style={{paddingTop:8}}>
+          <div style={{fontSize:15,fontWeight:700,color:P.colors[2].hex,marginBottom:10}}>✦ 值得肯定的地方</div>
+          {[
+            "不是教你省钱或炒股，而是讲底层逻辑——它回答了为什么有些人比你努力不了多少，却赚你的5倍、10倍",
+            "AFIUE五角星框架、多次收益思维、专家定位原则、心流理论的引入——在2000年代初相当超前，至今仍然有效",
+            "很多中文"财商教育"课程反复借用这些框架（但很少注明出处），读完原著能让你看清源头",
+          ].map((t,i)=><div key={i} style={{fontSize:14,color:P.textSoft,lineHeight:1.9,padding:"6px 0",borderBottom:i<2?`1px dashed ${P.colors[2].hex}12`:"none"}}>{`• ${t}`}</div>)}
+          <div style={{fontSize:15,fontWeight:700,color:P.vermillion,marginBottom:10,marginTop:16}}>✦ 需要批判性看待的地方</div>
+          {[
+            "大量内容是"正确的废话"——"做你热爱的事情"、"找到你的天赋"，道理谁都懂，但操作路径太模糊",
+            "书中的"案例"相当一部分是自我营销，舍费尔不断讲自己如何从破产到月入10万马克，有的地方读起来像广告",
+            "投资建议已严重过时——书里推荐的德国养老基金、英国生活保险是2003年语境，现在直接套用会踩雷",
+          ].map((t,i)=><div key={i} style={{fontSize:14,color:P.textSoft,lineHeight:1.9,padding:"6px 0",borderBottom:i<2?`1px dashed ${P.vermillion}12`:"none"}}>{`• ${t}`}</div>)}
+          <Quote text="我的综合判断：值得读，但要带着批判性眼光读。把它当框架书，而非操作手册。它的价值在于改变你对"收入"这件事的思考方式——一旦框架变了，很多细节你自己会想清楚。" color={c}/>
+        </div>
+      </Expand>
+    </div>
+  );
+}
+
+/* ===== TAB 1: 仓鼠之轮 ===== */
+function Ch1(){
+  const c=P.colors[0].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="仓鼠之轮" sub="你在跑，但你没有前进——为什么这么多人拼命工作却越来越穷？" color={c} char="轮" ls={0}/>
+      <LogicChain question="为什么拼命工作却越来越穷？" color={c} items={["努力→收入略增","花销同步增加","债务增加","更拼命工作","原地打转"]}/>
+      <Formula text="选错赛道 × 再多努力 = 原地打转" color={c}/>
+
+      <InkFlow steps={["A雇员","F自由职业者","I投资者","U企业家","E专家"]} color={c} title="AFIUE五角星——五种收入思维模式"/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>五角星不是职业分类，是思维方式</div>
+        <Para>书里用AFIUE五角星把所有人的收入方式分成五类。但这不只是职业分类，更是五种不同的"赚钱思维模式"。</Para>
+        <InkCompare
+          title="右侧 vs 左侧——两种根本不同的赚钱逻辑"
+          leftTitle="左侧（I投资者/U企业家/E专家）"
+          rightTitle="右侧（A雇员/F自由职业者）"
+          left={["用思想、资产或稀缺性换钱","不工作时收入仍然持续","安全感来自自身能力和财富机制","目标：创造财富","问：我怎样才能买得起？"]}
+          right={["用时间换钱，停止工作=停止收入","饭碗是别人的，收入上限=时间上限","安全感来自稳定的工作","目标：尽可能高的时薪","问：我买不起"]}
+          color={c}
+        />
+      </Card>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>四种仓鼠之轮的变体</div>
+        {[
+          {title:"雇员的轮子",text:"为老板工作、为国家纳税、为银行还贷、为企业消费。自己的劳动成果被四个方向瓜分。"},
+          {title:"自由职业者的轮子",text:"越成功越忙，因为自己就是那个机制，缺席=崩溃。舍费尔的尖锐观察：医生和律师的平均寿命是各职业中最短的，因为他们无法"离开"自己的机制。"},
+          {title:"投资者的轮子",text:"债务利息（6%-10%）吃掉资产收益（2%-5%），净收益为负，还要交税，总利润实际是负的。"},
+          {title:"企业家的轮子",text:"创业初期变成"雇了自己一个最苛刻的老板"，没有建立机制，公司离不开人，反而失去自由。"},
+        ].map((item,i)=>(
+          <div key={i} style={{marginBottom:16,padding:"14px 16px",background:c+"06",borderRadius:8,border:`1px solid ${c}12`}}>
+            <div style={{fontSize:14,fontWeight:800,color:c,marginBottom:6}}>{item.title}</div>
+            <div style={{fontSize:14,color:P.textSoft,lineHeight:1.9}}>{item.text}</div>
+          </div>
+        ))}
+      </Card>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>三阶层思维差异</div>
+        <div style={{overflowX:"auto"}}>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
+            <thead>
+              <tr>
+                {["维度","贫穷阶层","中产阶层","富裕阶层"].map((h,i)=>(
+                  <th key={i} style={{padding:"8px 12px",textAlign:"left",borderBottom:`2px solid ${c}20`,color:i===0?P.textMuted:i===3?c:P.textChapter,fontWeight:700,whiteSpace:"nowrap"}}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ["财务目标","尽可能高的时薪","好的收入","创造财富"],
+                ["对风险","风险=危险，要逃避","机遇和危险并存，看运气","风险=可控的不确定性，是机会"],
+                ["经典语句","我买不起","我负担不起","我怎样才能买得起？"],
+                ["对时间","用时间省钱（5小时比价省35欧）","两者都做","用钱省时间（时间比钱值钱）"],
+                ["安全感","稳定的工作","储蓄+工作","自身能力和财富机制"],
+              ].map((row,ri)=>(
+                <tr key={ri} style={{background:ri%2===0?c+"04":"transparent"}}>
+                  {row.map((cell,ci)=>(
+                    <td key={ci} style={{padding:"8px 12px",borderBottom:`1px solid ${c}08`,color:ci===0?P.textMuted:P.textSoft,fontSize:ci===3?13:13,lineHeight:1.7}}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <Quote text={"\"贫穷（Armut）这个词说到底来源于'缺乏勇气'（arm an Mut）。\" — 舍费尔的教练"} color={c}/>
+      </Card>
+
+      <Divider color={c}/>
+      <div style={{fontSize:16,fontWeight:800,color:P.textChapter,letterSpacing:2,marginBottom:16}}>三个典型案例</div>
+
+      <CaseStory title="✦ 案例1（正面）舍费尔：从破产到月入10万马克" color={c} icon="💰">
+        <div><span style={{fontWeight:700,color:c}}>场景：</span>26岁，破产，在保险代理机构打工糊口，毫无热情。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>冲突：</span>教练要求他立刻辞掉那份工作，他不知道下个月怎么交房租。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>转折：</span>在30分钟内传真出辞职信。两三个月是财务最艰难时期，但他没有退回旧路，开始学习"左半部分"的规则。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>结果：</span>两年半内，月收入翻了五番，超过100,000马克。他说：回头看，那已经不是奇迹了，因为他知道自己做了什么。</div>
+      </CaseStory>
+
+      <CaseStory title="✗ 案例2（反面）一直留在原单位的同事" color={P.vermillion} icon="⚠️">
+        <div><span style={{fontWeight:700,color:P.vermillion}}>场景：</span>一位技术极其精湛的同事，能在6小时内整理完所有索引卡片。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:P.vermillion}}>转折：</span>电脑系统出现后，整个索引卡片系统被废除。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:P.vermillion}}>结果：</span>技术精湛的同事被辞退。规则消失时，技能也随之失效。</div>
+      </CaseStory>
+
+      <CaseStory title="✗ 案例3（警示）19年后被辞退的职员" color={P.vermillion} icon="🔔">
+        <div><span style={{fontWeight:700,color:P.vermillion}}>场景：</span>丈夫19年全心奉献给公司，某天被悄无声息辞退。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:P.vermillion}}>妻子说：</span>"19年来我们一直为安全感工作，现在流落街头，不公平。"</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:P.vermillion}}>洞察：</span>没有转折——这就是悲剧所在。19年的"安全感"是幻象，因为安全感是别人给的，别人随时可以收走。</div>
+      </CaseStory>
+
+      <InsightBox color={c}>
+        仓鼠之轮最危险的地方不是"你在跑"，而是<span style={{fontWeight:800,color:c}}>"你太忙了，忙到意识不到自己在跑"</span>。
+        洛克菲勒有句话说得透："整天工作的人，没有时间赚钱。"
+        这里有个悖论：仓鼠之轮本身就制造了一种让你无法跳出轮子的状态——越在轮子里，越没有时间和精力反思、学习、转型。所以第一步不是"怎么跳出来"，而是先停下来，看清楚自己在哪里跑。
+      </InsightBox>
+
+      <Divider color={c}/>
+
+      <ActionBox char="诊" color={c}>
+        <div style={{fontSize:15,fontWeight:700,color:c,marginBottom:10}}>「收入领域自诊五问法」— 今天就能做</div>
+        <div style={{fontSize:13,color:P.textSoft,marginBottom:12}}>右手拿纸，左手看着这5个问题，给自己诚实地打分（1-10分）：</div>
+        {[
+          "我现在主要靠什么方式赚钱？（A/F/I/U/E中的哪一个）",
+          "如果我停止工作一个月，我的收入是否仍然有进账？（衡量"被动收入"比例）",
+          "我赚的钱里，有多少是"多次收入"（一次创造、多次获得报酬）？",
+          "在我所在的领域，有没有人比我收入高10倍？他们在做什么不同的事？",
+          "三年后，我希望自己处于五角星的哪个位置？",
+        ].map((q,i)=>(
+          <div key={i} style={{display:"flex",gap:10,marginBottom:10,padding:"8px 12px",background:P.paperLight,borderRadius:6,border:`1px solid ${c}10`}}>
+            <span style={{fontSize:13,fontWeight:900,color:c,flexShrink:0}}>{i+1}.</span>
+            <span style={{fontSize:13,color:P.text,lineHeight:1.8}}>{q}</span>
+          </div>
+        ))}
+        <div style={{fontSize:13,color:P.textSoft,marginTop:8}}>把这5个答案写下来，贴在你每天能看到的地方。时间：5分钟版（问题1-2）/ 15分钟版（全部5问）/ 深度版（联系3个收入比你高的人，问他们同样的问题）</div>
+      </ActionBox>
+
+      <TransitionCard color={c} text="认清了仓鼠之轮的结构，下一步是什么？不是立刻行动，而是先重建思维规则。因为旧的思维方式是把你送进轮子里的，同样的思维方式不会把你送出去。模块二，我们来看12条新规则——这是整本书的思想骨架。"/>
+    </div>
+  );
+}
+
+/* ===== TAB 2: 致富规则 ===== */
+function Ch2(){
+  const c=P.colors[1].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="致富规则" sub="12条让你赚更多的新游戏规则——为什么努力工作却没有突破，是因为你在用旧规则打新时代的游戏？" color={c} char="则" ls={1}/>
+      <LogicChain question="为什么努力却没有突破？" color={c} items={["工业时代旧规则","信息时代规则变了","旧规则失效","多数人未掌握新规则","先掌握新规则者赢"]}/>
+      <Formula text="旧规则 + 新时代 = 加速失败" color={c}/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>12条规则的底层逻辑：从"出售劳动力"到"出售稀缺性"</div>
+        <Para>书里的12条规则以德文"Gehaltserhöhung"（加薪）的每个字母命名，但比字母游戏更重要的是它们背后共同的底层逻辑——从"出售劳动力"到"出售稀缺性"。</Para>
+
+        <InkFlow steps={["重新定义产出","重新定义安全","重新定义工作"]} color={c} title="12条规则三组结构"/>
+
+        {[
+          {group:"第一组：重新定义产出（规则1-3）",rules:[
+            {n:"规则1",t:"多次收益",d:"一份工作应该不止被支付一次，寻求一次创造、多次获得报酬的机会"},
+            {n:"规则2",t:"可出售性",d:"你的工作/创造是否有独立价值？能否在你离开后继续存在？"},
+            {n:"规则3",t:"寻找时代榜样",d:"向那些做自己热爱之事且以此为乐的人看齐"},
+          ]},
+          {group:"第二组：重新定义安全（规则4-6）",rules:[
+            {n:"规则4",t:"关心自己的安全感",d:"公司和国家不再是保障，你的能力才是真正的安全感"},
+            {n:"规则5",t:"为盈利参与竞争，经历冒险",d:"逃避风险≠安全，风险=机会；成功者把错误视为对未来的投资"},
+            {n:"规则6",t:"错误是好事",d:"错误是反馈，是调整方向的信息；只有不行动的人才不犯错"},
+          ]},
+          {group:"第三组：重新定义工作（规则7-12）",rules:[
+            {n:"规则7",t:"不断学习，不断成长（K.L.U.W.）",d:"终身学习是信息时代的生存基础，不是痛苦，是竞争力"},
+            {n:"规则8",t:"重新开创自己的职业",d:"自我提高不够，有时必须完全舍弃过去、重新定位"},
+            {n:"规则9",t:"赚钱是一项游戏",d:"做你所热爱的事，工作必须有乐趣——这是高效运作大脑的必要条件"},
+            {n:"规则10",t:"发展强项",d:"没有人因为发展弱点而变富——把时间用在强项上"},
+            {n:"规则11",t:"找到解决弱点的办法或将其转化为强项",d:"弱点不必消除，有时只是还没找到正确的"容器"来放置它"},
+            {n:"规则12",t:"工作、学习和定位是一体的",d:"工作时间分配：日常工作（70%）+ 学习（10%）+ 定位（20%）"},
+          ]},
+        ].map((group,gi)=>(
+          <div key={gi} style={{marginBottom:20}}>
+            <div style={{fontSize:14,fontWeight:800,color:c,marginBottom:10,letterSpacing:1}}>{group.group}</div>
+            {group.rules.map((rule,ri)=>(
+              <div key={ri} style={{display:"flex",gap:12,marginBottom:10,padding:"10px 14px",background:c+"06",borderRadius:8,border:`1px solid ${c}10`}}>
+                <div style={{flexShrink:0,width:52,textAlign:"center"}}>
+                  <div style={{fontSize:10,color:c,fontWeight:700,border:`1px solid ${c}30`,borderRadius:3,padding:"2px 4px"}}>{rule.n}</div>
+                </div>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:14,fontWeight:700,color:P.textChapter,marginBottom:3}}>{rule.t}</div>
+                  <div style={{fontSize:13,color:P.textSoft,lineHeight:1.8}}>{rule.d}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </Card>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>规则12：时间三分法（立刻可用）</div>
+        <div style={{padding:"16px 20px",background:c+"08",borderRadius:8,border:`1px solid ${c}15`,marginBottom:16}}>
+          <div style={{fontSize:13,fontFamily:"'Inter',monospace",color:P.textChapter,lineHeight:2.0}}>
+            <div>每日工作时间分配（理想目标）：</div>
+            <div style={{marginLeft:16}}>├── <span style={{color:c,fontWeight:700}}>日常工作任务（70%）</span>= 完成交付</div>
+            <div style={{marginLeft:16}}>├── <span style={{color:P.colors[2].hex,fontWeight:700}}>学习与成长（10%）</span>= 读书/研讨班/导师</div>
+            <div style={{marginLeft:16}}>└── <span style={{color:P.colors[3].hex,fontWeight:700}}>自我定位（20%）</span>= 建立专家形象/写作/人脉</div>
+          </div>
+        </div>
+        <Quote text="如果当前无法实现理想比例，至少从今天开始把10%的工作时间划出来用于学习，把20%用于定位自己。关键不是比例，而是把这些时间锁死在日历里——就像会议一样不可取消，而非"有时间再说"。" color={c}/>
+      </Card>
+
+      <Divider color={c}/>
+      <div style={{fontSize:16,fontWeight:800,color:P.textChapter,letterSpacing:2,marginBottom:16}}>四个典型案例</div>
+
+      <CaseStory title="✦ 案例4（正面）舍费尔第一本书：被拒绝50次的多次收益" color={c} icon="📚">
+        <div><span style={{fontWeight:700,color:c}}>场景：</span>花了很长时间写第一本书，用了近半年时间寻找出版社，被大约50家出版社拒绝，期间任何一个服务生都比他挣得多。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>转折：</span>他对写作和出版业的了解达到了"无所不知"的程度，终于出版。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>结果：</span>4年内销量超过300万册，他从卖出的每本书中持续赚钱，"即使在今天依然如此"。这是"多次收益"机制的完美案例。</div>
+      </CaseStory>
+
+      <CaseStory title="✦ 案例5（正面）迪帕克·乔普拉：把弱点转化为强项" color={c} icon="🔄">
+        <div><span style={{fontWeight:700,color:c}}>场景：</span>一位印度裔医生在美国行医，美国白人不愿意到他诊所看病，处境艰难。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>转折：</span>他没有试图"去掉印度人身份"，而是回到印度，深入学习阿育吠陀治疗方法，重新定位自己为"将现代医药和古印度医术相结合的智慧印度人"。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>结果：</span>他的书成为全球畅销书，开班授课、成立诊所、开设健康产品邮购部，可能成为当时世界上赚钱最多的医生之一。</div>
+        <div style={{marginTop:8,padding:"10px 14px",background:c+"0a",borderRadius:6,fontSize:13,color:P.textChapter,fontWeight:600}}>💎 洞察：弱点不必消除，有时候只是还没找到正确的"容器"来放置它。"外国人身份"从劣势变成了"东方智慧权威"的稀缺性。</div>
+      </CaseStory>
+
+      <CaseStory title="✦ 案例6（正面）奥利弗·卡恩：把特质放对容器" color={c} icon="⚽">
+        <div><span style={{fontWeight:700,color:c}}>场景：</span>一个从小就不接受失败、恼羞成怒的男孩，这被认为是"性格缺陷"。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>转折：</span>他没有"改掉"这个特质，而是找了一份工作——足球守门员——在这个位置上，不接受失败的极端性格恰恰是最强竞争力。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>结果：</span>成为当时世界上最好的守门员之一。</div>
+      </CaseStory>
+
+      <CaseStory title="✗ 案例7（反面）按旧规则等待的一类人" color={P.vermillion} icon="⚠️">
+        <div><span style={{fontWeight:700,color:P.vermillion}}>场景：</span>"管子里已经没有食物却还在等的人"——他们看到规则变了，却选择继续等待，或者发出"不公平"的抱怨。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:P.vermillion}}>结果：</span>在信息时代用工业时代的规则生活，最终被淘汰，并且感到"不公平"。这就是悲剧所在——没有转折。</div>
+      </CaseStory>
+
+      <InsightBox color={c}>
+        规则9"赚钱是游戏"看起来最抽象，其实最重要。<span style={{fontWeight:800,color:c}}>如果你把工作当苦差事，你的大脑会无意识地在每个决策点选择"减少痛苦"，而不是"增加收益"。</span>
+        这是生理机制，不是意志力问题。所以"找到你热爱的事情"不只是鸡汤，而是高效运作大脑的必要条件——那些在工作中感受到乐趣的人，会在无意识中做出更多有利于长期成功的决策。
+      </InsightBox>
+
+      <Divider color={c}/>
+      <ActionBox char="换" color={c}>
+        <div style={{fontSize:15,fontWeight:700,color:c,marginBottom:10}}>「旧规则→新规则替换练习」— 30分钟版</div>
+        <div style={{fontSize:13,color:P.textSoft,marginBottom:12}}>打开手机备忘录，问自己这一个问题：</div>
+        <div style={{padding:"12px 16px",background:P.paperLight,borderRadius:8,border:`1px solid ${c}15`,marginBottom:12}}>
+          <div style={{fontSize:14,fontWeight:700,color:P.textChapter,lineHeight:1.9}}>"我现在做的工作，我能不能让它'多次被支付'？有没有哪个环节可以变成内容、产品、或者被授权？"</div>
+        </div>
+        <div style={{fontSize:13,color:P.textSoft,lineHeight:1.8}}>写下你的答案。哪怕只是一个模糊的想法，也要写下来。深度版（30分钟）：把所有12条"旧规则"逐一对应当前你的行为，找出你还在用的旧规则，并写下对应的"新规则替换方案"。</div>
+      </ActionBox>
+
+      <TransitionCard color={c} text="新规则告诉你应该往哪个方向走，但没有告诉你应该走向哪个具体战场。很多人困惑于：我应该做什么、我擅长什么、我的心流在哪里？模块三，我们来解密"心流"——那个让你既能赚钱、又不觉得累的神奇状态。"/>
+    </div>
+  );
+}
+
+/* ===== TAB 3: 心流密码 ===== */
+function Ch3(){
+  const c=P.colors[2].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="心流密码" sub="找到你真正的战场——什么才是值得奋斗一生的方向？" color={c} char="流" ls={2}/>
+      <LogicChain question="什么才是值得奋斗一生的方向？" color={c} items={["大多数人只有28%在工作中找到乐趣","心流=兴趣×天赋×适当挑战","心流是最高效的工作状态","心流战场=可持续高收入+高满足"]}/>
+      <Formula text="强烈兴趣 × 天赋 = 心流 = 可持续的高表现" color={c}/>
+
+      <InkFlow steps={["强烈兴趣","发现天赋","兴趣×天赋交集","心流战场","高收入+高满足"]} color={c} title="心流形成路径"/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>心流的七个触发条件</div>
+        <Para>舍费尔引用了心理学家米哈里·契克森米哈赖（Mihaly Csikszentmihalyi）对心流状态的研究。心流需要满足以下条件：</Para>
+        {[
+          {n:1,t:"明确的目标",d:"有方向感，知道下一步是什么"},
+          {n:2,t:"控制感",d:"感觉自己有掌控力，不是被动应对"},
+          {n:3,t:"能力匹配挑战",d:"既不太简单（无聊），也不太难（焦虑）——这意味着心流不是"轻松"的状态，而是"刚好够用力"的状态"},
+          {n:4,t:"完全专注",d:"其他杂念消失，进入全神贯注的状态"},
+          {n:5,t:"跨越极限感",d:"感觉自己是更大事物的一部分"},
+          {n:6,t:"即时反馈",d:"马上知道自己是否走在正确的路上"},
+          {n:7,t:"时间感改变",d:"不觉时光流逝，几小时如同几分钟"},
+        ].map((item)=>(
+          <div key={item.n} style={{display:"flex",gap:12,marginBottom:12,alignItems:"flex-start"}}>
+            <div style={{width:26,height:26,borderRadius:"50%",background:c+"12",border:`1.5px solid ${c}35`,color:c,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:800,flexShrink:0}}>{item.n}</div>
+            <div style={{flex:1,paddingTop:2}}>
+              <span style={{fontSize:15,fontWeight:700,color:P.textChapter}}>{item.t}</span>
+              <span style={{fontSize:14,color:P.textSoft,lineHeight:1.9}}> — {item.d}</span>
+            </div>
+          </div>
+        ))}
+      </Card>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>三环交集法——找到心流战场</div>
+        <Para>书中用两组"三圆交集图"来帮助读者找到心流战场：</Para>
+
+        <div style={{display:"flex",gap:16,flexWrap:"wrap",marginBottom:16}}>
+          <div style={{flex:"1 1 200px",padding:"16px",background:c+"08",borderRadius:8,border:`1px solid ${c}15`}}>
+            <div style={{fontSize:14,fontWeight:800,color:c,marginBottom:10}}>第一组：乐趣交集</div>
+            <div style={{fontSize:13,color:P.textSoft,lineHeight:1.8,marginBottom:8}}>列出三件给你带来最大乐趣的事情 → 找三个圆的交集</div>
+            <div style={{fontSize:13,color:P.textChapter,lineHeight:1.8}}>舍费尔的例子：① 旅行 ② 富有创造力的写作 ③ 授课</div>
+            <div style={{fontSize:13,color:c,fontWeight:600,marginTop:6}}>交集：演讲 + 写书</div>
+          </div>
+          <div style={{flex:"1 1 200px",padding:"16px",background:P.colors[0].hex+"08",borderRadius:8,border:`1px solid ${P.colors[0].hex}15`}}>
+            <div style={{fontSize:14,fontWeight:800,color:P.colors[0].hex,marginBottom:10}}>第二组：天赋交集</div>
+            <div style={{fontSize:13,color:P.textSoft,lineHeight:1.8,marginBottom:8}}>列出三项你最突出的天赋或能力 → 找三个圆的交集</div>
+            <div style={{fontSize:13,color:P.textChapter,lineHeight:1.8}}>舍费尔的例子：① 激励人的表达力 ② 理出复杂事情的结构 ③ 把愿景变成现实的忍耐力</div>
+            <div style={{fontSize:13,color:P.colors[0].hex,fontWeight:600,marginTop:6}}>交集：作家 + 演说家</div>
+          </div>
+        </div>
+
+        <div style={{padding:"14px 18px",background:P.vermillion+"08",borderRadius:8,border:`1px solid ${P.vermillion}15`}}>
+          <div style={{fontSize:14,fontWeight:800,color:P.vermillion,marginBottom:6}}>终极交集 = 心流战场</div>
+          <div style={{fontSize:13,color:P.textSoft,lineHeight:1.8}}>把乐趣交集和天赋交集叠加 → 找到两组交集的重叠项</div>
+          <div style={{fontSize:13,color:P.textChapter,fontWeight:600,marginTop:6}}>⚠️ 重要提醒：先考虑天赋/能力，再考虑乐趣。只有乐趣没有能力是不够的。爱因斯坦热爱音乐，但他的物理才华让他站在了正确的战场上。</div>
+        </div>
+      </Card>
+
+      <Divider color={c}/>
+      <div style={{fontSize:16,fontWeight:800,color:P.textChapter,letterSpacing:2,marginBottom:16}}>三个典型案例</div>
+
+      <CaseStory title="✦ 案例8（正面）舍费尔被解雇后找到心流战场" color={c} icon="🌱">
+        <div><span style={{fontWeight:700,color:c}}>场景：</span>与第二个教练共同创业，全力以赴7个月后，被教练用传真毫无预警地"解雇"，伤心欲绝，在家发呆了几个月。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>转折：</span>他开始写书，把这段经历的教训注入文字。教练在解雇6周后打来一个电话："你不再需要我了。去做你自己的事情吧。"</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>结果：</span>他写了《财务自由之路》，销量超过250万册，畅销书榜110周，随后建立了自己的演讲事业。他说："要不是被解雇，也许那本书根本不会存在。"</div>
+        <div style={{marginTop:8,padding:"10px 14px",background:c+"0a",borderRadius:6,fontSize:13,color:P.textChapter,fontWeight:600}}>💎 核心不是"失业变机会"的鸡汤，而是：他在最痛苦的时候找到了自己乐趣×天赋的真正交集（写作+演讲+教育）。危机只是一个被迫停下来的时机，心流战场本来就在那里等着他。</div>
+      </CaseStory>
+
+      <CaseStory title="✗ 案例9（反面）72%在工作中找不到乐趣的人" color={P.vermillion} icon="📺">
+        <div><span style={{fontWeight:700,color:P.vermillion}}>场景：</span>调查数据：只有28%的人在工作中找到乐趣，对大多数人来说，薪水是给自己"对糟糕工作的赔偿"。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:P.vermillion}}>结果：</span>大多数人没有转折——他们在不满意的工作上继续了几十年。电视成为最大的逃避工具——"人们从电视里寻找那种自己无法在工作中得到的'流畅体验'"。</div>
+      </CaseStory>
+
+      <CaseStory title="✦ 案例10（寓言）两只猫的故事" color={c} icon="🐱">
+        <div><span style={{fontWeight:700,color:c}}>场景：</span>两只猫都知道"幸福藏在尾巴里"。第一只猫不停追自己的尾巴。第二只猫说：当我做我热爱的事情时，幸福就自动追随着我。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>拆书师评论：</span>这个寓言过于简洁，书中对"做热爱的事"与"保证收入"之间过渡期的艰难描述不够充分。但核心道理是对的：<span style={{fontWeight:800}}>把心流作为选择方向的标准，你会更接近它；把心流当最终目标，你可能永远找不到。</span></div>
+      </CaseStory>
+
+      <InsightBox color={c}>
+        书里有一句话让我印象最深："<span style={{fontWeight:800,color:c}}>生命中真正的悲剧并不是每个个体不够强大，而是我们当中有许多人的优势没有发挥出来。</span>"
+        心流密码的真正秘密：绝大多数人的天赋从未被正确地展示在正确的舞台上。他们的天赋被放在了一个完全不匹配的"容器"里，当然发不出光。
+        乔普拉的印度身份、卡恩的不服输——这些"弱点"或"特质"，放在错误的容器里是麻烦，放在正确的容器里是核武器。
+      </InsightBox>
+
+      <Divider color={c}/>
+      <ActionBox char="探" color={c}>
+        <div style={{fontSize:15,fontWeight:700,color:c,marginBottom:10}}>「心流探测三步法」— 今天就能开始</div>
+        {[
+          {t:"5分钟版（今天就能做）",d:"列出10件"让你忘记时间"的事情（不需要和工作有关）。注意：不是"让你快乐"的事，而是"让你完全沉浸其中的事"。"},
+          {t:"10分钟版",d:"在上面10件事中，标出3件你觉得自己做得比大多数人好（哪怕是直觉判断）。这3件事的交集，就是你心流战场的方向。"},
+          {t:"20分钟版（深度版）",d:"做舍费尔的"三环交集"练习：画三个大圆（乐趣），找交集；再画三个大圆（天赋），找交集；把两组交集重叠，看看有什么出现。"},
+        ].map((step,i)=>(
+          <div key={i} style={{display:"flex",gap:12,marginBottom:12,padding:"10px 14px",background:P.paperLight,borderRadius:8,border:`1px solid ${c}10`}}>
+            <span style={{fontSize:13,fontWeight:900,color:c,flexShrink:0,marginTop:1}}>{i+1}.</span>
+            <div>
+              <div style={{fontSize:13,fontWeight:700,color:P.textChapter,marginBottom:3}}>{step.t}</div>
+              <div style={{fontSize:13,color:P.textSoft,lineHeight:1.8}}>{step.d}</div>
+            </div>
+          </div>
+        ))}
+        <div style={{padding:"12px 16px",background:c+"08",borderRadius:8,border:`1px solid ${c}15`,marginTop:4}}>
+          <div style={{fontSize:13,fontWeight:700,color:c,marginBottom:4}}>今天就能做的第一步：</div>
+          <div style={{fontSize:13,color:P.textSoft,lineHeight:1.9}}>"如果我不需要为赚钱而工作，我今天会做什么？这件事里，有哪个部分是我比大多数人更擅长的？"</div>
+        </div>
+      </ActionBox>
+
+      <TransitionCard color={c} text="找到了心流战场，接下来的问题是：如何把这个战场变成高收入来源？这是一条三级进化路线——从雇员到专家到企业家，每一级都有具体的路径和工具。模块四带你走这条路。"/>
+    </div>
+  );
+}
+
+/* ===== TAB 4: 三条路径 ===== */
+function Ch4(){
+  const c=P.colors[3].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="三条路径" sub="从打工人到高收入专家的进化路线图——我应该按照什么路径，一步步实现收入翻倍？" color={c} char="径" ls={3}/>
+      <LogicChain question="怎么一步步实现收入翻倍？" color={c} items={["雇员加薪路径","专家定位路径","企业家机制路径","三路径是进化阶梯","多数人止步于路径一"]}/>
+      <Formula text="稀缺性 × 传播度 = 专家定价权" color={c}/>
+
+      <InkFlow steps={["雇员加薪","专家定位","企业家机制"]} color={c} title="三级进化路线图"/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>路径一：雇员加薪的核心原则</div>
+        <Para>书中针对雇员加薪给出了系统框架，以下是最重要的几条：</Para>
+
+        <Step n="①" text="永远做到最好（核心中的核心）" detail={"钱德拉塞卡教授为两名学生开设一整学期高级天体物理课，这两个学生后来都获得了诺贝尔奖，他本人1983年也获得诺贝尔奖。乔治·博尔特为一对老夫妇腾出自己的私人房间，后来成为第一家华尔道夫酒店总经理。核心原则：你今天付出多少，决定了你明天能赚多少。"} color={c}/>
+        <Step n="②" text="帕累托原则的实际运用" detail={"你80%的收入来自你20%的活动。先做那20%"创造收入的活动"，把那80%"不产生收入的活动"往后推。成功人士把不重要的信件放一个月再看——过了一个月还重要的才回复，大部分自然过时了。"} color={c}/>
+        <Step n="③" text="加薪谈判的五条心理定理" detail={"① 没有人"为老板"工作，每个人都是为自己工作——你是一家独立公司，老板是你的客户；② 你得到的总是你赚到的（不是你应得的）；③ 没有客观标准衡量你的价值——价格由老板评估+你的自我评估+谈判技巧共同决定；④ 关于收入，没有任何规则是一成不变的；⑤ 不是你"得到"加薪，而是你"赚到"加薪。"} color={c}/>
+      </Card>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>路径二：专家定位的10条原则</div>
+        <Para>舍费尔用一个生动的比喻引入：把1000欧元扔在地上（包括两张500欧元和二十张5欧元），你会怎么做？当然先捡大钞。但大多数人的职业策略恰恰相反——把所有时间花在捡5欧元零钱，却不去捡500欧元。</Para>
+
+        <InkCompare
+          title="万金油 vs 专家"
+          leftTitle="专家路径（500欧元大钞）"
+          rightTitle="万金油路径（5欧元零钱）"
+          left={["聚焦一个精细领域","越稀缺越有定价权","客户主动找上门","不参与价格战","越专注越有穿透力"]}
+          right={["什么都会，什么都不稀缺","被迫参与价格竞争","需要主动招揽生意","收入上限=时间上限","缺乏差异化，易被替代"]}
+          color={c}
+        />
+
+        <div style={{overflowX:"auto",marginTop:16}}>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:13,minWidth:480}}>
+            <thead>
+              <tr>
+                {["原则","一句话核心","实操关键"].map((h,i)=>(
+                  <th key={i} style={{padding:"8px 10px",textAlign:"left",borderBottom:`2px solid ${c}20`,color:i===0?P.textMuted:P.textChapter,fontWeight:700,whiteSpace:"nowrap"}}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ["1. 不求更好，但求不同","第一的定义不是"最优秀"，而是"最独特"","找到你和所有竞争者的一个不同点"],
+                ["2. 卓越还不够，要做到非凡","平均水平不会被人记住，只有非凡才会","找一个"奥运冠军"级别的小领域"],
+                ["3. 争做第一人","在一个足够小的领域里成为第一","领域越小，越容易成为第一"],
+                ["4. 无法成为第一，创造新类别","艾米丽·艾尔哈特不是第一个飞越大西洋的，但她是第一个飞越大西洋的女性","给自己一个"第一个……"的头衔"],
+                ["5. 宁可精细，不要宽泛","扳手比桌子更容易打碎玻璃","你展示的东西越聚焦，越有穿透力"],
+                ["6. 选择基本需求，不要特殊套路","专注于不会过时的基本需求","我解决的问题是永久性的吗？"],
+                ["7. 确定目标群体","不是为所有人服务","你越了解你的客户，他们越信任你"],
+                ["8. 为他人解决一个问题","专家的核心价值：解决别人无法解决的问题","持续问客户：你最头疼的问题是什么？"],
+                ["9. 把你做的事说出来","母鸡在下蛋前就开始叫","写文章、演讲、公开发声"],
+                ["10. 由你来确定价格","稀缺性创造定价权","如果你和所有人一样，就要参与价格战"],
+              ].map((row,ri)=>(
+                <tr key={ri} style={{background:ri%2===0?c+"04":"transparent"}}>
+                  {row.map((cell,ci)=>(
+                    <td key={ci} style={{padding:"7px 10px",borderBottom:`1px solid ${c}08`,color:ci===0?c:P.textSoft,fontSize:12,lineHeight:1.7,fontWeight:ci===0?700:400}}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <Quote text="我的批判：原则3'争做第一人'是正确的，但书里低估了一个困难：在你真正建立起专家定位之前的那段时间，你可能颗粒无收。更务实的方法是：在保留主业收入的同时，慢慢用业余时间建立专家定位，等到专家收入超过主业收入的50%时再全面转型。" color={c}/>
+      </Card>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>路径三：企业家的6项核心任务</div>
+        <Para>企业家最容易犯的错误是在公司里工作，而不是在公司之上管理公司。</Para>
+        {[
+          {n:1,t:"寻找优秀的同事与合伙人",d:"你能成多大，取决于你吸引来的人有多强"},
+          {n:2,t:"监督盈利以及创建机制",d:"不监督盈利=没有盈利；不建立机制=公司离不开你"},
+          {n:3,t:"对公司进行创新",d:"不是改善（经理的工作），而是彻底创新（企业家的工作）"},
+          {n:4,t:"从多余事务中解脱",d:"每年问自己：有哪些事情，如果当初没有开始，今天我就不会再开始？"},
+          {n:5,t:"保持宏伟蓝图充满活力",d:"集中、简单、与日常保持距离；愿景是企业家存在的理由"},
+          {n:6,t:"制定退出策略",d:"今天就可以卖出你的公司吗？如果不能，它没有真正的价值"},
+        ].map((item)=>(
+          <Step key={item.n} n={item.n} text={item.t} detail={item.d} color={c}/>
+        ))}
+        <Quote text={`"公司需要雇员、自由职业者以及专家，但也需要一名企业家——而你必须自己来做企业家。你可以雇用别人做雇员、自由职业者或专家，但企业家的任务只能由你来承担。" — 舍费尔`} color={c}/>
+      </Card>
+
+      <Divider color={c}/>
+      <div style={{fontSize:16,fontWeight:800,color:P.textChapter,letterSpacing:2,marginBottom:16}}>四个典型案例</div>
+
+      <CaseStory title="✦ 案例11（正面）乔治·博尔特：一个小举动改变命运" color={c} icon="🏨">
+        <div><span style={{fontWeight:700,color:c}}>场景：</span>酒店服务员乔治在全城酒店预订光的情况下，把自己的私人房间让给了一对老夫妇，这不是他的工作职责。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>转折：</span>他用这段时间学习了酒店管理的所有知识。两年后，那对老夫妇邀请他去纽约，把一幢专门为他建的大楼交给他管理。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>结果：</span>乔治·博尔特成为第一家华尔道夫酒店的总经理。规则印证：你今天付出多少，决定了你明天能赚多少。</div>
+      </CaseStory>
+
+      <CaseStory title="✦ 案例12（正面）"让人无罪释放的小施密茨"" color={c} icon="⚖️">
+        <div><span style={{fontWeight:700,color:c}}>场景：</span>一位名叫施密茨的律师专注于交通违规案件，赢了97.5%的超速案件。大家都觉得"什么都懂的律师"才厉害，"只懂一件事的"是"专业白痴"。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>结果：</span>当人们需要解决超速问题时，他们不会找"什么都懂"的律师，而是专门找施密茨。施密茨不需要招揽生意——客户主动找上门，而且愿意支付高价。这就是专家定价权的完美案例。</div>
+      </CaseStory>
+
+      <CaseStory title="✦ 案例13（正面）理查德·布朗森：主要能力vs主要事业" color={c} icon="✈️">
+        <div><span style={{fontWeight:700,color:c}}>核心能力：</span>"当市场领先者变得涣散，给顾客提供的服务不值所支付的钱，他能看到扩大和增长的机会"。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>结果：</span>220多家维珍集团公司，横跨音乐、航空、电信、健身等完全不同领域，都被同一个核心能力串联起来。关键：他以"主要能力"为出发点，而不是以"主要行业"为出发点。</div>
+      </CaseStory>
+
+      <CaseStory title="✦ 案例14（正面）迪斯尼失去"兔子奥斯华"后找到米老鼠" color={c} icon="🐭">
+        <div><span style={{fontWeight:700,color:c}}>场景：</span>沃尔特·迪斯尼输掉了漫画形象"兔子奥斯华"的所有权，这对他是巨大打击。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>转折：</span>在回家的路上看到一只老鼠，立刻有了想法——把同样的内容用另一种动物形象表现。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>结果：</span>米老鼠诞生，迪斯尼帝国建立。核心洞察：失去原有定位后，迪斯尼立刻寻找新的"第一人"定位，而没有停留在"不公平"的情绪里。</div>
+      </CaseStory>
+
+      <InsightBox color={c}>
+        书里有一个令我震惊的数据：大多数失业者每周只花5小时找工作。舍费尔的建议是：像有工作一样每天工作（早8:30到晚6:00），但这段时间用来找到你真正想做的工作，以及主动拜访200家公司（而不是投简历）。
+        这个逻辑的底层是：<span style={{fontWeight:800,color:c}}>行动本身比策略更有价值。</span>大多数人花90%的时间在策略上，10%的时间在行动上；成功的专家花20%的时间确定方向，80%的时间行动。而且行动会产生信息，信息会修正策略。
+      </InsightBox>
+
+      <Divider color={c}/>
+      <ActionBox char="位" color={c}>
+        <div style={{fontSize:15,fontWeight:700,color:c,marginBottom:10}}>「专家定位七天实验」— 每天15分钟</div>
+        <div style={{padding:"12px 16px",background:P.paperLight,borderRadius:8,border:`1px solid ${c}15`,marginBottom:12}}>
+          <div style={{fontSize:14,fontWeight:700,color:P.textChapter,marginBottom:6}}>今天就能做的第一步：</div>
+          <div style={{fontSize:13,color:P.textSoft,lineHeight:1.9}}>写下这个句子并填空：<span style={{fontWeight:700,color:c}}>"我是[目标人群]的[解决的问题]专家，我是[领域]里第一个[独特之处]的人。"</span>哪怕现在的答案很模糊，也要写出来。</div>
+        </div>
+        <div style={{fontSize:13,fontWeight:700,color:c,marginBottom:8}}>7天每天一问：</div>
+        {[
+          "我在什么领域比99%的人都了解更多？",
+          "我解决过什么别人觉得很难但我觉得不难的问题？",
+          "我的哪一个特质或背景是独一无二的？",
+          "我最想帮助哪类人？",
+          "在我的领域里，什么是现在还没有人做的？",
+          "如果我要写一本书，它的主题会是什么？",
+          "10年后，我希望在哪个领域被称为权威？",
+        ].map((q,i)=>(
+          <div key={i} style={{display:"flex",gap:10,marginBottom:8,padding:"8px 12px",background:c+"06",borderRadius:6,border:`1px solid ${c}10`}}>
+            <span style={{fontSize:12,fontWeight:700,color:c,flexShrink:0}}>Day{i+1}</span>
+            <span style={{fontSize:13,color:P.text,lineHeight:1.8}}>{q}</span>
+          </div>
+        ))}
+      </ActionBox>
+
+      <TransitionCard color={c} text="你找到了方向（心流），你知道了路径（专家→企业家），但这些都需要钱来支撑。如果你的财务基础不稳固，任何升级都是建在沙滩上的城堡。模块五，我们来解决最后一块拼图：让钱替你工作。"/>
+    </div>
+  );
+}
+
+/* ===== TAB 5: 钱生钱 ===== */
+function Ch5(){
+  const c=P.colors[4].hex;
+  return(
+    <div className="page-in">
+      <SecTitle title="钱生钱" sub="建立你自己的印钞机——有了更多收入之后，怎么让钱产生更多钱？" color={c} char="钱" ls={0}/>
+      <LogicChain question="有了收入，怎么让钱产生更多钱？" color={c} items={["收入提高→花销同步提高","混淆负债和投资","先堵漏洞","建立储蓄机制","最后投资增值"]}/>
+      <Formula text="节约 + 增值 = 投资者身份" color={c}/>
+
+      <InkFlow steps={["堵漏洞（消债）","建储蓄机制","投资增值","复利循环","财务自由"]} color={c} title="钱生钱五步路径"/>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>投资 vs 负债——最被忽视的区别</div>
+        <Para>书里最犀利的一条定义：</Para>
+        <div style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:16}}>
+          <div style={{flex:"1 1 180px",padding:"14px 16px",background:c+"0a",borderRadius:8,border:`1px solid ${c}20`,textAlign:"center"}}>
+            <div style={{fontSize:14,fontWeight:900,color:c,marginBottom:6}}>投资</div>
+            <div style={{fontSize:13,color:P.textSoft,lineHeight:1.8}}>使钱<span style={{fontWeight:700,color:c}}>流入</span>你钱袋的资产</div>
+            <div style={{fontSize:12,color:P.textMuted,marginTop:6}}>租金收入房产 / 股票/基金收益</div>
+          </div>
+          <div style={{flex:"1 1 180px",padding:"14px 16px",background:P.vermillion+"08",borderRadius:8,border:`1px solid ${P.vermillion}15`,textAlign:"center"}}>
+            <div style={{fontSize:14,fontWeight:900,color:P.vermillion,marginBottom:6}}>负债</div>
+            <div style={{fontSize:13,color:P.textSoft,lineHeight:1.8}}>使钱<span style={{fontWeight:700,color:P.vermillion}}>流出</span>你钱袋的东西</div>
+            <div style={{fontSize:12,color:P.textMuted,marginTop:6}}>汽车 / 自住房 / 消费债务</div>
+          </div>
+        </div>
+        <InkCompare
+          title="常见资产的真实属性"
+          leftTitle="实际上是负债"
+          rightTitle="才是真正的投资"
+          left={["你的汽车：折旧+油+保险+维修","自住房（房贷+物业+装修）","奢侈品消费","信用卡花今后的钱"]}
+          right={["出租房产（产生租金现金流）","股票/指数基金（产生收益）","创造多次收益的作品/版权","建立被动收入的机制"]}
+          color={c}
+        />
+        <Quote text={"\"银行家说'你的房子是一项投资'——但那是对谁的投资？是对银行的投资！银行借钱给你，收取利息，还有你的房子作为抵押。\" — 舍费尔的教练"} color={c}/>
+      </Card>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>账户模式——强制储蓄的机制</div>
+        <Para>不要靠意志力存钱，而要靠"机制"存钱：</Para>
+        <div style={{padding:"16px 20px",background:c+"08",borderRadius:8,border:`1px solid ${c}15`,marginBottom:16}}>
+          <div style={{fontSize:13,fontFamily:"'Inter',monospace",color:P.textChapter,lineHeight:2.2}}>
+            <div>每月收入流入 → 主账户（转账账户）</div>
+            <div style={{marginLeft:20}}>├── <span style={{color:c,fontWeight:700}}>10% 自动转入储蓄账户</span>（投资用，不能触碰）</div>
+            <div style={{marginLeft:20}}>├── <span style={{color:P.colors[2].hex,fontWeight:700}}>5-10% 自动转入欢乐账户</span>（享受用，有计划地花）</div>
+            <div style={{marginLeft:20}}>└── <span style={{color:P.textSoft,fontWeight:700}}>剩余80-85% 日常生活账户</span></div>
+          </div>
+        </div>
+        <div style={{fontSize:15,fontWeight:700,color:P.textChapter,marginBottom:10}}>收入增加时的分配原则：</div>
+        {[
+          {pct:"50%",text:"存入储蓄账户（锁住增量）",color:c},
+          {pct:"25%",text:"存入欢乐账户（有质量地享受）",color:P.colors[2].hex},
+          {pct:"25%",text:"提高日常生活标准",color:P.textSoft},
+        ].map((item,i)=>(
+          <div key={i} style={{display:"flex",gap:12,marginBottom:10,alignItems:"center"}}>
+            <div style={{width:48,height:32,borderRadius:6,background:item.color+"12",border:`1.5px solid ${item.color}30`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+              <span style={{fontSize:13,fontWeight:800,color:item.color}}>{item.pct}</span>
+            </div>
+            <span style={{fontSize:14,color:P.textSoft,lineHeight:1.8}}>{item.text}</span>
+          </div>
+        ))}
+        <Quote text="永远不要借消费债务——绝对不要为了消费目的借钱（购车贷款、信用卡花今后的钱）。储蓄账户的钱不能触碰，积累到一定数量后再投资。" color={c}/>
+      </Card>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>投资的三个关键问题</div>
+        {[
+          {q:"Q1：应该购买什么投资品？",a:"没有人能长期预测股市，所以最佳策略是买下"整个市场"——通过指数基金（或宽基基金）广撒网，分散投资。舍费尔对市场分析师的批评相当犀利："那些今天被奉为图表专家和分析师的人，也许几百年后的人们会怎样看呢？——就像我们看待用动物内脏预测未来的古代巫师一样。""},
+          {q:"Q2：应该何时买入？",a:"越早越好。令人震惊的算例：每月投资200欧元、年收益20%，40岁开始到60岁 = 632,000欧元；41岁才开始 = 516,000欧元。仅仅等待一年 = 损失116,000欧元，相当于每天浪费317欧元。犹豫本身是有成本的，而且成本巨大。"},
+          {q:"Q3：应该何时卖出？",a:"使用机制（不是感情）来决定，避免在市场高点因贪婪全部买入、低点因恐惧全部卖出的"散户思维"。"},
+        ].map((item,i)=>(
+          <div key={i} style={{marginBottom:16,padding:"14px 16px",background:c+"06",borderRadius:8,border:`1px solid ${c}10`}}>
+            <div style={{fontSize:14,fontWeight:800,color:c,marginBottom:6}}>{item.q}</div>
+            <div style={{fontSize:13,color:P.textSoft,lineHeight:1.9}}>{item.a}</div>
+          </div>
+        ))}
+        <div style={{overflowX:"auto",marginTop:16}}>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:13,minWidth:360}}>
+            <thead>
+              <tr>
+                {["类别","比例","代表产品"].map((h,i)=>(
+                  <th key={i} style={{padding:"8px 10px",textAlign:"left",borderBottom:`2px solid ${c}20`,color:P.textChapter,fontWeight:700}}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ["货币类（安全）","40%-50%","货币基金、国债、定期存款"],
+                ["权益类（中等风险）","40%-50%","大型国际股票基金、指数基金"],
+                ["高风险（进阶）","10%-20%","个股、高收益产品（需要知识储备）"],
+              ].map((row,ri)=>(
+                <tr key={ri} style={{background:ri%2===0?c+"04":"transparent"}}>
+                  {row.map((cell,ci)=>(
+                    <td key={ci} style={{padding:"8px 10px",borderBottom:`1px solid ${c}08`,color:ci===1?c:P.textSoft,fontSize:13,lineHeight:1.7,fontWeight:ci===1?700:400}}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:12,letterSpacing:2}}>印钞机思维</div>
+        <Para>农民发现鹅每天下一枚金蛋，变富了。但他嫌一天只有一枚蛋太少，于是杀了鹅。</Para>
+        <InkCompare
+          title="鹅与金蛋的寓言"
+          leftTitle="印钞机思维（养大鹅）"
+          rightTitle="大多数人的做法（杀鹅）"
+          left={["本金=鹅（神圣不可侵犯）","收益=金蛋（用于再投资）","让复利机制自动运作","收益最终超过生活开支"]}
+          right={["在鹅还没养大前就把它吃掉","把所有收入都消费掉","永远没有积累","财务自由永远是"以后的事""]}
+          color={c}
+        />
+        <div style={{padding:"16px 20px",background:c+"08",borderRadius:8,border:`1px solid ${c}15`,marginTop:16}}>
+          <div style={{fontSize:14,fontWeight:800,color:c,marginBottom:8}}>印钞机建立路径</div>
+          {[
+            "第一步：堵漏洞（分清投资和负债，停止"消费债务"）",
+            "第二步：强制储蓄（账户模式，固定10%）",
+            "第三步：把储蓄变成投资（买入产生现金流的资产）",
+            "第四步：投资产生的收益继续买入资产（复利机制）",
+            "第五步：当你的利息/收益能够覆盖生活开支时，实现真正的财务自由",
+          ].map((step,i)=>(
+            <div key={i} style={{display:"flex",gap:10,marginBottom:8,padding:"6px 0",borderBottom:i<4?`1px dashed ${c}15`:"none"}}>
+              <span style={{fontSize:13,fontWeight:700,color:c,flexShrink:0}}>{i+1}.</span>
+              <span style={{fontSize:13,color:P.text,lineHeight:1.8}}>{step}</span>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <Divider color={c}/>
+      <div style={{fontSize:16,fontWeight:800,color:P.textChapter,letterSpacing:2,marginBottom:16}}>三个典型案例</div>
+
+      <CaseStory title="✦ 案例15（正面）舍费尔的教练改变他对钱的认知" color={c} icon="💡">
+        <div><span style={{fontWeight:700,color:c}}>场景：</span>舍费尔26岁破产，对教练说"我坠入了一个又大又黑的深洞"，认为只要能多赚一些，一切就会好起来。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>转折：</span>教练说："你有一个计划——一个贫穷的计划。"然后指出三个根本错误：①认为收入提高就能解决问题（错——先要学会管好现有的钱）；②混淆"需要"和"想要"；③混淆"负债"和"投资"（以为汽车和家具是"必要的投资"）。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>结果：</span>舍费尔停止购置新负债，还清了旧债，开始储蓄和投资，最终建立了8家公司参股的投资组合。</div>
+      </CaseStory>
+
+      <CaseStory title="✦ 案例16（对比）两个40岁投资者的对比" color={c} icon="⏱️">
+        <div><span style={{fontWeight:700,color:c}}>场景A：</span>40岁开始，每月投资200欧元，年收益20%，到60岁 = <span style={{fontWeight:800,color:c}}>632,000欧元</span>。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>场景B：</span>41岁才开始，其他条件相同 = <span style={{fontWeight:800,color:P.vermillion}}>516,000欧元</span>。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>洞察：</span>仅一年之差，损失116,000欧元——相当于每天损失317欧元，每小时13欧元。<span style={{fontWeight:800}}>犹豫本身是有成本的，而且成本巨大。</span></div>
+      </CaseStory>
+
+      <CaseStory title="✦ 案例17（正面）李维斯牛仔裤的诞生" color={c} icon="👖">
+        <div><span style={{fontWeight:700,color:c}}>场景：</span>淘金热，一个年轻人带着帐篷布去加利福尼亚，发现已经有人先到了，卖帐篷的计划失效。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>转折：</span>他观察淘金者发现他们总是跪着工作，膝盖处的裤子很快磨破。于是他用帐篷布给淘金者做裤子。</div>
+        <div style={{marginTop:8}}><span style={{fontWeight:700,color:c}}>结果：</span>李维斯牛仔裤诞生。核心洞察：当原来的"投资方向"失效时，用已有的"资源"找到新的需求，而不是放弃退回。</div>
+      </CaseStory>
+
+      <InsightBox color={c}>
+        书里有一句话让我在阅读时停了很久："<span style={{fontWeight:800,color:c}}>穷人为了赚钱而工作，中产阶层为了赚钱更加努力地工作，而富裕的人让金钱为他们而工作。</span>"
+        这不是在否定努力的价值。这是在说：努力的方向不同。
+        但这里有一个被书中忽略的关键步骤：在你让钱工作之前，你必须先赚到足够的第一桶金。而第一桶金的唯一来源，是你的劳动——你的技能、你的专家定位、你在某个领域的稀缺性。
+        所以五个模块的逻辑闭环就完整了：看清仓鼠之轮 → 更新思维规则 → 找到心流战场 → 建立专家/企业家路径 → 用赚到的钱建立印钞机。这不是一条轻松的路，但这是一条逻辑清晰的路。
+      </InsightBox>
+
+      <Divider color={c}/>
+      <ActionBox char="钱" color={c}>
+        <div style={{fontSize:15,fontWeight:700,color:c,marginBottom:10}}>「印钞机建设七步法」— 今天就开始</div>
+        {[
+          {t:"今天（5分钟）",d:"打开你的银行App，查看过去三个月的支出，找出三笔可以立刻取消的"漏洞"（不再需要的订阅、可以减少的固定消费）"},
+          {t:"本周（15分钟）",d:"做一张"现金流向图"：左侧写所有收入来源，右侧写所有流出，标注每一笔是"负债"还是"投资""},
+          {t:"本周（10分钟）",d:"打电话给你的银行，问："我怎么设置每月自动转账，把10%的工资转到一个单独的储蓄账户？""},
+          {t:"立即停止",d:"绝对不借消费债务——不用信用卡分期购买不产生收益的东西"},
+          {t:"建立欢乐账户",d:"设立5%-10%的"欢乐账户"，用于有计划的享受，而不是随机消费"},
+          {t:"三个月后",d:"当储蓄账户积累到一定额度，开始研究投资方向（不要在没有积累之前就研究投资）"},
+          {t:"长期目标",d:"让你的投资收益/利息超过你的月生活开支——那一天，就是你真正财务自由的开始"},
+        ].map((step,i)=>(
+          <div key={i} style={{display:"flex",gap:12,marginBottom:10,padding:"8px 12px",background:P.paperLight,borderRadius:6,border:`1px solid ${c}10`}}>
+            <span style={{fontSize:11,fontWeight:700,color:c,flexShrink:0,marginTop:2,minWidth:60}}>{step.t}</span>
+            <span style={{fontSize:13,color:P.text,lineHeight:1.8}}>{step.d}</span>
+          </div>
+        ))}
+      </ActionBox>
+    </div>
+  );
+}
+
+/* ===== TAB 6: 全书回望 ===== */
+function Ch6(){
+  const c=P.vermillion;
+  return(
+    <div className="page-in">
+      <SecTitle title="全书回望" sub="五大公式汇总 · 17个案例速查 · 拆书师最终评价" color={c} char="望" ls={3}/>
+
+      {/* 五大公式汇总 */}
+      <div style={{marginBottom:32}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,letterSpacing:2,marginBottom:20}}>五大核心公式</div>
+        {[
+          {n:1,module:"仓鼠之轮",formula:"选错赛道 × 再多努力 = 原地打转",color:P.colors[0].hex,key:"你在哪个领域运作，比你在那个领域有多努力更重要"},
+          {n:2,module:"致富规则",formula:"旧规则 + 新时代 = 加速失败",color:P.colors[1].hex,key:"你越努力执行旧规则，就越快跑向错误的终点"},
+          {n:3,module:"心流密码",formula:"强烈兴趣 × 天赋 = 心流 = 可持续高表现",color:P.colors[2].hex,key:"心流不是偶然发生的状态，而是对的人做对的事的必然结果"},
+          {n:4,module:"三条路径",formula:"稀缺性 × 传播度 = 专家定价权",color:P.colors[3].hex,key:"你越聚焦于一个精细领域，就越稀缺；越稀缺，就越有资格自己定价"},
+          {n:5,module:"钱生钱",formula:"节约 + 增值 = 投资者身份",color:P.colors[4].hex,key:"不是赚得更多才能开始投资，而是管好现有的钱，才能看清楚下一步"},
+        ].map((item)=>(
+          <div key={item.n} style={{marginBottom:16,padding:"18px 20px",background:P.paperLight,borderRadius:10,border:`1px solid ${item.color}20`,borderLeft:`4px solid ${item.color}`,position:"relative",overflow:"hidden"}}>
+            <div style={{position:"absolute",top:12,right:16,fontSize:32,fontWeight:900,color:item.color,opacity:0.06,fontFamily:"'Inter',sans-serif"}}>{item.n}</div>
+            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8}}>
+              <span style={{fontSize:11,fontWeight:900,fontFamily:"'ZCOOL XiaoWei',serif",color:item.color,border:`1px solid ${item.color}40`,width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)",background:item.color+"08"}}>模{item.n}</span>
+              <span style={{fontSize:13,color:item.color,fontWeight:700,letterSpacing:1}}>{item.module}</span>
+            </div>
+            <div style={{fontSize:18,fontWeight:900,color:P.textChapter,marginBottom:8,fontFamily:"'Noto Serif SC',serif",lineHeight:1.5}}>{item.formula}</div>
+            <div style={{fontSize:13,color:P.textSoft,lineHeight:1.8}}>{item.key}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* 五模块逻辑全链 */}
+      <Card color={c} style={{marginBottom:32}}>
+        <div style={{fontSize:17,fontWeight:800,color:P.textChapter,marginBottom:16,letterSpacing:2}}>五模块逻辑全链</div>
+        <InkFlow steps={["认清仓鼠之轮（现状）","12条新规则（思维重建）","心流密码（找到方向）","三条路径（执行）","钱生钱（财富增长）"]} color={c} title=""/>
+        <Quote text="这五个模块不是独立的，而是一个完整的逻辑闭环：你必须先看清自己在哪里，才能知道该往哪里走；必须先找到正确的方向，才能在正确的路径上执行；必须先建立收入，才能让钱为你工作。" color={c}/>
+      </Card>
+
+      {/* 17个案例速查表 */}
+      <div style={{marginBottom:32}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,letterSpacing:2,marginBottom:16}}>17个案例速查</div>
+        <div style={{overflowX:"auto"}}>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:13,minWidth:480}}>
+            <thead>
+              <tr>
+                {["编号","案例","所在模块","类型"].map((h,i)=>(
+                  <th key={i} style={{padding:"8px 10px",textAlign:"left",borderBottom:`2px solid ${c}20`,color:P.textChapter,fontWeight:700,whiteSpace:"nowrap"}}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ["1","舍费尔从破产到月入10万马克","模块一·仓鼠之轮","✦ 正面","#a87a28"],
+                ["2","一直留在原单位的同事","模块一·仓鼠之轮","✗ 反面","#c85030"],
+                ["3","19年后被辞退的职员","模块一·仓鼠之轮","⚠ 警示","#c85030"],
+                ["4","舍费尔第一本书被拒50次","模块二·致富规则","✦ 正面（多次收益）","#3a7090"],
+                ["5","迪帕克·乔普拉：弱点变强项","模块二·致富规则","✦ 正面","#3a7090"],
+                ["6","奥利弗·卡恩：放对容器","模块二·致富规则","✦ 正面","#3a7090"],
+                ["7","按旧规则等待的一类人","模块二·致富规则","✗ 反面","#c85030"],
+                ["8","舍费尔被解雇后写出畅销书","模块三·心流密码","✦ 正面（心流找回）","#3a8a6a"],
+                ["9","72%在工作中找不到乐趣的人","模块三·心流密码","✗ 反面","#c85030"],
+                ["10","两只猫的寓言","模块三·心流密码","☯ 寓言","#3a8a6a"],
+                ["11","乔治·博尔特成为华尔道夫总经理","模块四·三条路径","✦ 正面（雇员路径）","#a84a58"],
+                ["12",""让人无罪释放的小施密茨"","模块四·三条路径","✦ 正面（专家定位）","#a84a58"],
+                ["13","维珍集团理查德·布朗森","模块四·三条路径","✦ 正面（企业家路径）","#a84a58"],
+                ["14","迪斯尼失去兔子奥斯华找到米老鼠","模块四·三条路径","✦ 正面（新定位创造）","#a84a58"],
+                ["15","舍费尔教练改变他的财务认知","模块五·钱生钱","✦ 正面","#b89a28"],
+                ["16","两个40岁投资者的对比","模块五·钱生钱","⚖ 对比案例","#b89a28"],
+                ["17","李维斯牛仔裤的诞生","模块五·钱生钱","✦ 正面（资源重用）","#b89a28"],
+              ].map((row,ri)=>(
+                <tr key={ri} style={{background:ri%2===0?"rgba(160,140,110,0.03)":"transparent"}}>
+                  <td style={{padding:"7px 10px",borderBottom:`1px solid rgba(160,140,110,0.08)`,color:P.textMuted,fontSize:12,fontWeight:700}}>{row[0]}</td>
+                  <td style={{padding:"7px 10px",borderBottom:`1px solid rgba(160,140,110,0.08)`,color:P.textChapter,fontSize:13,lineHeight:1.7}}>{row[1]}</td>
+                  <td style={{padding:"7px 10px",borderBottom:`1px solid rgba(160,140,110,0.08)`,color:P.textSoft,fontSize:12}}>{row[2]}</td>
+                  <td style={{padding:"7px 10px",borderBottom:`1px solid rgba(160,140,110,0.08)`,color:row[4],fontSize:12,fontWeight:700}}>{row[3]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* 拆书师最终评价 */}
+      <Card color={c} style={{marginBottom:24}}>
+        <div style={{fontSize:18,fontWeight:800,color:P.textChapter,marginBottom:16,letterSpacing:2}}>拆书师最终评价</div>
+
+        <div style={{padding:"14px 18px",background:P.colors[2].hex+"08",borderRadius:8,border:`1px solid ${P.colors[2].hex}15`,marginBottom:16}}>
+          <div style={{fontSize:14,fontWeight:700,color:P.colors[2].hex,marginBottom:8}}>这本书最大的价值</div>
+          <Para>不在于它告诉你"投什么"或"怎么加薪"，而在于它给了你一套用于理解收入和财富的底层框架。AFIUE五角星、心流理论的引入、专家定位原则——这三个框架组合在一起，构成了一套在2000年代初相当超前的"个人财务战略体系"。</Para>
+        </div>
+
+        <div style={{padding:"14px 18px",background:P.vermillion+"06",borderRadius:8,border:`1px solid ${P.vermillion}12`,marginBottom:16}}>
+          <div style={{fontSize:14,fontWeight:700,color:P.vermillion,marginBottom:8}}>这本书最大的局限</div>
+          <Para>它太擅长描述"应该是什么样子"，但不够擅长回答"当下处于困境时，具体第一步是什么"。它假设读者已经有了一定的财务余裕、可以从容选择职业方向——但对于大量真正被困在仓鼠之轮里的人，书中的"弯路"可能还是太长了。</Para>
+        </div>
+
+        <InsightBox color={c}>
+          把这本书当作一张地图，而不是GPS导航。它告诉你地形，但你需要自己找到当前位置。读完之后，你最重要的任务不是记住12条规则，而是回答一个问题：
+          <div style={{marginTop:12,padding:"12px 16px",background:c+"08",borderRadius:8,fontSize:15,fontWeight:700,color:P.textChapter,lineHeight:1.9}}>
+            "我现在在五角星的哪个位置，我想在三年后到哪里？"
+          </div>
+          <div style={{marginTop:8,fontSize:14,color:P.textSoft,lineHeight:1.9}}>这一个问题的答案，比这本书的所有内容加起来更重要。</div>
+        </InsightBox>
+      </Card>
+    </div>
+  );
+}
+
+/* ===== CHS 导航标签 ===== */
+const CHS=[
+  {id:"overview",label:"全书导读",char:"导",color:P.vermillion,ls:0},
+  {id:"ch1",label:"仓鼠之轮",char:"轮",color:P.colors[0].hex,ls:0},
+  {id:"ch2",label:"致富规则",char:"则",color:P.colors[1].hex,ls:1},
+  {id:"ch3",label:"心流密码",char:"流",color:P.colors[2].hex,ls:2},
+  {id:"ch4",label:"三条路径",char:"径",color:P.colors[3].hex,ls:3},
+  {id:"ch5",label:"钱生钱",char:"钱",color:P.colors[4].hex,ls:0},
+  {id:"retro",label:"全书回望",char:"望",color:P.vermillion,ls:1},
+];
+
+function ScrollTop(){
+  const[show,setShow]=useState(false);
+  React.useEffect(()=>{
+    const h=()=>setShow(window.scrollY>600);
+    window.addEventListener("scroll",h);
+    return()=>window.removeEventListener("scroll",h);
+  },[]);
+  if(!show)return null;
+  return(
+    <button onClick={()=>window.scrollTo({top:0,behavior:"smooth"})} style={{
+      position:"fixed",bottom:24,right:20,zIndex:50,
+      width:40,height:40,borderRadius:20,border:"none",
+      background:"rgba(160,140,110,0.15)",backdropFilter:"blur(8px)",
+      color:"#8a7a60",fontSize:18,cursor:"pointer",
+      display:"flex",alignItems:"center",justifyContent:"center",
+      boxShadow:"0 2px 8px rgba(0,0,0,0.08)",
+      transition:"all .3s",
+    }}>↑</button>
+  );
+}
+
+function App(){
+  const[ch,setCh]=useState(0);
+  const[toc,setToc]=useState(false);
+  const chContent=[
+    ()=>React.createElement(OverviewPage,{onJump:setCh}),
+    Ch1,Ch2,Ch3,Ch4,Ch5,Ch6
+  ];
+  const CurrentCh=chContent[ch];
+
+  return(
+    <div style={{minHeight:"100vh",position:"relative"}}>
+      <PaperBg/>
+      <ReadBar progress={((ch+1)/CHS.length)*100}/>
+      <Sidebar chapters={CHS} current={ch} onSelect={setCh} open={toc} onClose={()=>setToc(false)}/>
+
+      <div style={{position:"sticky",top:0,zIndex:10,background:P.paper,borderBottom:`1px solid rgba(160,140,110,0.12)`}}>
+        <div style={{padding:"12px clamp(16px,4vw,24px) 0"}}>
+          <div style={{maxWidth:720,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <span onClick={()=>setToc(true)} style={{cursor:"pointer",opacity:0.5,fontSize:18}}>{"☰"}</span>
+              <span style={{fontSize:13,color:P.textMuted,letterSpacing:3}}>拆卷</span>
+              <span style={{fontSize:11,color:P.textMuted,opacity:0.4}}>·</span>
+              <span style={{fontSize:13,color:P.textMuted}}>财务自由之路 Ⅱ</span>
+            </div>
+            <span style={{fontSize:11,color:P.textMuted}}>{ch+1}/{CHS.length}</span>
+          </div>
+        </div>
+        <div style={{maxWidth:720,margin:"0 auto",padding:"8px clamp(16px,4vw,24px) 0",position:"relative"}}>
+          <div style={{display:"flex",gap:0,overflowX:"auto",scrollbarWidth:"none",msOverflowStyle:"none",WebkitOverflowScrolling:"touch",paddingBottom:2}}>
+            {CHS.map((t,i)=>(
+              <ChTab key={t.id} label={t.label} char={t.char} color={t.color} active={ch===i} onClick={()=>{setCh(i);window.scrollTo(0,0);}} isOverview={i===0}/>
+            ))}
+          </div>
+          <div style={{position:"absolute",top:0,right:"clamp(16px,4vw,24px)",width:40,height:"100%",pointerEvents:"none",background:`linear-gradient(to left,${P.paper},transparent)`}}/>
+        </div>
+      </div>
+
+      <div style={{maxWidth:720,margin:"0 auto",padding:"0 clamp(16px,4vw,24px) 40px",position:"relative",zIndex:1}}>
+        {ch===0&&<SpeedRead onStart={()=>{setCh(1);window.scrollTo(0,0);}}/>}
+        <CurrentCh/>
+        <PageNav current={ch} total={CHS.length} name={CHS[ch].label} onPrev={()=>{setCh(ch-1);window.scrollTo(0,0);}} onNext={()=>{setCh(ch+1);window.scrollTo(0,0);}}/>
+      </div>
+
+      <ScrollTop/>
+      <div style={{textAlign:"center",padding:"40px 24px 20px",position:"relative",zIndex:1}}>
+        <div style={{fontSize:12,color:P.textMuted,letterSpacing:4}}>拆卷 · 财务自由之路 Ⅱ</div>
+        <div style={{fontSize:11,color:P.textMuted,opacity:0.5,marginTop:6}}>博多·舍费尔 · 3年内让你的个人资产翻一番</div>
+      </div>
+      <div style={{maxWidth:560,margin:"0 auto",padding:"0 24px 48px",textAlign:"center"}}>
+        <div style={{background:P.paperDeep,borderRadius:8,padding:"14px 18px",border:`1px solid rgba(160,140,110,0.1)`}}>
+          <div style={{fontSize:11,color:P.textMuted,lineHeight:1.9,letterSpacing:0.5}}>
+            {"⚠ 免责声明：本页面内容仅供个人学习与读书笔记整理之用，不用于任何商业目的。书籍版权归原作者及出版社所有。如有侵权，请联系博主，将第一时间删除处理。"}
+          </div>
+          <div style={{fontSize:11,color:P.textMuted,marginTop:6,opacity:0.6}}>ISBN: 978-7-5143-7287-8 · 现代出版社</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
