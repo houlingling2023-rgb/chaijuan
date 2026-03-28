@@ -998,10 +998,10 @@ function SpeedRead({onStart}){
       }}>
         <div style={{padding:"16px 20px 12px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:open?`1px solid ${c}10`:"none"}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
-            <SealIcon char="览" color={c} size={32} glow={false}/>
+            <SealIcon char="览" color={c} size={38} glow={false}/>
             <div>
-              <div style={{fontSize:16,fontWeight:800,color:P.textChapter,letterSpacing:2}}>3分钟速览</div>
-              <div style={{fontSize:11,color:P.textMuted,marginTop:2}}>不想读全文？看这里就够了</div>
+              <div style={{fontSize:20,fontWeight:900,color:P.textChapter,letterSpacing:3}}>3分钟速览</div>
+              <div style={{fontSize:13,color:P.textMuted,marginTop:3}}>不想读全文？看这里就够了</div>
             </div>
           </div>
           <span style={{fontSize:13,color:P.textMuted,transition:"transform 0.3s",transform:open?"rotate(180deg)":"rotate(0)"}}>{"\u25B2"}</span>
@@ -1073,7 +1073,7 @@ function App(){
         <div style={{padding:"12px clamp(16px,4vw,24px) 0"}}>
           <div style={{maxWidth:960,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
             <div style={{display:"flex",alignItems:"center",gap:10}}>
-              <span onClick={()=>setToc(true)} style={{cursor:"pointer",opacity:0.7,fontSize:28,padding:"6px 8px",lineHeight:1}}>{"☰"}</span>
+              <span onClick={()=>setToc(true)} style={{cursor:"pointer",opacity:0.6,fontSize:22,padding:"2px 4px",lineHeight:1}}>{"☰"}</span>
               <span className="nav-book-title" style={{display:"flex",alignItems:"center",gap:4}}>
                 <span style={{fontSize:13,color:P.textMuted,letterSpacing:3}}>拆卷</span>
                 <span style={{fontSize:11,color:P.textMuted,opacity:0.4}}>·</span>
