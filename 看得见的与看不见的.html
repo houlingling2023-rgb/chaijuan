@@ -221,16 +221,20 @@ function PageNav({current,total,name,onPrev,onNext}){
   );
 }
 
-function SecTitle({title,sub,color=P.colors[0].hex,char,ls=0}){
+function SecTitle({title,sub,color=P.colors[0].hex,char,ls=0,bgImg}){
   return(
-    <div style={{marginBottom:32,paddingTop:8}}>
-      <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:10}}>
-        <SealIcon char={char} color={color} size={44} glow={false}/>
-        <div style={{opacity:0.3,marginLeft:-28,marginTop:14}}><MiniLandscape color={color} size={32} variant={ls}/></div>
-        <h2 style={{fontSize:26,fontWeight:900,letterSpacing:4,color:P.textChapter,fontFamily:"'Noto Serif SC',serif",lineHeight:1.4}}>{title}</h2>
+    <div style={{marginBottom:32,paddingTop:8,position:"relative",overflow:"hidden"}}>
+      {bgImg&&<div style={{position:"absolute",inset:0,backgroundImage:`url(${bgImg})`,backgroundSize:"cover",backgroundPosition:"center 40%",opacity:0.15,filter:"saturate(0.5)",borderRadius:8}}/>}
+      {bgImg&&<div style={{position:"absolute",inset:0,background:"linear-gradient(180deg, rgba(245,240,232,0.2) 0%, rgba(245,240,232,0.85) 100%)",borderRadius:8}}/>}
+      <div style={{position:"relative",zIndex:1,padding:bgImg?"24px 16px 16px":"0"}}>
+        <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:10}}>
+          <SealIcon char={char} color={color} size={44} glow={false}/>
+          <div style={{opacity:0.3,marginLeft:-28,marginTop:14}}><MiniLandscape color={color} size={32} variant={ls}/></div>
+          <h2 style={{fontSize:26,fontWeight:900,letterSpacing:4,color:P.textChapter,fontFamily:"'Noto Serif SC',serif",lineHeight:1.4}}>{title}</h2>
+        </div>
+        {sub&&<p style={{fontSize:15,color:P.textSoft,lineHeight:1.9,borderLeft:`2px solid ${color}30`,paddingLeft:16,marginLeft:2}}>{sub}</p>}
+        <div style={{height:1,background:`linear-gradient(90deg,${color}40,transparent 60%)`,marginTop:16}}/>
       </div>
-      {sub&&<p style={{fontSize:15,color:P.textSoft,lineHeight:1.9,borderLeft:`2px solid ${color}30`,paddingLeft:16,marginLeft:2}}>{sub}</p>}
-      <div style={{height:1,background:`linear-gradient(90deg,${color}40,transparent 60%)`,marginTop:16}}/>
     </div>
   );
 }
@@ -560,8 +564,7 @@ function Ch1(){
   const nextC=P.colors[1].hex;
   return(
     <div className="page-in">
-      <SceneBanner img={SCENE_IMGS.thinking}/>
-      <SecTitle title="思维之眼——看见「看不见的」" sub="建立「看见看不见的」这一分析框架：破窗理论、第三个人、优秀vs糟糕经济学家。这是全书的方法论总纲。" color={c} char="眼" ls={0}/>
+      <SecTitle bgImg={SCENE_IMGS.thinking} title="思维之眼——看见「看不见的」" sub="建立「看见看不见的」这一分析框架：破窗理论、第三个人、优秀vs糟糕经济学家。这是全书的方法论总纲。" color={c} char="眼" ls={0}/>
       <div style={{position:"relative",height:0}}><img src={FIGURE_IMGS.lantern} style={{position:"absolute",right:0,top:-60,width:56,height:56,objectFit:"contain",opacity:0.2,filter:"saturate(0.4)",pointerEvents:"none"}}/></div>
       <LogicChain question="为什么只看直接效果必然得出错误结论？" color={c} items={["经济决策产生多重后果","有些后果立刻可见","有些后果延迟且分散","糟糕经济学家只看第一面","优秀经济学家兼顾两面","第三个人永远被忽视","破窗理论揭示一切"]}/>
 
@@ -635,8 +638,7 @@ function Ch2(){
   const nextC=P.colors[2].hex;
   return(
     <div className="page-in">
-      <SceneBanner img={SCENE_IMGS.dialogue}/>
-      <SecTitle title="政府之手——公共支出的幻觉" sub="将破窗框架应用于公共支出：军队复员、赋税、公共工程、阿尔及利亚殖民。论证「政府花钱≠创造财富」。" color={c} char="手" ls={1}/>
+      <SecTitle bgImg={SCENE_IMGS.dialogue} title="政府之手——公共支出的幻觉" sub="将破窗框架应用于公共支出：军队复员、赋税、公共工程、阿尔及利亚殖民。论证「政府花钱≠创造财富」。" color={c} char="手" ls={1}/>
       <div style={{position:"relative",height:0}}><img src={FIGURE_IMGS.pointer} style={{position:"absolute",right:0,top:-60,width:56,height:56,objectFit:"contain",opacity:0.2,filter:"saturate(0.4)",pointerEvents:"none"}}/></div>
       <LogicChain question="政府的钱从哪里来，又去了哪里？" color={c} items={["政府征税","税款来自纳税人","政府花钱（可见：官员消费/工程/军队）","纳税人少花钱（不可见：私人消费消失）","就业被转移非创造","效率低于私人配置则净损失"]}/>
 
@@ -716,8 +718,7 @@ function Ch3(){
   const nextC=P.colors[3].hex;
   return(
     <div className="page-in">
-      <SceneBanner img={SCENE_IMGS.bridge}/>
-      <SecTitle title="保护之墙——贸易管制与中介的谬误" sub="将破窗框架应用于贸易领域：保护主义、中介价值、商人们的请愿书。论证「保护主义是合法化的掠夺」。" color={c} char="墙" ls={2}/>
+      <SecTitle bgImg={SCENE_IMGS.bridge} title="保护之墙——贸易管制与中介的谬误" sub="将破窗框架应用于贸易领域：保护主义、中介价值、商人们的请愿书。论证「保护主义是合法化的掠夺」。" color={c} char="墙" ls={2}/>
       <div style={{position:"relative",height:0}}><img src={FIGURE_IMGS.fallen} style={{position:"absolute",right:0,top:-60,width:56,height:56,objectFit:"contain",opacity:0.2,filter:"saturate(0.4)",pointerEvents:"none"}}/></div>
       <LogicChain question="保护主义保护的到底是谁？" color={c} items={["外国商品比国内便宜","国内生产者要求保护","法律禁止或加税限制","消费者被迫高价购买（不可见的损失）","生产者获利=消费者亏损","保护主义=合法化掠夺"]}/>
 
@@ -798,8 +799,7 @@ function Ch4(){
   const nextC=P.colors[4].hex;
   return(
     <div className="page-in">
-      <SceneBanner img={SCENE_IMGS.breakthrough}/>
-      <SecTitle title="进步之惧——机器、节俭与文明的代价" sub="将破窗框架应用于技术进步和储蓄：机器淘汰就业的恐惧，节俭与奢侈的对比。论证「短期损失背后是长期福利增长」。" color={c} char="进" ls={3}/>
+      <SecTitle bgImg={SCENE_IMGS.breakthrough} title="进步之惧——机器、节俭与文明的代价" sub="将破窗框架应用于技术进步和储蓄：机器淘汰就业的恐惧，节俭与奢侈的对比。论证「短期损失背后是长期福利增长」。" color={c} char="进" ls={3}/>
       <div style={{position:"relative",height:0}}><img src={FIGURE_IMGS.climber} style={{position:"absolute",right:0,top:-60,width:56,height:56,objectFit:"contain",opacity:0.2,filter:"saturate(0.4)",pointerEvents:"none"}}/></div>
       <LogicChain question="机器和节俭为何总被误解为有害？" color={c} items={["机器发明","同样工作只需一半工人","被替代工人失业（可见）","发明者节省成本（不可见）","节省的成本→新消费→新就业","长期社会总福利增加","储蓄也是间接的支出"]}/>
 
@@ -871,8 +871,7 @@ function Ch5(){
   const c=P.colors[4].hex;
   return(
     <div className="page-in">
-      <SceneBanner img={SCENE_IMGS.growth}/>
-      <SecTitle title="权利之基——财产、法律与自由的根基" sub="从经济分析上升到哲学原则：财产先于法律，立法者的傲慢是一切错误政策的根源。这是全书的思想基石。" color={c} char="基" ls={0}/>
+      <SecTitle bgImg={SCENE_IMGS.growth} title="权利之基——财产、法律与自由的根基" sub="从经济分析上升到哲学原则：财产先于法律，立法者的傲慢是一切错误政策的根源。这是全书的思想基石。" color={c} char="基" ls={0}/>
       <div style={{position:"relative",height:0}}><img src={FIGURE_IMGS.gazer} style={{position:"absolute",right:0,top:-60,width:56,height:56,objectFit:"contain",opacity:0.2,filter:"saturate(0.4)",pointerEvents:"none"}}/></div>
       <LogicChain question="财产权是法律给的还是劳动创造的？" color={c} items={["人有需求","满足需求必须劳动","劳动创造价值","劳动者对成果有天然权利=财产权","财产权先于法律","法律保护财产（而非创造）","立法者的傲慢→乌托邦空想"]}/>
 
