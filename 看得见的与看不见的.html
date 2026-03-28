@@ -171,12 +171,12 @@ function ReadBar({progress}){
 function ChTab({label,char,color,active,onClick,isOverview}){
   return(
     <button onClick={onClick} style={{
-      padding:"10px 14px",border:"none",display:"flex",alignItems:"center",gap:6,
+      padding:window.innerWidth<=480?"6px 8px":"10px 14px",border:"none",display:"flex",alignItems:"center",gap:window.innerWidth<=480?4:6,
       background:active?P.paperLight:"transparent",
       borderBottom:active?`2px solid ${color}`:"2px solid transparent",
       borderRight:isOverview?"1px solid rgba(160,140,110,0.15)":"none",
-      color:active?P.textChapter:P.textMuted,fontSize:13,fontWeight:active?700:400,
-      letterSpacing:active?1.5:0.5,cursor:"pointer",transition:"all 0.3s",
+      color:active?P.textChapter:P.textMuted,fontSize:window.innerWidth<=480?11:13,fontWeight:active?700:400,
+      letterSpacing:active?1:0.5,cursor:"pointer",transition:"all 0.3s",
       fontFamily:"'Noto Serif SC',serif",whiteSpace:"nowrap",flexShrink:0,
     }}>
       {char&&<span style={{fontSize:10,fontWeight:900,fontFamily:"'ZCOOL XiaoWei',serif",border:`1px solid ${active?color+"60":color+"25"}`,color:active?color:color+"60",width:18,height:18,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)",transition:"all 0.3s",background:active?color+"08":"transparent"}}>{char}</span>}
@@ -194,13 +194,13 @@ function Sidebar({chapters,current,onSelect,open,onClose}){
         <div style={{padding:"0 24px 24px",borderBottom:`1px solid rgba(160,140,110,0.12)`}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <SealIcon char="目" color={P.vermillion} size={28} glow={false}/>
-            <span style={{fontSize:16,fontWeight:700,color:P.textChapter,letterSpacing:3}}>目录</span>
+            <span style={{fontSize:14,fontWeight:700,color:P.textChapter,letterSpacing:2}}>目录</span>
           </div>
         </div>
         {chapters.map((ch,i)=>(
           <div key={i} onClick={()=>{onSelect(i);onClose();}} style={{padding:"14px 24px",cursor:"pointer",display:"flex",alignItems:"center",gap:12,background:current===i?ch.color+"08":"transparent",borderLeft:current===i?`3px solid ${ch.color}`:"3px solid transparent",transition:"all 0.25s"}}>
             <span style={{fontSize:11,fontWeight:900,fontFamily:"'ZCOOL XiaoWei',serif",color:current===i?ch.color:P.textMuted,border:`1px solid ${current===i?ch.color+"50":P.textMuted+"30"}`,width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",borderRadius:3,transform:"rotate(-3deg)"}}>{ch.char}</span>
-            <span style={{fontSize:14,color:current===i?P.textChapter:P.textSoft,fontWeight:current===i?600:400}}>{ch.label}</span>
+            <span style={{fontSize:13,color:current===i?P.textChapter:P.textSoft,fontWeight:current===i?600:400}}>{ch.label}</span>
           </div>
         ))}
       </div>
@@ -230,7 +230,7 @@ function SecTitle({title,sub,color=P.colors[0].hex,char,ls=0,bgImg}){
         <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:10}}>
           <SealIcon char={char} color={color} size={44} glow={false}/>
           <div style={{opacity:0.3,marginLeft:-28,marginTop:14}}><MiniLandscape color={color} size={32} variant={ls}/></div>
-          <h2 style={{fontSize:26,fontWeight:900,letterSpacing:4,color:P.textChapter,fontFamily:"'Noto Serif SC',serif",lineHeight:1.4}}>{title}</h2>
+          <h2 style={{fontSize:window.innerWidth<=480?18:26,fontWeight:900,letterSpacing:window.innerWidth<=480?2:4,color:P.textChapter,fontFamily:"'Noto Serif SC',serif",lineHeight:1.4}}>{title}</h2>
         </div>
         {sub&&<p style={{fontSize:15,color:P.textSoft,lineHeight:1.9,borderLeft:`2px solid ${color}30`,paddingLeft:16,marginLeft:2}}>{sub}</p>}
         <div style={{height:1,background:`linear-gradient(90deg,${color}40,transparent 60%)`,marginTop:16}}/>

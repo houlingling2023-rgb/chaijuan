@@ -393,8 +393,8 @@ function BookReader({ book, onBack }) {
           <div style={{width:28,height:36,borderRadius:3,overflow:"hidden",background:book.coverStyle.bg,flexShrink:0}}>
             {book.coverImage ? <img src={book.coverImage} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/> : <div style={{display:"flex",alignItems:"flex-end",justifyContent:"center",padding:2,height:"100%"}}><span style={{fontSize:6,fontWeight:900,color:book.coverStyle.titleColor,lineHeight:1,textAlign:"center",fontFamily:"'Noto Serif SC',serif"}}>{book.title}</span></div>}
           </div>
-          <span style={{fontSize:15,fontWeight:700,color:"#3a2a18",letterSpacing:2}}>{book.title}</span>
-          <span style={{fontSize:12,color:"#a09080"}}>· {book.subtitle}</span>
+          <span style={{fontSize:window.innerWidth<=480?12:15,fontWeight:700,color:"#3a2a18",letterSpacing:window.innerWidth<=480?1:2}}>{book.title}</span>
+          <span style={{fontSize:window.innerWidth<=480?10:12,color:"#a09080"}}>· {book.subtitle}</span>
         </div>
       </div>
       {/* Loading overlay */}
