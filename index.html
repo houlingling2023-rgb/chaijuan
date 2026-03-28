@@ -379,12 +379,12 @@ function BookReader({ book, onBack }) {
         display:"flex",alignItems:"center",gap:16,
       }}>
         <button onClick={onBack} style={{
-          padding:"8px 18px",borderRadius:10,
+          padding:window.innerWidth<=480?"4px 10px":"8px 18px",borderRadius:8,
           border:"1px solid #d5cfc5",
           background:"rgba(255,255,255,0.7)",
-          color:"#5a4a30",fontSize:13,fontWeight:600,
+          color:"#5a4a30",fontSize:window.innerWidth<=480?11:13,fontWeight:600,
           cursor:"pointer",fontFamily:"'Noto Serif SC',serif",
-          transition:"all .2s",
+          transition:"all .2s",flexShrink:0,
         }}
         onMouseEnter={e=>{e.target.style.background="#fff";e.target.style.borderColor="#b0a080"}}
         onMouseLeave={e=>{e.target.style.background="rgba(255,255,255,0.7)";e.target.style.borderColor="#d5cfc5"}}
