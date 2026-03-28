@@ -171,11 +171,11 @@ function ReadBar({progress}){
 function ChTab({label,char,color,active,onClick,isOverview}){
   return(
     <button onClick={onClick} style={{
-      padding:window.innerWidth<=480?"6px 8px":"10px 14px",border:"none",display:"flex",alignItems:"center",gap:window.innerWidth<=480?4:6,
+      padding:window.innerWidth<=480?"8px 10px":"10px 14px",border:"none",display:"flex",alignItems:"center",gap:window.innerWidth<=480?5:6,
       background:active?P.paperLight:"transparent",
       borderBottom:active?`2px solid ${color}`:"2px solid transparent",
       borderRight:isOverview?"1px solid rgba(160,140,110,0.15)":"none",
-      color:active?P.textChapter:P.textMuted,fontSize:window.innerWidth<=480?11:13,fontWeight:active?700:400,
+      color:active?P.textChapter:P.textMuted,fontSize:window.innerWidth<=480?12:13,fontWeight:active?700:400,
       letterSpacing:active?1:0.5,cursor:"pointer",transition:"all 0.3s",
       fontFamily:"'Noto Serif SC',serif",whiteSpace:"nowrap",flexShrink:0,
     }}>
