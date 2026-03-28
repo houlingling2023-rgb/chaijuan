@@ -17,6 +17,7 @@
   ::-webkit-scrollbar-track{background:#ebe5d8}
   ::-webkit-scrollbar-thumb{background:rgba(140,110,70,0.3);border-radius:3px}
   @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes sideNudge{0%,85%,100%{transform:translateY(-50%) translateX(0)}90%{transform:translateY(-50%) translateX(4px)}95%{transform:translateY(-50%) translateX(0)}}
   @keyframes glowPulse{0%,100%{opacity:0.3}50%{opacity:0.7}}
   @keyframes slideOpen{from{max-height:0;opacity:0}to{max-height:6000px;opacity:1}}
   @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
@@ -962,6 +963,22 @@ function Ch5(){
 }
 
 /* ===== ScrollTop ===== */
+function SideMenuTrigger({onClick}){
+  return(
+    <div onClick={onClick} style={{
+      position:"fixed",left:0,top:"50%",transform:"translateY(-50%)",zIndex:50,
+      width:20,height:48,borderRadius:"0 8px 8px 0",
+      background:"rgba(168,122,40,0.12)",backdropFilter:"blur(4px)",
+      border:"1px solid rgba(168,122,40,0.15)",borderLeft:"none",
+      display:"flex",alignItems:"center",justifyContent:"center",
+      cursor:"pointer",transition:"all 0.3s",
+      animation:"sideNudge 3s ease-in-out infinite",
+    }}>
+      <span style={{fontSize:14,color:"#8b7355",fontWeight:700,opacity:0.7}}>›</span>
+    </div>
+  );
+}
+
 function ScrollTop(){
   const[show,setShow]=useState(false);
   useEffect(()=>{
@@ -1073,7 +1090,7 @@ function App(){
         <div style={{padding:"12px clamp(16px,4vw,24px) 0"}}>
           <div style={{maxWidth:960,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
             <div style={{display:"flex",alignItems:"center",gap:10}}>
-              <span onClick={()=>setToc(true)} style={{cursor:"pointer",opacity:0.6,fontSize:22,padding:"2px 4px",lineHeight:1}}>{"☰"}</span>
+              {false&&<span>{"☰"}</span>}
               <span className="nav-book-title" style={{display:"flex",alignItems:"center",gap:4}}>
                 <span style={{fontSize:13,color:P.textMuted,letterSpacing:3}}>拆卷</span>
                 <span style={{fontSize:11,color:P.textMuted,opacity:0.4}}>·</span>
@@ -1100,6 +1117,7 @@ function App(){
         <PageNav current={ch} total={CHS.length} name={CHS[ch].label} onPrev={()=>{setCh(ch-1);window.scrollTo(0,0);}} onNext={()=>{setCh(ch+1);window.scrollTo(0,0);}}/>
       </div>
 
+      <SideMenuTrigger onClick={()=>setToc(true)}/>
       <ScrollTop/>
 
       <div style={{textAlign:"center",padding:"40px 24px 12px",position:"relative",zIndex:1}}>
